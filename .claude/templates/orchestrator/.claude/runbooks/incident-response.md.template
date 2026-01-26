@@ -1,0 +1,37 @@
+# Incident Response
+
+## Severity
+| Level | Definition | Response |
+|-------|------------|----------|
+| SEV1 | Outage | Immediate |
+| SEV2 | Major broken | 30 min |
+| SEV3 | Degraded | 4 hours |
+
+## Steps
+
+### 1. Assess
+- [ ] Determine severity
+- [ ] Notify team
+- [ ] Start incident doc
+
+### 2. Investigate
+- [ ] Check monitoring
+- [ ] Check recent deploys
+- [ ] Check error logs
+- [ ] Check external deps
+
+### 3. Mitigate
+- [ ] Rollback (see rollback.md)
+- [ ] Toggle feature flag
+- [ ] Scale resources
+- [ ] Apply hotfix
+
+### 4. Resolve
+- [ ] Confirm restored
+- [ ] Verify with monitoring
+- [ ] Communicate resolution
+
+### 5. Post-Incident
+- [ ] Post-mortem (48h for SEV1/2)
+- [ ] Document timeline
+- [ ] Action items

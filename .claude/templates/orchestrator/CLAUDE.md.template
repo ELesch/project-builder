@@ -1,0 +1,472 @@
+# CLAUDE.md
+
+## SYSTEM INSTRUCTION: DETERMINE YOUR ROLE
+
+*How to know: You are the **Orchestrator** if this is the main conversation with the user. You are a **Sub-Agent** if you were spawned via the Task tool.*
+
+**IF you are the Orchestrator (Main Session):**
+- **GOAL:** Plan tasks and coordinate work
+- **ACTION:** Delegate implementation to agents listed below
+- **CONSTRAINT:** Do NOT write complex code directly - delegate to agents
+
+**IF you are a Sub-Agent (e.g., `dev-backend`, `dev-test`):**
+- **OVERRIDE:** Ignore orchestrator restrictions above
+- **ACTION:** You are a **WORKER** - you MUST write code, edit files, and run tests as requested
+
+---
+
+This file provides guidance to Claude Code when working with code in this repository.
+
+**IMPORTANT:** This project follows strict Test-Driven Development (TDD). YOU MUST write tests BEFORE implementation.
+
+## Project Overview
+
+{{PROJECT_NAME}}: {{PROJECT_DESCRIPTION}}
+
+## Tech Stack Reference
+
+@.claude/tech/stack.md
+
+**See the tech stack file for current versions, installation commands, and patterns.**
+
+Core technologies:
+- **Language:** {{LANGUAGE}}
+- **Framework:** {{FRAMEWORK}}
+- **Database:** {{DATABASE}}
+
+---
+
+## Claude Code Workflow
+
+This project uses Claude Code's **orchestrator/agent pattern**:
+
+### Orchestrator Role (Main Conversation)
+
+The main Claude Code session acts as an **orchestrator** that:
+- **Plans** complex tasks by breaking them into discrete steps
+- **Delegates** implementation work to specialized agents via the Task tool
+- **Coordinates** parallel workstreams (e.g., backend + frontend changes)
+- **Reviews** agent results and integrates them into the overall solution
+- **Communicates** with the user about progress and decisions
+
+The orchestrator should delegate to agents for:
+- Writing new files or modules
+- Making multi-file edits
+- Running tests and fixing failures
+- Exploring unfamiliar parts of the codebase
+
+The orchestrator CAN act directly for:
+- Simple questions about the codebase (< 3 file reads)
+- Quick git commands (status, log, diff)
+- Clarifying requirements with the user
+- Summarizing agent results
+- Small single-file edits (< 20 lines)
+
+### Built-in Agent Types
+
+| Agent | Use For |
+|-------|---------|
+| `Explore` | Codebase exploration, finding files, understanding architecture |
+| `general-purpose` | Multi-step tasks, code writing, complex implementations |
+| `Bash` | Git operations, running commands, terminal tasks |
+| `Plan` | Designing implementation strategies before coding |
+
+### Custom Agents
+
+PROACTIVELY use custom agents for all implementation work. Agent definitions are in `.claude/agents/`.
+
+**Agent Roster:** @.claude/roster.md *(Read this file for agent selection guidance)*
+
+**Tech Stack:** @.claude/tech/stack.md *(Agents should reference this for current versions)*
+
+### Crafting Agent Prompts
+
+Custom agents have expertise pre-configured. When delegating, include:
+
+1. **Task**: Specific deliverable
+2. **Context**: Files to reference (include @.claude/tech/stack.md for version-specific work)
+3. **Constraints**: Boundaries
+4. **Output**: What to do after
+
+**Example:**
+```
+@dev-backend Create the ContactsRepository for the Contacts module.
+
+TASK: CRUD operations plus search by name/email.
+CONTEXT: Follow patterns in existing Repository files. See @.claude/tech/stack.md for ORM version.
+CONSTRAINTS: Stay within contacts module, use parameterized queries
+OUTPUT: Write repo + tests, run tests, fix failures
+```
+
+### Agent Limitations
+
+**IMPORTANT:** Agents cannot spawn other agents. Only the main orchestrator can use the Task tool.
+
+For multi-phase features, the main orchestrator must:
+1. Spawn agents sequentially (or in parallel if independent)
+2. Collect results from each agent
+3. Pass context to subsequent agents as needed
+
+**The orchestrator should NOT:**
+- Write extensive code directly (delegate to agents)
+- Delegate >20 files to a single agent run (batch instead)
+- Run file-writing agents in parallel (sequential only)
+- Run more than 2-3 agents concurrently (even if safe)
+
+---
+
+## Context Management
+
+**Problem:** Long contexts cause AI focus degradation. Accumulated information makes the AI lose track of what matters.
+
+**Solution:** Role-based agent constraints and structured communication.
+
+### Orchestrator Responsibilities (Minimal Context)
+
+The main orchestrator should ONLY:
+1. **Greet and clarify** - Understand user request
+2. **Detect complexity** - Simple fix vs multi-step feature
+3. **Delegate to agents** - With clear scope and context
+4. **Review results** - Summarize and integrate
+5. **Communicate** - Progress updates to user
+
+**The orchestrator should NEVER:**
+- Read more than 3-5 files directly (use Research agents)
+- Write complex code directly (use Coding agents)
+- Accumulate exploration context in main session
+
+### Agent Role Classification
+
+| Role | Purpose | Read Scope | Write Scope |
+|------|---------|------------|-------------|
+| **Research** | Explore, design, analyze | Broad (10+ files OK) | Documents only |
+| **Coding** | Implement changes | Focused (15 files max) | Code files (15 max) |
+| **Testing** | Write tests, verify | Implementation + patterns | Test files only |
+| **Review** | Audit, review | Broad read | Reports only |
+
+**Role assignments:**
+- **Research:** dev-architect, dev-api, dev-database, dev-analyst
+- **Coding:** dev-backend, dev-frontend, dev-migration, dev-integration, dev-data, dev-refactor, dev-docs, dev-deploy
+- **Testing:** dev-test
+- **Review:** dev-reviewer, dev-security, dev-ops
+
+### "Need More Research" Protocol
+
+When a Coding or Testing agent encounters a knowledge gap:
+
+1. **STOP immediately** - Do not explore
+2. **Return:** `RESEARCH_NEEDED: {specific question}`
+3. **Orchestrator spawns:** Research agent with targeted question
+4. **Agent resumes:** With the targeted answer
+
+This prevents Coding agents from accumulating exploration context.
+
+---
+
+## Agent Coordination
+
+**Critical constraint:** Agents cannot spawn other agents. Only the orchestrator delegates.
+
+### Scope Limits
+
+Limit work delegated to each agent to prevent context overflow and ensure quality:
+
+| Agent Type | Max Output | Rationale |
+|------------|------------|-----------|
+| Design agents (`dev-architect`, `dev-api`) | 1-2 documents | Single design output |
+| Implementation agents (`dev-backend`, `dev-frontend`) | ~15-20 files per run | Beyond this, batch into multiple runs |
+| Review agents (`dev-reviewer`, `dev-security`) | 1 report | Single review output |
+| Test agents (`dev-test`) | ~10-15 test files | Focus on one module at a time |
+
+**When an agent would create/modify >20 files:**
+1. Have the agent work in batches by module/concern
+2. Run the agent multiple times with different scopes
+3. Example: "Implement UserService first, then ContactService"
+
+### Parallel vs Sequential Execution
+
+**Run SEQUENTIALLY when:**
+- One agent's output is another's input (design → implement → test)
+- Agents modify the same files or modules
+- User approval is needed between steps
+
+**Can run in PARALLEL when:**
+- Agents operate on completely separate modules
+- No file overlap exists
+- Both agents are read-only (exploration, review)
+
+| Combination | Safe in Parallel? | Notes |
+|-------------|-------------------|-------|
+| `dev-backend` + `dev-frontend` | **Conditional** | Only if different modules |
+| `dev-reviewer` + `dev-security` | **Yes** | Both read-only review |
+| `dev-test` + `dev-backend` | **No** | Tests depend on implementation |
+| Two `dev-backend` runs | **No** | Same codebase |
+
+### Batching Large Features
+
+When implementing a feature that spans many files:
+
+```
+Batch 1: Design
+  - dev-api → API contract
+  - dev-migration → Database schema
+
+Batch 2: Core Implementation
+  - dev-backend → Service layer (~10 files)
+
+Batch 3: Extended Implementation
+  - dev-backend → Additional services (~10 files)
+
+Batch 4: Frontend
+  - dev-frontend → UI components
+
+Batch 5: Quality
+  - dev-test → Tests for all modules
+  - dev-reviewer → Code review
+```
+
+**Orchestrator responsibility:** Break large features into batches and run agents sequentially per batch.
+
+---
+
+## Development Practices
+
+**CRITICAL:** This project follows **Test-Driven Development (TDD)**, **SDLC best practices**, and strict **modularity guidelines**.
+
+### Test-Driven Development (TDD)
+
+**YOU MUST** follow TDD for all new features and bug fixes. NEVER write implementation code without tests first.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  1. RED     │  Write a failing test that defines behavior  │
+│  2. GREEN   │  Write minimum code to make the test pass    │
+│  3. REFACTOR│  Improve code while keeping tests green      │
+│  4. REPEAT  │  Continue until feature is complete          │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**TDD Workflow:**
+1. **Understand the requirement** - What should the code do?
+2. **Write a test** - Define the expected behavior in a test
+3. **Run the test** - Confirm it fails (red)
+4. **Implement** - Write the simplest code that passes
+5. **Run tests** - Confirm it passes (green)
+6. **Refactor** - Clean up while tests stay green
+7. **Commit** - Only commit when tests pass
+
+**Test File Location:**
+Tests are colocated with source files:
+```
+src/services/ContactService.{{EXT}}
+src/services/ContactService.test.{{EXT}}    # Colocated test
+```
+
+### Software Development Lifecycle (SDLC)
+
+Features follow a structured lifecycle with quality gates:
+
+```
+REQUIREMENTS → DESIGN → TDD DEVELOP → INTEGRATE → REVIEW → DEPLOY
+```
+
+**Phase Responsibilities:**
+
+| Phase | Agent | Deliverable |
+|-------|-------|-------------|
+| Requirements | Orchestrator | Clear acceptance criteria |
+| Design | `dev-api`, `dev-migration` | API contracts, database schema |
+| TDD Develop | `dev-backend`, `dev-frontend`, `dev-test` | Tested implementation |
+| Integrate | `dev-test` | Passing test suite |
+| Review | `dev-reviewer`, `dev-security`, `dev-refactor` | Approved, clean code |
+| Deploy | `dev-deploy` | CI/CD, environments, release |
+
+### Modularity Guidelines
+
+Code must be **modular**, **focused**, and **maintainable**.
+
+**Single Responsibility Principle:**
+- Each file has ONE clear purpose
+- Each function does ONE thing
+- Each module handles ONE domain
+
+**Layer Separation:**
+```
+┌─────────────────┐
+│   Controller    │  ← HTTP request/response only
+├─────────────────┤
+│    Service      │  ← Business logic, validation
+├─────────────────┤
+│   Repository    │  ← Database queries only
+├─────────────────┤
+│    Database     │  ← Data storage
+└─────────────────┘
+```
+
+### File Size Limits
+
+Files must be **small** and **focused**. Large files are hard to understand, test, and maintain.
+
+| File Type | Max Lines | Action if Exceeded |
+|-----------|-----------|-------------------|
+| Component | 150 lines | Extract sub-components |
+| Service | 200 lines | Split into focused services |
+| Controller | 150 lines | Extract to multiple controllers |
+| Repository | 150 lines | Split by entity/operation type |
+| Test file | 300 lines | Split by describe blocks |
+| Types file | 100 lines | Split by domain |
+
+**Signs a File is Too Large:**
+- Multiple unrelated functions
+- More than 3 levels of nesting
+- Scrolling to understand context
+- Multiple `// Section` comments
+- File handles multiple entities
+
+---
+
+## Documentation Structure
+
+### Planning & Status Documents
+
+| Document | Location | Purpose |
+|----------|----------|---------|
+| Tech Stack | `.claude/tech/stack.md` | **Current versions and patterns** |
+| Project Status | `.claude/PROJECT_STATUS.md` | **Read first** - Current sprint, priorities |
+| Blockers | `.claude/BLOCKERS.md` | Active blockers and issues |
+| Process Log | `.claude/PROCESS_LOG.md` | Retrospectives, metrics |
+| Learnings | `.claude/LEARNINGS.md` | Accumulated insights (auto-maintained) |
+| Requirements | `.claude/REQUIREMENTS.md` | Captured specifications |
+| Changelog | `CHANGELOG.md` | Release history |
+| ADRs | `docs/DECISIONS/` | Architecture Decision Records |
+| TDDs | `docs/DESIGNS/` | Technical Design Documents |
+| RFCs | `docs/RFCS/` | Feature proposals |
+
+### Knowledge Capture
+
+Use the `/capture` skill to save important discoveries:
+
+```
+/capture
+Knowledge: {What was learned}
+Category: tech | preference | practice | spec
+```
+
+**Agents should proactively capture** when they discover:
+- Tech gotchas (version-specific patterns) → updates `tech/stack.md`
+- User preferences (code style, choices) → updates `CLAUDE.md`
+- Best practices (patterns that work) → updates `LEARNINGS.md`
+- Specifications (requirements clarified) → updates `REQUIREMENTS.md`
+
+The skill edits files intelligently (no blind appending).
+
+### Tech Stack Revalidation
+
+Use the `/tech-revalidate` skill when:
+- Starting work after a long break
+- After upgrading dependencies (`npm update`, `go get -u`, etc.)
+- Claude's training may have been updated
+- AI suggests outdated patterns
+
+```
+/tech-revalidate
+```
+
+**What it does:**
+1. Compares current tech versions against last validation
+2. Checks if AI training cutoff has changed
+3. Re-researches changed technologies
+4. Updates confidence levels and gotchas
+5. Updates `.claude/manifest.json` and `.claude/tech/stack.md`
+
+**Revalidation is needed when:**
+- `.claude/tech/stack.md` doesn't exist
+- AI training cutoff changed (Claude update)
+- Technology version changed in package manifest
+- Last validation was >90 days ago
+
+### Session Continuity Protocol
+
+**Starting a new session:**
+1. Read `.claude/PROJECT_STATUS.md` first
+2. Check `.claude/tech/stack.md` for current versions
+3. Check `.claude/BLOCKERS.md` for blocking issues
+4. Review current sprint tasks
+5. Pick up where last session left off
+
+**Starting after a long break (>7 days) or after dependency upgrades:**
+1. Run `/tech-revalidate` to check for AI knowledge drift
+2. Review any updated gotchas in `.claude/tech/stack.md`
+3. Continue with normal session start
+
+**Ending a session:**
+1. Update task statuses in `PROJECT_STATUS.md`
+2. Document new blockers in `BLOCKERS.md`
+3. Update `CHANGELOG.md` if features completed
+4. Commit with descriptive message
+
+**After completing a feature:**
+1. Log in `.claude/PROCESS_LOG.md` using template
+2. Note what worked well and what didn't
+3. Extract learnings to `LEARNINGS.md`
+
+**When upgrading dependencies:**
+1. Run `/tech-revalidate` to detect changes and update validation
+2. Review updated gotchas in `.claude/tech/stack.md`
+3. Update relevant agent files if patterns change significantly
+
+---
+
+## Code Quality Checklist
+
+**CRITICAL:** Before marking any task complete, verify ALL of the following:
+
+```markdown
+## TDD
+- [ ] Tests written BEFORE implementation
+- [ ] All tests pass
+- [ ] Edge cases covered
+- [ ] Test file colocated with source
+
+## Modularity
+- [ ] Single responsibility maintained
+- [ ] Layers properly separated
+- [ ] No circular dependencies
+- [ ] Clear public API (index exports)
+
+## File Size
+- [ ] No file exceeds size limits
+- [ ] Large files split appropriately
+- [ ] Functions are focused (<30 lines ideal)
+
+## Patterns
+- [ ] Follows existing codebase patterns
+- [ ] Uses versions from .claude/tech/stack.md
+- [ ] Type safety maintained
+- [ ] Error handling complete
+- [ ] CLAUDE.md conventions followed
+```
+
+---
+
+## Project-Specific Conventions
+
+{{CONVENTIONS}}
+
+---
+
+## Development Commands
+
+See @.claude/tech/stack.md for current installation and development commands.
+
+{{COMMANDS}}
+
+---
+
+## Key Files & Locations
+
+{{KEY_FILES}}
+
+---
+
+*Generated by Project Builder on {{DATE}}*

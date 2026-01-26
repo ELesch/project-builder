@@ -1,0 +1,23 @@
+# Security: {{PROJECT_NAME}}
+
+## Overview
+| Attribute | Value |
+|-----------|-------|
+| Security Level | {{SECURITY_LEVEL}} |
+| Compliance | {{COMPLIANCE_REQS}} |
+| Authentication | {{AUTH_TYPE}} |
+
+## Review Status
+| Review | Last Done | Status |
+|--------|-----------|--------|
+| OWASP Top 10 | Never | Pending |
+| Dependency Audit | Never | Pending |
+| Access Control | Never | Pending |
+
+## Quick Actions
+- Run security checklist: @.claude/checklists/security-review.md
+- Run dependency audit: `npm audit`
+- Review access control: Check all protected routes
+
+## Reporting Issues
+Report security vulnerabilities to: {{SECURITY_CONTACT}}

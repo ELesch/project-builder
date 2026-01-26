@@ -1,0 +1,46 @@
+# Handoff: Research → Coding
+
+> **Max 50 lines** - This is the ONLY context the Coding agent receives.
+> Drop everything not essential for implementation.
+
+## Task (5 lines max)
+**Feature/Fix:** {{What to implement}}
+
+**Success Criteria:** {{How to know it's done}}
+
+## Files to Modify
+
+| File | Action | Reason |
+|------|--------|--------|
+| {{path/to/file.ts}} | Create | {{Why}} |
+| {{path/to/existing.ts}} | Modify | {{What change}} |
+
+## Reference Files (patterns to follow)
+
+| File | Pattern |
+|------|---------|
+| {{path/to/similar.ts}} | {{What pattern to copy}} |
+
+## Critical Context (10 lines max)
+
+**Architecture:**
+- {{Layer this belongs to}}
+- {{Key dependencies}}
+
+**Patterns:**
+- {{Pattern 1 from reference files}}
+- {{Pattern 2}}
+
+**Gotchas:**
+- {{Tech-specific gotcha from .claude/tech/stack.md}}
+
+## Test Files (if TDD)
+
+| Test File | What to Test |
+|-----------|--------------|
+| {{path/to/test.ts}} | {{Behavior to test}} |
+
+## Anti-Context (DROP - not relevant)
+
+- {{Files explored but not needed}}
+- {{Approaches rejected}}

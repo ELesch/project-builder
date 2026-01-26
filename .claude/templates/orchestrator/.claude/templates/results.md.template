@@ -1,0 +1,52 @@
+# Feature Results: {{FEATURE_NAME}}
+
+> Plan: `.claude/plans/{{plan-filename}}`
+> Completed: {{DATE}}
+
+## Summary
+
+{{Brief summary of what was accomplished}}
+
+## Delivered
+
+### Completed Items
+- [x] {{What was done}}
+
+### Deferred Items
+- [ ] {{What was postponed and why}}
+
+### Unplanned Additions
+- {{Anything added that wasn't in plan}}
+
+## Files Changed
+
+| File | Change Type | Description |
+|------|-------------|-------------|
+| `{{path}}` | Added/Modified/Deleted | {{what changed}} |
+
+## Test Coverage
+
+- Tests added: {{number}}
+- Coverage: {{percentage}}
+
+## Metrics
+
+- **Planned scope:** {{original}}
+- **Delivered scope:** {{actual}}
+- **Blockers encountered:** {{count}}
+
+## What Went Well
+
+- {{Positive outcome}}
+
+## What Could Improve
+
+- {{Area for improvement}}
+
+## Learnings
+
+- {{Key takeaway for future work}}
+
+---
+
+*Analysis: Run @dev-analyst to compare with plan*

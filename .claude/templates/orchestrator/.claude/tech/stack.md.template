@@ -1,0 +1,160 @@
+# {{PROJECT_NAME}} - Technology Stack
+
+> **Last Validated**: {{DATE}}
+>
+> This file contains current versions and patterns for the project's tech stack.
+> Run `/tech-revalidate` after upgrading dependencies or when patterns change.
+
+## AI Version Awareness
+
+> **AI Training Cutoff**: May 2025
+>
+> Code patterns from AI assistance may reflect older versions. Consult the
+> "Version Gotchas" section when working with technologies marked Medium/Low confidence.
+
+| Technology | Current | AI Trained On | Gap | Confidence |
+|------------|---------|---------------|-----|------------|
+| Next.js | {{NEXTJS_VERSION}} | 14.x | {{NEXTJS_GAP}} | {{NEXTJS_CONFIDENCE}} |
+| React | {{REACT_VERSION}} | 18.x | {{REACT_GAP}} | {{REACT_CONFIDENCE}} |
+| TypeScript | {{TYPESCRIPT_VERSION}} | 5.3 | {{TYPESCRIPT_GAP}} | {{TYPESCRIPT_CONFIDENCE}} |
+| Prisma | {{PRISMA_VERSION}} | 7.x | {{PRISMA_GAP}} | {{PRISMA_CONFIDENCE}} |
+| Tailwind CSS | {{TAILWIND_VERSION}} | 3.x | {{TAILWIND_GAP}} | {{TAILWIND_CONFIDENCE}} |
+| shadcn/ui | {{SHADCN_VERSION}} | 0.8.x | {{SHADCN_GAP}} | {{SHADCN_CONFIDENCE}} |
+{{ADDITIONAL_VERSION_GAPS}}
+
+**Gap Levels**: Minor | Moderate | **Major**
+**Confidence**: High (code works) | Medium (review gotchas) | **Low (verify all code)** | Unknown
+
+### Confidence Level Meaning
+
+| Level | What It Means | Developer Action |
+|-------|---------------|------------------|
+| **High** | AI has sufficient training data, patterns are stable | Use AI code with normal review |
+| **Medium** | Some patterns may be outdated or incomplete | Review gotchas, test edge cases |
+| **Low** | Limited training data or major changes | Verify ALL AI code against docs |
+| **Unknown** | Cannot determine AI knowledge state | Research before using |
+
+### When to Revalidate
+
+Run `/tech-revalidate` when:
+- AI training cutoff may have changed (Claude update)
+- You upgraded major dependencies
+- Starting work after a long break
+- You notice AI suggesting outdated patterns
+
+## Developer Prerequisites
+
+These tools must be installed before working on this project.
+
+| Tool | Version | Install | Verify |
+|------|---------|---------|--------|
+{{PREREQUISITES}}
+
+### Installation Notes
+
+{{PREREQUISITE_NOTES}}
+
+## Current Versions
+
+| Technology | Version | Notes |
+|------------|---------|-------|
+| Next.js | {{NEXTJS_VERSION}} | {{NEXTJS_NOTES}} |
+| TypeScript | {{TYPESCRIPT_VERSION}} | Strict mode enabled |
+| React | {{REACT_VERSION}} | {{REACT_NOTES}} |
+| Prisma | {{PRISMA_VERSION}} | {{PRISMA_NOTES}} |
+| Tailwind CSS | {{TAILWIND_VERSION}} | {{TAILWIND_NOTES}} |
+| shadcn/ui | {{SHADCN_VERSION}} | {{SHADCN_NOTES}} |
+| Zod | {{ZOD_VERSION}} | Runtime validation |
+{{ADDITIONAL_VERSIONS}}
+
+## Version Gotchas
+
+> Reference this section when AI-generated code uses outdated patterns.
+> Only technologies with Moderate/Major gaps are listed.
+
+{{VERSION_GOTCHAS}}
+
+<!--
+TEMPLATE FOR GOTCHAS (populated by initializer based on gap analysis):
+
+### Next.js {{NEXTJS_VERSION}} (AI trained on 14.x)
+
+| Do | Don't |
+|----|-------|
+| Use Server Actions for mutations | Use API routes for form submissions |
+| Let React Compiler memoize | Add manual useMemo/useCallback everywhere |
+| Use `onLoad` for Image component | Use `onLoadingComplete` (removed) |
+
+### Prisma {{PRISMA_VERSION}} (AI trained on 7.x)
+
+| Do | Don't |
+|----|-------|
+| Use `prisma.config.ts` with `defineConfig()` | Put database URL in schema.prisma |
+| Use `provider = "prisma-client"` in generator | Use `provider = "prisma-client-js"` |
+| Output client to custom path (e.g., `src/generated/prisma`) | Expect client in `node_modules` |
+| Use `PrismaPg` adapter in db client | Use `PrismaClient` without adapter |
+| Load env in `prisma.config.ts` with dotenv | Use `dotenv-cli` for prisma commands |
+| Import from `@/generated/prisma/client` | Import from `@prisma/client` |
+
+### Tailwind {{TAILWIND_VERSION}} (AI trained on 3.x)
+
+| Do | Don't |
+|----|-------|
+| Configure with `@theme` in CSS | Create tailwind.config.js |
+| Let content be auto-detected | Manually specify content paths |
+
+-->
+
+## Installation Commands
+
+```bash
+# Create Next.js app
+{{NEXTJS_CREATE_COMMAND}}
+
+# Install core dependencies
+{{CORE_DEPS_COMMAND}}
+
+# Install dev dependencies
+{{DEV_DEPS_COMMAND}}
+
+# Initialize shadcn/ui
+{{SHADCN_INIT_COMMAND}}
+
+# Initialize Prisma
+{{PRISMA_INIT_COMMAND}}
+```
+
+## Framework Patterns
+
+### Next.js {{NEXTJS_VERSION}}
+
+{{NEXTJS_PATTERNS}}
+
+### Prisma {{PRISMA_VERSION}}
+
+{{PRISMA_PATTERNS}}
+
+### React {{REACT_VERSION}}
+
+{{REACT_PATTERNS}}
+
+## Breaking Changes to Avoid
+
+{{BREAKING_CHANGES}}
+
+## Deprecated Patterns
+
+{{DEPRECATED_PATTERNS}}
+
+## Official Documentation
+
+- Next.js: https://nextjs.org/docs
+- Prisma: https://www.prisma.io/docs
+- Tailwind CSS: https://tailwindcss.com/docs
+- shadcn/ui: https://ui.shadcn.com
+- Supabase: https://supabase.com/docs
+- Zod: https://zod.dev
+
+## Project-Specific Technologies
+
+{{PROJECT_SPECIFIC_TECH}}

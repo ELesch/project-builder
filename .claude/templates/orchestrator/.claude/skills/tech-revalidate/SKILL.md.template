@@ -1,0 +1,199 @@
+# Tech Revalidation Skill
+
+Detects when AI knowledge validation needs to be updated and triggers revalidation.
+
+## When This Runs
+
+This skill should be invoked when:
+- Starting a new development session after a long break
+- After upgrading any technology in the stack
+- When Claude's training cutoff may have changed
+- Manually via `/tech-revalidate`
+
+## Detection Logic
+
+Revalidation is needed when ANY of these conditions are true:
+
+| Condition | How to Detect | Action |
+|-----------|---------------|--------|
+| **Stack file missing** | `.claude/tech/stack.md` doesn't exist | Full validation |
+| **AI training cutoff changed** | Compare manifest `aiTrainingCutoffAtValidation` vs current Claude knowledge | Full validation |
+| **Technology version changed** | Compare manifest `validatedVersions` vs current `package.json`/`go.mod`/etc. | Targeted validation |
+| **Confidence needs refresh** | `lastValidated` is older than 90 days | Full validation |
+
+## Process
+
+### Step 1: Read Current State
+
+Read these files:
+- `.claude/manifest.json` → Get `techValidation` section
+- `.claude/tech/stack.md` → Check if exists
+- Package manifest (`package.json`, `go.mod`, `requirements.txt`, etc.) → Get current versions
+
+### Step 2: Detect Changes
+
+#### Check AI Training Cutoff
+
+```
+Current AI training cutoff: May 2025 (or later if Claude has been updated)
+Manifest aiTrainingCutoffAtValidation: {from manifest}
+
+If different → AI knowledge may have improved, full revalidation needed
+```
+
+#### Check Technology Versions
+
+Compare each technology in `manifest.techValidation.validatedVersions`:
+
+```javascript
+// Example comparison
+manifest: { "next": "15.0.1", "react": "19.0.0", "prisma": "7.1.0" }
+current:  { "next": "15.1.0", "react": "19.0.0", "prisma": "8.0.0" }
+
+// Differences found:
+// - next: minor update (15.0.1 → 15.1.0) - validate
+// - prisma: major update (7.1.0 → 8.0.0) - validate with high priority
+```
+
+### Step 3: Report Findings
+
+If no changes detected:
+```
+Tech validation is current.
+Last validated: {date}
+AI training cutoff: {cutoff} (unchanged)
+All technology versions match.
+```
+
+If changes detected:
+```
+Tech validation update needed:
+
+AI Training Cutoff:
+  - Previous: {old}
+  - Current: {new}
+
+Technology Version Changes:
+  - {tech}: {old version} → {new version} ({change type})
+  - ...
+
+Recommended action: Run full/targeted tech validation
+```
+
+### Step 4: Perform Revalidation (if changes detected)
+
+For EACH technology that changed or all if full revalidation:
+
+1. **Research current patterns**
+   - WebSearch: "{technology} {version} best practices 2026"
+   - WebSearch: "{technology} {version} breaking changes"
+   - WebSearch: "{technology} {version} common mistakes"
+
+2. **Assess confidence level**
+   - Is this version in AI training? → Check training cutoff
+   - Is this widely used? → Check community activity
+   - Are patterns stable? → Check for recent major changes
+
+3. **Update gotchas**
+   - Research do/don't patterns for Medium/Low confidence
+   - Update `.claude/tech/stack.md` VERSION GOTCHAS section
+
+4. **Create verification tasks**
+   - Generate test patterns for Medium/Low confidence technologies
+   - Add to stack.md or separate verification file
+
+### Step 5: Update Manifest
+
+After revalidation, update `.claude/manifest.json`:
+
+```json
+{
+  "techValidation": {
+    "lastValidated": "{current date}",
+    "aiTrainingCutoffAtValidation": "{current AI cutoff}",
+    "validatedVersions": {
+      "{tech}": "{current version}",
+      ...
+    },
+    "confidenceLevels": {
+      "{tech}": "{High|Medium|Low|Unknown}",
+      ...
+    }
+  }
+}
+```
+
+### Step 6: Update stack.md
+
+Update `.claude/tech/stack.md` with:
+- New version numbers in AI Version Awareness table
+- Updated gap levels
+- New/updated gotchas for changed technologies
+- Updated confidence indicators
+
+## Outputs
+
+| File | Updates |
+|------|---------|
+| `.claude/manifest.json` | `techValidation` section |
+| `.claude/tech/stack.md` | Version table, gotchas, patterns |
+| Console | Summary of changes and actions taken |
+
+## Example Usage
+
+```
+User: /tech-revalidate
+
+Claude: Checking tech validation state...
+
+Reading .claude/manifest.json...
+Reading package.json...
+
+Changes detected:
+- AI training cutoff: unchanged (May 2025)
+- prisma: 7.1.0 → 8.0.0 (MAJOR update)
+- next: 15.0.1 → 15.1.0 (minor update)
+
+Researching Prisma 8.0 patterns...
+[research happens]
+
+Updated:
+- .claude/tech/stack.md: Added Prisma 8 gotchas
+- .claude/manifest.json: Updated validatedVersions
+
+Prisma 8.0 Confidence: LOW
+- Major version change
+- New query engine patterns
+- Verify all database queries against new patterns
+
+Next.js 15.1 Confidence: HIGH
+- Minor update, patterns unchanged
+```
+
+## Version Detection by Language
+
+| Language | Package Manifest | Version Extraction |
+|----------|------------------|-------------------|
+| Node.js/TypeScript | `package.json` | `dependencies` + `devDependencies` |
+| Python | `pyproject.toml`, `requirements.txt` | Parse version specifiers |
+| Go | `go.mod` | `require` statements |
+| Rust | `Cargo.toml` | `[dependencies]` section |
+| .NET | `*.csproj`, `Directory.Packages.props` | `<PackageReference>` elements |
+
+## Confidence Level Criteria
+
+| Level | Criteria | Action |
+|-------|----------|--------|
+| **High** | Version in training, widely used, patterns stable | Code likely works |
+| **Medium** | Recent version, pattern changes, or niche usage | Review gotchas, test carefully |
+| **Low** | Post-cutoff, limited training data, major changes | Must reference gotchas, verify all code |
+| **Unknown** | Cannot determine AI knowledge state | Research required |
+
+## Integration with Development Workflow
+
+This skill integrates with the orchestrator pattern:
+
+1. **Session Start**: Consider running at the start of development sessions
+2. **After Upgrades**: Run after `npm update`, `go get -u`, etc.
+3. **Before Major Work**: Run before starting significant new features
+4. **CI Integration**: Can be triggered in CI to check for drift

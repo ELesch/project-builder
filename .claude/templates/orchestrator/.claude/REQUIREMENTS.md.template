@@ -1,0 +1,64 @@
+# Requirements: {{PROJECT_NAME}}
+
+Captured specifications and requirements. This file is auto-maintained by the `/capture` skill.
+
+## Functional Requirements
+
+*Core features and behaviors the system must have*
+
+## Non-Functional Requirements
+
+*Performance, security, scalability, and other quality attributes*
+
+## Business Rules
+
+*Domain-specific rules and constraints*
+
+## User Stories
+
+*User-centered requirement statements*
+
+## Acceptance Criteria
+
+*Testable conditions for requirement completion*
+
+---
+
+## How to Add Requirements
+
+### Automatic Capture (Preferred)
+
+Use the `/capture` skill when requirements are clarified:
+
+```
+/capture
+Knowledge: {Requirement statement}
+Category: spec
+```
+
+The skill will add to the appropriate section without duplicating content.
+
+### Format Guidelines
+
+**Functional Requirements:**
+```markdown
+- **{Feature}**: {What it must do}
+  - Acceptance: {How to verify}
+```
+
+**Business Rules:**
+```markdown
+- **{Rule Name}**: {Rule statement}
+  - When: {Condition}
+  - Then: {Outcome}
+```
+
+**User Stories:**
+```markdown
+- As a {role}, I want {capability} so that {benefit}
+  - Acceptance: {Criteria}
+```
+
+---
+
+*Auto-maintained by /capture skill*

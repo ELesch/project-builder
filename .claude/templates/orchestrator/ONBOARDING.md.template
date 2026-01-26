@@ -1,0 +1,54 @@
+# Onboarding: {{PROJECT_NAME}}
+
+## Prerequisites
+{{PREREQUISITES}}
+
+## Quick Start
+
+```bash
+# Clone
+git clone {{REPO_URL}}
+cd {{PROJECT_SLUG}}
+
+# Install
+{{INSTALL_COMMAND}}
+
+# Environment
+cp .env.example .env
+# Edit .env with your values
+
+# Run
+{{DEV_COMMAND}}
+```
+
+## Key Files
+1. `CLAUDE.md` - Development conventions
+2. `.claude/tech/stack.md` - Tech versions & gotchas
+3. `README.md` - Project overview
+
+## Project Structure
+```
+{{DIRECTORY_STRUCTURE}}
+```
+
+## Workflow
+1. Branch from `main`
+2. Make changes
+3. Test: `{{TEST_COMMAND}}`
+4. PR & review
+5. Merge
+
+## Common Tasks
+
+### Add Feature
+{{ADD_FEATURE_STEPS}}
+
+### Fix Bug
+{{FIX_BUG_STEPS}}
+
+### Deploy
+See: `.claude/runbooks/deployment.md`
+
+## Help
+- Docs: This folder
+- Team: {{TEAM_CONTACT}}

@@ -1,0 +1,51 @@
+{
+  "orchestrator": {
+    "version": "{{ORCHESTRATOR_VERSION}}",
+    "templateVersion": "1.2.0"
+  },
+  "project": {
+    "name": "{{PROJECT_NAME}}",
+    "slug": "{{PROJECT_SLUG}}",
+    "type": "{{PROJECT_TYPE}}",
+    "primaryLanguage": "{{PRIMARY_LANGUAGE}}",
+    "mobileApps": "{{MOBILE_APPS}}"
+  },
+  "created": {
+    "date": "{{DATE}}",
+    "method": "{{CREATION_METHOD}}"
+  },
+  "ai": {
+    "trainingCutoff": "2025-05",
+    "knownVersionsBaseline": "2025-05"
+  },
+  "techValidation": {
+    "lastValidated": "{{DATE}}",
+    "aiTrainingCutoffAtValidation": "2025-05",
+    "validatedVersions": {
+      {{VALIDATED_VERSIONS}}
+    },
+    "confidenceLevels": {
+      {{CONFIDENCE_LEVELS}}
+    }
+  },
+  "versionControl": {
+    "provider": "{{VC_PROVIDER}}",
+    "repository": "{{REPO_URL}}",
+    "clonedFrom": {{CLONED_FROM}}
+  },
+  "services": {
+    "database": "{{DATABASE}}",
+    "hosting": "{{HOSTING}}",
+    "errorTracking": "{{ERROR_TRACKING}}"
+  },
+  "logging": {
+    "library": "{{LOGGING_LIBRARY}}",
+    "errorTracking": "{{ERROR_TRACKING}}",
+    "aggregation": "{{LOG_AGGREGATION}}"
+  },
+  "migration": {
+    "migratedFrom": {{MIGRATED_FROM}},
+    "originalPath": {{ORIGINAL_PATH}},
+    "preMigrationBackup": {{PRE_MIGRATION_BACKUP}}
+  }
+}

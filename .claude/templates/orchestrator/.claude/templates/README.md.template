@@ -1,0 +1,28 @@
+# Planning Templates: {{PROJECT_NAME}}
+
+Templates for planning and documenting features.
+
+## Available Templates
+
+| Template | Purpose |
+|----------|---------|
+| `plan.md` | Feature planning |
+| `results.md` | Results documentation |
+
+## Usage
+
+1. Copy template to `.claude/plans/` with feature name
+2. Fill in all sections
+3. Get approval before implementation
+4. After completion, move to `.claude/results/` with actual outcomes
+
+## Workflow
+
+```
+1. Create plan from template
+2. Review and approve plan
+3. Implement with TDD
+4. Document results
+5. Run analysis (@dev-analyst)
+6. Extract learnings
+```

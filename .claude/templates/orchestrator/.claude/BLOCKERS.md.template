@@ -1,0 +1,40 @@
+# Blockers: {{PROJECT_NAME}}
+
+Active issues preventing progress.
+
+## Active Blockers
+
+*No active blockers*
+
+## Blocker Template
+
+When adding a blocker, use this format:
+
+```markdown
+### [BLOCKER-XXX] Title
+
+**Severity:** Critical / High / Medium / Low
+**Blocking:** What tasks/features are blocked
+**Owner:** Who is working on this
+**Created:** Date
+
+**Description:**
+What the issue is
+
+**Impact:**
+What cannot proceed until this is resolved
+
+**Mitigation:**
+Current workarounds, if any
+
+**Resolution Path:**
+Steps to resolve
+```
+
+## Resolved Blockers
+
+*No resolved blockers yet*
+
+---
+
+*Update this file when blockers are identified or resolved*

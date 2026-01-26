@@ -1,0 +1,61 @@
+# {{PROJECT_NAME}}
+
+{{PROJECT_DESCRIPTION}}
+
+## Tech Stack
+
+- {{TECH_STACK}}
+
+## Quick Start
+
+```bash
+# Clone the repository
+git clone {{REPO_URL}}
+cd {{PROJECT_SLUG}}
+
+# Install dependencies
+{{INSTALL_COMMAND}}
+
+# Run development server
+{{DEV_COMMAND}}
+
+# Run tests
+{{TEST_COMMAND}}
+```
+
+## Development
+
+This project uses the Claude Code orchestrator pattern for AI-assisted development.
+
+### Starting a Development Session
+
+1. Open Claude Code in this directory
+2. Claude will read `CLAUDE.md` for project conventions
+3. Check `.claude/PROJECT_STATUS.md` for current tasks
+
+### Project Structure
+
+```
+{{PROJECT_STRUCTURE}}
+```
+
+## Documentation
+
+- [Architecture Decisions](docs/DECISIONS/)
+- [Technical Designs](docs/DESIGNS/)
+- [Feature RFCs](docs/RFCS/)
+
+## Contributing
+
+1. Follow the conventions in `CLAUDE.md`
+2. Write tests first (TDD)
+3. Keep files under size limits
+4. Update documentation
+
+## License
+
+{{LICENSE}}
+
+---
+
+*Created with [Project Builder](../project/)*

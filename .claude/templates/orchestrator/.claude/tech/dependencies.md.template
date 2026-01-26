@@ -1,0 +1,36 @@
+# Dependency Health
+
+> Last audit: {{DATE}}
+
+## Summary
+| Metric | Count | Status |
+|--------|-------|--------|
+| Direct deps | {{DEP_COUNT}} | {{DEP_STATUS}} |
+| Vulnerabilities | {{VULN_COUNT}} | {{VULN_STATUS}} |
+| Outdated (major) | {{OUTDATED_COUNT}} | {{OUTDATED_STATUS}} |
+
+## Vulnerabilities
+```
+{{AUDIT_OUTPUT}}
+```
+
+## License Summary
+| License | Count | OK |
+|---------|-------|-----|
+| MIT | {{MIT_COUNT}} | Yes |
+| Apache-2.0 | {{APACHE_COUNT}} | Yes |
+
+## Key Dependencies
+| Package | Version | Last Update | Health |
+|---------|---------|-------------|--------|
+| {{packages}} | | | |
+
+## Update Strategy
+- Strategy: {{DEP_STRATEGY}}
+- Frequency: {{UPDATE_FREQ}}
+- Automation: {{AUTOMATION}}
+
+## Review Schedule
+- Vulnerabilities: Weekly (automated)
+- Outdated: Monthly
+- Full review: Quarterly

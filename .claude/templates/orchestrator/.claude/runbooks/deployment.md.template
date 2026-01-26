@@ -1,0 +1,32 @@
+# Deployment
+
+## Standard (Vercel)
+
+### Pre-Deploy
+- [ ] CI tests passing
+- [ ] PR merged to main
+
+### Deploy
+```bash
+# Auto-deploys on merge
+# Manual if needed:
+vercel --prod
+```
+
+### Verify
+- [ ] Health endpoint OK
+- [ ] Run smoke tests
+- [ ] Monitor 15 min
+
+## With DB Migration
+
+### Pre-Deploy
+- [ ] Migration tested locally
+- [ ] Backup exists
+
+### Steps
+```bash
+npx prisma migrate deploy
+npx prisma migrate status
+vercel --prod
+```

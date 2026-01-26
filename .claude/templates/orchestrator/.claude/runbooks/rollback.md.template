@@ -1,0 +1,33 @@
+# Rollback
+
+## When to Rollback
+- Error rate spike >2x
+- Critical feature broken
+- Security vulnerability
+
+## Steps
+
+### 1. Confirm
+- [ ] Rollback is right action
+- [ ] Notify team
+- Current version: _____
+- Target version: _____
+
+### 2. Execute
+```bash
+# Vercel
+vercel rollback [deployment-url]
+
+# DB migration (if needed)
+npx prisma migrate rollback
+```
+
+### 3. Verify
+- [ ] Service restored
+- [ ] Errors normalizing
+- [ ] Notify completion
+
+## If Rollback Fails
+1. Try one more version back
+2. Check DB compatibility
+3. Escalate to backup

@@ -1,0 +1,43 @@
+# Project Status: {{PROJECT_NAME}}
+
+> Last Updated: {{DATE}}
+
+## Current Sprint: Sprint 1 - Project Setup
+
+### Sprint Goal
+Set up the foundational project structure and development workflow.
+
+### Active Tasks
+
+| Task | Status | Owner | Notes |
+|------|--------|-------|-------|
+| Project initialization | Complete | - | Created by Project Builder |
+| Development environment setup | Not Started | - | |
+| First feature planning | Not Started | - | |
+
+### Priorities
+
+1. **High**: Set up development environment
+2. **Medium**: Create initial feature plan
+3. **Low**: Documentation improvements
+
+## Upcoming
+
+- Define first feature requirements
+- Create architecture design if needed
+- Begin TDD implementation
+
+## Blockers
+
+See `BLOCKERS.md` for active blocking issues.
+
+## Session Notes
+
+### {{DATE}} - Project Created
+- Project initialized using Project Builder
+- Basic structure in place
+- Ready for development environment setup
+
+---
+
+*Read this file at the start of every session*

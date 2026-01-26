@@ -1,0 +1,27 @@
+# On-Call Reference
+
+## When Paged
+1. Acknowledge alert
+2. Assess severity
+3. Start incident (if SEV1/2)
+4. Investigate & mitigate
+5. Document
+
+## Escalate When
+- Cannot resolve in 30 min
+- Need domain expertise
+- Multiple systems affected
+
+## Key Links
+| Resource | URL |
+|----------|-----|
+| Monitoring | {{MONITORING_URL}} |
+| Logs | {{LOGS_URL}} |
+| Runbooks | This folder |
+
+## Common Issues
+| Symptom | Likely Cause | First Step |
+|---------|--------------|------------|
+| High errors | Bad deploy | Check deploys |
+| Slow responses | Database | Check DB metrics |
+| Timeouts | External API | Check deps |

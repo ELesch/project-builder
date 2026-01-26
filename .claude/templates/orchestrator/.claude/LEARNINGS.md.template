@@ -1,0 +1,60 @@
+# Learnings: {{PROJECT_NAME}}
+
+Accumulated insights from development. This file is auto-maintained by the `/capture` skill.
+
+## Effective Patterns
+
+*Approaches that work well in this project*
+
+## Solutions Found
+
+*Problems encountered and how they were solved*
+
+## Common Blockers
+
+*Recurring issues and how to prevent them*
+
+## Anti-Patterns
+
+*Approaches to avoid in this project*
+
+## Estimation Patterns
+
+*Learnings about task estimation*
+
+---
+
+## How to Add Learnings
+
+### Automatic Capture (Preferred)
+
+Use the `/capture` skill to save knowledge:
+
+```
+/capture
+Knowledge: {What you learned}
+Category: practice
+```
+
+The skill will intelligently update this file without duplicating content.
+
+### Agent Self-Capture
+
+Agents can invoke `/capture` when they discover important patterns:
+- Solutions to tricky problems
+- Patterns that worked well
+- Anti-patterns to avoid
+
+### Manual Review
+
+After completing a feature, consider:
+1. What took longer than expected?
+2. What was easier than expected?
+3. What would you do differently?
+4. What patterns emerged?
+
+Use `@dev-analyst` to compare plans vs results and extract learnings, then use `/capture` to save them.
+
+---
+
+*Auto-maintained by /capture skill*

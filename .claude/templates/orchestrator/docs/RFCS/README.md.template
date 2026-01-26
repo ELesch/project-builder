@@ -1,0 +1,56 @@
+# Feature RFCs
+
+This directory contains Requests for Comments (RFCs) for {{PROJECT_NAME}}.
+
+## What is an RFC?
+
+An RFC is a proposal for a new feature or significant change that benefits from discussion before implementation.
+
+## When to Create an RFC
+
+Create an RFC when:
+- Proposing a new feature
+- Suggesting a significant change
+- The approach is controversial
+- Multiple stakeholders need input
+
+## Template
+
+```markdown
+# RFC: Feature Name
+
+## Summary
+One paragraph explanation of the feature.
+
+## Motivation
+Why are we doing this? What problem does it solve?
+
+## Detailed Explanation
+Explain the proposal in detail.
+
+## Drawbacks
+What are the downsides of this approach?
+
+## Alternatives
+What other designs have been considered?
+
+## Unresolved Questions
+What questions need to be answered before this can proceed?
+
+## Future Possibilities
+What future enhancements could build on this?
+```
+
+## Process
+
+1. Create RFC from template
+2. Share for discussion
+3. Iterate based on feedback
+4. Accept or reject
+5. If accepted, create TDD or proceed to implementation
+
+## Index
+
+| RFC | Title | Status | Date |
+|-----|-------|--------|------|
+| - | - | - | - |

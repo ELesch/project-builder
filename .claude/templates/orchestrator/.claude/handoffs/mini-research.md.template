@@ -1,0 +1,23 @@
+# Mini-Research Response
+
+> **Max 20 lines** - Targeted answer to a specific question.
+
+## Question
+{{The specific question asked by the Coding/Testing agent}}
+
+## Answer (10 lines max)
+{{Direct answer with relevant details}}
+
+## Files Found
+
+| File | Relevance |
+|------|-----------|
+| {{path}} | {{How it answers the question}} |
+
+## Pattern (if applicable)
+```{{language}}
+{{Minimal code example showing the pattern}}
+```
+
+## Resume With
+{{One sentence: what the agent should do next with this info}}

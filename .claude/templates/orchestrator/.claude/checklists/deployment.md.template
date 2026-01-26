@@ -1,0 +1,31 @@
+# Deployment Checklist
+
+## Pre-Deployment
+- [ ] Tests passing
+- [ ] Security review (if required)
+- [ ] Code reviewed
+- [ ] CHANGELOG updated
+
+## Environment
+- [ ] Env vars configured
+- [ ] Secrets set
+- [ ] DB migrations ready
+- [ ] Rollback plan known
+
+## Deploy
+- [ ] Notify team
+- [ ] Run migrations (if any)
+- [ ] Deploy application
+- [ ] Health check passes
+
+## Post-Deploy
+- [ ] Monitor errors (15 min)
+- [ ] Verify key flows
+- [ ] Notify completion
+
+## Rollback If
+- Error rate >2x baseline
+- Critical feature broken
+- Security issue found
+
+See: @.claude/runbooks/rollback.md

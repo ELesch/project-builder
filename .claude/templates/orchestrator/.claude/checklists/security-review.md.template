@@ -1,0 +1,50 @@
+# Security Review Checklist
+
+> Security level: {{SECURITY_LEVEL}} | Compliance: {{COMPLIANCE_REQS}}
+
+## Pre-Review
+- [ ] Know the security context (above)
+- [ ] Have codebase access
+
+## OWASP Top 10
+
+### A01: Access Control
+- [ ] All endpoints check auth
+- [ ] Users access only their data
+- [ ] Admin functions protected
+
+### A02: Cryptography
+- [ ] No hardcoded secrets
+- [ ] TLS/HTTPS enforced
+- [ ] Passwords hashed (bcrypt/argon2)
+
+### A03: Injection
+- [ ] SQL parameterized
+- [ ] No eval() on user input
+- [ ] HTML escaped (XSS)
+
+### A04-A05: Design & Config
+- [ ] Security headers set
+- [ ] No default credentials
+- [ ] Errors don't leak info
+
+### A06: Components
+- [ ] npm audit clean
+- [ ] No known CVEs
+
+### A07-A10: Auth & Logging
+- [ ] Session management secure
+- [ ] Security events logged
+- [ ] External URLs validated
+
+## Compliance: {{COMPLIANCE_REQS}}
+{{COMPLIANCE_CHECKS}}
+
+## Sign-Off
+- Reviewer: _______
+- Date: _______
+- Issues: [ ] None [ ] See below
+
+| Severity | Issue | Location | Fix |
+|----------|-------|----------|-----|
+| | | | |

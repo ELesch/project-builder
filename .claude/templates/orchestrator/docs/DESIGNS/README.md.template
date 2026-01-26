@@ -1,0 +1,58 @@
+# Technical Design Documents
+
+This directory contains Technical Design Documents (TDDs) for {{PROJECT_NAME}}.
+
+## What is a TDD?
+
+A TDD describes the technical approach for implementing a complex feature or system component.
+
+## When to Create a TDD
+
+Create a TDD when:
+- Implementing a complex feature
+- Making significant changes to existing systems
+- The approach isn't obvious
+- Multiple components need coordination
+
+## Template
+
+```markdown
+# Design: Feature Name
+
+## Overview
+Brief description of what this design covers.
+
+## Goals
+- What we're trying to achieve
+
+## Non-Goals
+- What this design explicitly doesn't cover
+
+## Background
+Context needed to understand this design.
+
+## Detailed Design
+### Component 1
+How it works...
+
+### Component 2
+How it works...
+
+## Alternatives Considered
+Other approaches and why they weren't chosen.
+
+## Security Considerations
+Any security implications.
+
+## Testing Strategy
+How this will be tested.
+
+## Rollout Plan
+How this will be deployed.
+```
+
+## Index
+
+| Design | Status | Date |
+|--------|--------|------|
+| - | - | - |

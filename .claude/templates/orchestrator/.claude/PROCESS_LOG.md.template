@@ -1,0 +1,56 @@
+# Process Log: {{PROJECT_NAME}}
+
+Meta-process tracking for retrospectives and improvement.
+
+## Sprint Retrospectives
+
+### Sprint 1 - Project Setup
+
+*Retrospective to be completed at end of sprint*
+
+#### What Went Well
+-
+
+#### What Could Improve
+-
+
+#### Action Items
+-
+
+---
+
+## Feature Completion Log
+
+Use this template after completing each feature:
+
+```markdown
+### Feature: {Name}
+
+**Planned:** {date}
+**Completed:** {date}
+**Estimated:** {effort}
+**Actual:** {effort}
+
+**What Worked:**
+-
+
+**What Didn't:**
+-
+
+**Learnings Extracted:** Yes/No
+```
+
+---
+
+## Process Metrics
+
+| Metric | Sprint 1 | Sprint 2 | Sprint 3 |
+|--------|----------|----------|----------|
+| Features completed | - | - | - |
+| Estimation accuracy | - | - | - |
+| Blockers encountered | - | - | - |
+| Process improvements | - | - | - |
+
+---
+
+*Updated at sprint boundaries and feature completions*

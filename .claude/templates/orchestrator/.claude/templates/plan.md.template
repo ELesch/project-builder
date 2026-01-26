@@ -1,0 +1,63 @@
+# Feature Plan: {{FEATURE_NAME}}
+
+> Created: {{DATE}}
+> Status: Draft / Approved / In Progress / Complete
+
+## Overview
+
+{{Brief description of the feature}}
+
+## Goals
+
+- {{Goal 1}}
+- {{Goal 2}}
+
+## Non-Goals
+
+- {{What this feature explicitly won't do}}
+
+## Design
+
+### User Flow
+{{How users interact with this feature}}
+
+### Technical Approach
+{{High-level implementation approach}}
+
+### Files to Modify/Create
+- `{{path}}` - {{purpose}}
+
+## Implementation Phases
+
+### Phase 1: Tests (RED)
+- [ ] {{Test 1}}
+- [ ] {{Test 2}}
+
+### Phase 2: Implementation (GREEN)
+- [ ] {{Implementation task 1}}
+- [ ] {{Implementation task 2}}
+
+### Phase 3: Review
+- [ ] Code review
+- [ ] Test coverage check
+
+## Success Criteria
+
+- [ ] {{Criterion 1}}
+- [ ] {{Criterion 2}}
+- [ ] All tests pass
+- [ ] Code review approved
+
+## Risks
+
+| Risk | Likelihood | Impact | Mitigation |
+|------|------------|--------|------------|
+| {{Risk}} | Low/Med/High | Low/Med/High | {{Mitigation}} |
+
+## Open Questions
+
+- {{Question that needs resolution}}
+
+---
+
+*Approved by: {{name/date}}*

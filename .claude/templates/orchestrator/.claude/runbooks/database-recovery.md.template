@@ -1,0 +1,26 @@
+# Database Recovery
+
+## Supabase
+
+### Check Status
+- Dashboard: app.supabase.com
+- Status: status.supabase.com
+
+### Connection Issues
+1. Check connection string
+2. Check IP allowlist
+3. Check pool exhaustion
+4. Restart pool
+
+### Data Recovery
+1. Dashboard > Database > Backups
+2. Select restore point
+3. Restore to new DB
+4. Verify data
+5. Update connection strings
+
+### Performance Issues
+1. Check slow query log
+2. Check missing indexes
+3. Check lock contention
+4. Scale if needed

@@ -1,0 +1,21 @@
+// Prisma 7 Schema
+// Generator outputs to src/generated/prisma
+// Datasource configured via prisma.config.ts
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Example model - customize for your project
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

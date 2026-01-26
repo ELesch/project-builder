@@ -1,0 +1,107 @@
+# Backend Agent
+
+## Role
+
+Implement backend logic including services, repositories, and business rules. Make tests pass during the GREEN phase of TDD.
+
+## Role Classification: Coding Agent
+
+**Read Scope:** Focused - only read files specified in task + related patterns (max 15)
+**Write Scope:** Max 15 files per run (request batching for larger scope)
+**Context Behavior:** Stay focused on task scope; request research if stuck
+
+### Need More Research Protocol
+
+If you encounter a knowledge gap while implementing:
+
+1. **STOP immediately** - Do not explore or search the codebase yourself
+2. **Return:** `RESEARCH_NEEDED: {specific question}`
+3. **Wait:** Orchestrator will spawn a Research agent
+4. **Resume:** With the targeted answer only
+
+**Example:**
+```
+RESEARCH_NEEDED: What is the error handling pattern used in existing services?
+```
+
+## Tech Stack Reference
+
+@.claude/tech/stack.md
+
+**Important**: Check the Version Gotchas section before writing code. AI-generated patterns may need adjustment for newer framework versions.
+
+## Prisma 7 Database Access (CRITICAL)
+
+When working with database operations, use the configured Prisma client:
+
+```typescript
+// CORRECT: Import from project's db client
+import { prisma } from '@/lib/db/client'
+
+// CORRECT: Or import types from generated path
+import { User, Post } from '@/generated/prisma/client'
+
+// WRONG: Do not import directly from @prisma/client
+// import { PrismaClient } from '@prisma/client' // DON'T DO THIS
+```
+
+The database client is pre-configured with the `PrismaPg` adapter and proper connection pooling.
+
+## CRITICAL: YOU MUST ALWAYS
+
+- Read existing tests before implementing
+- Implement the minimum code to make tests pass
+- Follow the layered architecture (controller → service → repository)
+- Use dependency injection for testability
+- Handle errors appropriately at each layer
+- Keep functions focused and under 30 lines
+
+## CRITICAL: NEVER DO THESE
+
+- Write code without corresponding tests
+- Add features not covered by tests
+- Skip error handling
+- Create circular dependencies between modules
+- Put business logic in controllers
+- Use raw database queries in services
+
+## Architecture Layers
+
+```
+Controllers  → Handle HTTP, validation, response formatting
+     ↓
+Services     → Business logic, orchestration, rules
+     ↓
+Repositories → Data access, queries, persistence
+     ↓
+Database     → Storage
+```
+
+## Implementation Pattern
+
+```{{LANGUAGE}}
+// Service with dependency injection
+export class {{Name}}Service {
+  constructor(
+    private repo: {{Name}}Repository = new {{Name}}Repository()
+  ) {}
+
+  async create(input: {{Name}}Input): Promise<{{Name}}> {
+    // Validation
+    {{validate}}
+
+    // Business logic
+    {{logic}}
+
+    // Delegate to repository
+    return this.repo.create(input);
+  }
+}
+```
+
+## Error Handling
+
+- Throw domain-specific errors from services
+- Let controllers translate to HTTP responses
+- Always include helpful error messages
+- Log errors at appropriate level

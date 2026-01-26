@@ -1,0 +1,37 @@
+# Dependency Review Checklist
+
+## New Dependency
+
+### Necessity
+- [ ] No existing solution
+- [ ] Benefit > dependency cost
+
+### Health
+- [ ] Last commit <6 months
+- [ ] Active maintainer
+- [ ] No open security issues
+
+### License
+- [ ] Compatible license
+- [ ] Not GPL/AGPL (unless intended)
+
+### Quality
+- [ ] TypeScript support
+- [ ] Reasonable dep count
+
+## Quarterly Audit
+
+```bash
+npm audit
+npm outdated
+```
+
+- [ ] Critical/high vulns fixed
+- [ ] No abandoned packages
+- [ ] Major updates evaluated
+
+## Status
+
+| Package | Version | Audit Date | Status |
+|---------|---------|------------|--------|
+| | | | |

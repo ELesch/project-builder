@@ -1,0 +1,46 @@
+# Architecture Decision Records
+
+This directory contains Architecture Decision Records (ADRs) for {{PROJECT_NAME}}.
+
+## What is an ADR?
+
+An ADR documents a significant architectural decision along with its context and consequences.
+
+## When to Create an ADR
+
+Create an ADR when:
+- Choosing between technologies
+- Defining module boundaries
+- Establishing patterns
+- Making decisions that are hard to reverse
+
+## Template
+
+```markdown
+# ADR-XXX: Title
+
+## Status
+Proposed / Accepted / Deprecated / Superseded by ADR-YYY
+
+## Context
+What is the issue that we're seeing that is motivating this decision?
+
+## Decision
+What is the change that we're proposing and/or doing?
+
+## Consequences
+What becomes easier or more difficult because of this change?
+
+## Alternatives Considered
+What other options were evaluated?
+```
+
+## Naming Convention
+
+`ADR-001-brief-title.md`
+
+## Index
+
+| ADR | Title | Status | Date |
+|-----|-------|--------|------|
+| - | - | - | - |

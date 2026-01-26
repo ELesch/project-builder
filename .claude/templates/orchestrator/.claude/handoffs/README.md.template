@@ -1,0 +1,27 @@
+# Handoff Templates
+
+Templates for structured communication between agents.
+
+## When to Use Handoffs
+
+**Research → Coding:** Use `research-to-coding.md` when passing design/exploration results to implementation agents.
+
+**Mini-Research:** Use `mini-research.md` when a Coding/Testing agent requests targeted research.
+
+## Why Structured Handoffs?
+
+1. **Context discipline** - Prevents agents from accumulating exploration noise
+2. **Focus** - Coding agents only see what they need to implement
+3. **Reproducibility** - Clear inputs make debugging easier
+4. **Efficiency** - Less context = faster agent responses
+
+## File Limits
+
+| Handoff Type | Max Lines | Typical Use |
+|--------------|-----------|-------------|
+| Research → Coding | 50 | Feature implementation |
+| Mini-Research | 20 | Quick clarification |
+
+## Anti-Context
+
+Always include what to DROP - this tells the next agent what was explored but isn't relevant, preventing them from re-exploring the same dead ends.

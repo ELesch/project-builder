@@ -1,0 +1,98 @@
+# Development Agents: {{PROJECT_NAME}}
+
+Specialized agents for the orchestrator/agent pattern.
+
+## Available Agents
+
+### Implementation Agents
+
+| Agent | File | Expertise |
+|-------|------|-----------|
+| Backend | `dev-backend.md` | Controllers, services, repositories |
+| Frontend | `dev-frontend.md` | Components, hooks, pages, forms |
+| Test | `dev-test.md` | TDD, test writing, coverage |
+| Migration | `dev-migration.md` | Database schema, DDL |
+| Integration | `dev-integration.md` | OAuth, third-party APIs, webhooks |
+| Data | `dev-data.md` | ETL, sync, transformations |
+
+### Design & Architecture Agents
+
+| Agent | File | Expertise |
+|-------|------|-----------|
+| Architect | `dev-architect.md` | System design, ADRs |
+| API | `dev-api.md` | REST design, contracts |
+| Database | `dev-database.md` | Query optimization, indexes |
+
+### Quality & Review Agents
+
+| Agent | File | Expertise |
+|-------|------|-----------|
+| Reviewer | `dev-reviewer.md` | Code review, patterns |
+| Security | `dev-security.md` | OWASP, vulnerabilities |
+| Refactor | `dev-refactor.md` | Code structure, splitting |
+
+### Support Agents
+
+| Agent | File | Expertise |
+|-------|------|-----------|
+| Docs | `dev-docs.md` | Documentation |
+| Deploy | `dev-deploy.md` | CI/CD, DevOps |
+| Analyst | `dev-analyst.md` | Plan vs results analysis |
+
+## Agent Pattern
+
+Each agent follows this structure:
+
+```markdown
+# Agent Name
+
+## Role
+What this agent does
+
+## CRITICAL: YOU MUST ALWAYS
+- Required behaviors
+
+## CRITICAL: NEVER DO THESE
+- Prohibited behaviors
+
+## Patterns
+Code patterns and examples
+
+## Output Format
+What the agent produces
+```
+
+## Usage
+
+Agents are invoked by the orchestrator using the Task tool:
+
+```
+@dev-backend Create the UserService with CRUD operations.
+TASK: Implement create, read, update, delete
+CONTEXT: Follow existing service patterns
+OUTPUT: Run tests after implementation
+```
+
+## Rules
+
+- Agents **cannot** spawn other agents
+- Only the main orchestrator can delegate to agents
+- Agents should follow their scope constraints
+- Agents report results back to orchestrator
+
+## Coordination Rules
+
+See `.claude/roster.md` for detailed agent coordination guidance including:
+- **Scope limits**: 15-20 files max for implementation agents
+- **Parallel execution matrix**: Which agents can run together
+- **Batching strategy**: How to handle large features
+- **Directory ownership**: Which agents own which paths
+
+**Key constraints:**
+- Never run file-writing agents in parallel on the same module
+- Batch operations >20 files into multiple agent runs
+- Run no more than 2-3 agents concurrently
+
+## Customization
+
+These agents are configured for {{TECH_STACK}}. Modify agent files to add project-specific patterns or constraints as needed.

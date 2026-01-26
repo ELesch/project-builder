@@ -1,0 +1,28 @@
+# Technical Debt
+
+## Priority Levels
+| Priority | Impact | Fix When |
+|----------|--------|----------|
+| P1 | Blocks work/causes incidents | Next sprint |
+| P2 | Slows development | This quarter |
+| P3 | Minor inconvenience | When convenient |
+
+## P1 - High
+| Item | Impact | Added |
+|------|--------|-------|
+| | | |
+
+## P2 - Medium
+| Item | Impact | Added |
+|------|--------|-------|
+| | | |
+
+## P3 - Low
+| Item | Impact | Added |
+|------|--------|-------|
+| | | |
+
+## Resolved
+| Item | Resolution | Date |
+|------|------------|------|
+| | | |
