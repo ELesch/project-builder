@@ -5,7 +5,7 @@
 
 **Baseline Date**: 2026-01-26
 **Claude Code Version**: Latest (as of January 2026)
-**Project Builder Version**: 2.0.0
+**Project Builder Version**: 2.2.0
 
 ---
 
@@ -417,6 +417,57 @@ Use `/cpm_update` to check for and apply updates.
 ---
 
 ## Changelog
+
+### 2.2.0 (2026-01-26)
+
+**Mandatory Agent Creation - Closing Delegation Loopholes**
+
+This release addresses critical issues where orchestrators performed work directly instead of delegating to agents, even when delegation was clearly appropriate.
+
+**Problem Identified:**
+- Orchestrators (both Project Builder and created project orchestrators) were doing too much work directly
+- "Missing agent" was used as an excuse to bypass delegation
+- Vague language ("extensive code") allowed subjective interpretation
+- No enforcement mechanism for agent creation when one doesn't exist
+
+**Key User Feedback Addressed:**
+> "Missing an agent isn't an excuse to not use an agent. When there isn't an agent then you must create an agent with the necessary context to perform the task."
+
+**Changes to Project Builder:**
+
+- **Created `@project-updater` agent** (`.claude/agents/project-updater.md`)
+  - Handles updates to existing projects created by the Project Builder
+  - Follows role classification (Coding agent)
+  - Includes batching and handoff protocols
+
+- **Updated CLAUDE.md** with stricter delegation rules:
+  - Changed "Write extensive code directly" to "Write any code files directly (always delegate)"
+  - Added "Read more than 3 files directly without delegating to an agent"
+  - Added "Skip creating agents when one doesn't exist for the task"
+  - Added new "Mandatory Agent Creation" section with:
+    - Explicit triggers for when to create agents
+    - 4-step agent creation process
+    - Clear principle: "The orchestrator's job is to COORDINATE, not to DO the work"
+
+- **Updated roster.md** with enforcement rules:
+  - Added `@project-updater` to agent overview
+  - Added "Mandatory Agent Creation Rules" section
+  - Added action table mapping task types to required agents
+  - Added "Anti-Pattern: Direct Work" section explicitly listing forbidden behaviors
+
+**Changes to Orchestrator Templates (for new projects):**
+
+- **Updated CLAUDE.md.template** with same stricter delegation rules
+- **Updated roster.md.template** with:
+  - "Mandatory Agent Creation Rules" section
+  - Agent template for creating new agents on-the-fly
+  - Anti-pattern documentation
+
+**Impact:**
+- Orchestrators can no longer claim "no agent exists" as justification for direct work
+- Clear enforcement: create the agent first, then delegate
+- Quantified limits replace vague qualifiers (>3 files = delegate)
+- Both Project Builder and created projects now enforce this pattern
 
 ### 2.1.0 (2026-01-26)
 

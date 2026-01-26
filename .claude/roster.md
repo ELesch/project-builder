@@ -16,6 +16,7 @@ Quick reference for selecting the right agent during project creation and migrat
 | `@project-initializer` | Create files | Coding | After tech validation |
 | `@project-analyzer` | Analyze existing project | Research | Before migration |
 | `@project-migrator` | Migrate existing project | Coding | When user has existing codebase |
+| `@project-updater` | Update existing projects to newer framework versions | Coding | When updating created projects |
 
 ## Agent Role Classification
 
@@ -401,6 +402,40 @@ Coding Agent resumes
 ```
 
 **Why this matters:** Prevents Coding agents from accumulating exploration context.
+
+## Mandatory Agent Creation Rules
+
+**The orchestrator MUST NOT work directly when an agent could be created.**
+
+| If Task Requires... | Action |
+|---------------------|--------|
+| Reading >3 files | Create Research agent or use existing |
+| Writing any code files | Create Coding agent or use existing |
+| Analyzing existing code | Use `@project-analyzer` or create specific agent |
+| Updating existing projects | Use `@project-updater` |
+| Any specialized work | Create agent with necessary context |
+
+### Creating a New Agent
+
+When no suitable agent exists:
+
+1. **Determine agent type**: Research, Coding, Testing, or Review
+2. **Create agent file**: `.claude/agents/{descriptive-name}.md`
+3. **Define clearly**:
+   - Role and purpose
+   - Role classification (with constraints)
+   - Inputs expected
+   - Outputs expected
+   - CRITICAL: YOU MUST ALWAYS (musts)
+   - CRITICAL: NEVER DO THESE (nevers)
+4. **Delegate via Task tool**
+
+### Anti-Pattern: Direct Work
+
+The orchestrator should NEVER:
+- Read 10+ files to "understand" the codebase (delegate to Research agent)
+- Edit multiple files directly (delegate to Coding agent)
+- Say "there's no agent for this" and do it directly (CREATE the agent)
 
 ## Agent Coordination Rules
 

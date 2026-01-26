@@ -108,10 +108,33 @@ For multi-phase features, the main orchestrator must:
 3. Pass context to subsequent agents as needed
 
 **The orchestrator should NOT:**
-- Write extensive code directly (delegate to agents)
+- Write any code files directly (always delegate to agents)
+- Read more than 3 files directly without delegating to an agent
+- Skip creating agents when one doesn't exist for the task
 - Delegate >20 files to a single agent run (batch instead)
 - Run file-writing agents in parallel (sequential only)
 - Run more than 2-3 agents concurrently (even if safe)
+
+### Mandatory Agent Creation
+
+**CRITICAL**: If no agent exists for a required task, you MUST create one.
+
+#### When to Create an Agent
+
+Create a new agent in `.claude/agents/` when:
+- A task requires reading >3 files
+- A task requires writing any code or content files
+- A task requires specialized knowledge or patterns
+- No existing agent covers the task's scope
+
+#### Agent Creation Process
+
+1. **Create the agent file** at `.claude/agents/{task-name}.md`
+2. **Define scope**: Role, inputs, outputs, constraints
+3. **Add role classification**: Research, Coding, Testing, or Review
+4. **Use Task tool** to delegate to the new agent
+
+**The orchestrator's job is to COORDINATE, not to DO the work.**
 
 ---
 

@@ -310,4 +310,63 @@ Each batch is sequential. Never run same agent on same module in parallel.
 
 ---
 
+## Mandatory Agent Creation Rules
+
+**The orchestrator MUST NOT work directly when an agent could be created.**
+
+| If Task Requires... | Action |
+|---------------------|--------|
+| Reading >3 files | Create or use Research agent |
+| Writing any code files | Create or use Coding agent |
+| Analyzing code | Create or use analyzer agent |
+| Any specialized work | Create agent with context |
+
+### When No Agent Exists
+
+If no existing agent covers the task:
+
+1. **Create a new agent** at `.claude/agents/{task-name}.md`
+2. **Define the role** (Research, Coding, Testing, or Review)
+3. **Specify constraints** (file limits, scope boundaries)
+4. **Delegate immediately** using the Task tool
+
+### Anti-Pattern: Direct Work
+
+The orchestrator should NEVER:
+- Read 10+ files to "understand" the codebase (delegate to Research agent)
+- Edit multiple files directly (delegate to Coding agent)
+- Say "there's no agent for this" and do it directly (CREATE the agent)
+- Accumulate context by exploring (spawn explorer agents)
+
+### Agent Template
+
+When creating a new agent, use this structure:
+
+```markdown
+---
+name: {task-name}
+description: {When to use this agent}
+allowed-tools: Read, Grep, Edit, Write, Bash
+---
+
+## Role
+
+{Research | Coding | Testing | Review}
+
+## Scope
+
+{What this agent handles}
+
+## Constraints
+
+- Max files: {N}
+- Stay within: {boundaries}
+
+## Instructions
+
+{Specific guidance for the task}
+```
+
+---
+
 **Note:** Use `.claude/templates/plan.md` and `.claude/templates/results.md` to structure work.
