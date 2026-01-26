@@ -26,6 +26,9 @@ This agent produces a **full handoff** (100 lines max) in the form of a project 
 - Document all findings in structured format
 - Note any custom patterns or conventions found
 - Identify files that would conflict with orchestrator framework
+- **Map the ACTUAL directory structure** (read src/, app/, etc. to see what exists)
+- **Detect domain-specific syntax** (scan source files for project-specific patterns)
+- **Identify extended context files** (docs/, README.md, any detailed documentation)
 
 ## CRITICAL: NEVER DO THESE
 
@@ -182,18 +185,104 @@ From dependencies, identify:
 
 ### Step 3: Structure Analysis
 
-Identify common patterns:
+**CRITICAL: Read the actual directory structure, don't assume it.**
 
+```bash
+# List actual directories
+ls -la src/       # What subdirectories exist?
+ls -la app/       # Is this Next.js app router or something else?
 ```
-src/              → Source directory
-app/              → Next.js App Router
-pages/            → Next.js Pages Router or general pages
-components/       → UI components
-lib/ or utils/    → Shared utilities
-api/              → API routes or backend
-services/         → Business logic
-repositories/     → Data access
-tests/ or __tests__/ → Test files
+
+**Map what actually exists:**
+
+| Expected | What to Check | Document As |
+|----------|---------------|-------------|
+| `src/` | `ls src/` | List actual subdirectories |
+| `app/` | `ls app/` | List actual contents |
+| Backend code | Where is it? `src/server/`? `backend/`? `api/`? | Exact path |
+| Frontend code | Where is it? `src/client/`? `frontend/`? `src/`? | Exact path |
+| Shared code | Does `src/shared/` or `lib/` exist? | Exact path |
+| Tests | `tests/`? `__tests__/`? `src/**/*.test.*`? | Exact pattern |
+
+**Output the ACTUAL structure, not a template:**
+
+```markdown
+## Actual Directory Structure
+
+src/
+├── server/          # Backend (NOT backend/)
+├── client/          # Frontend (NOT frontend/)
+├── cli/             # CLI tool
+└── shared/          # Shared code
+```
+
+This exact structure must be used in CLAUDE.md - never use assumed paths.
+
+### Step 3b: Domain-Specific Syntax Detection
+
+**CRITICAL: Many projects have domain-specific syntax or terminology. Detect it from source files.**
+
+Scan source files for:
+
+1. **Custom placeholder/template syntax:**
+   ```bash
+   # Look for placeholder patterns
+   grep -r "\[\[" src/ --include="*.ts" | head -5     # [[fieldName]] style
+   grep -r "{{" src/ --include="*.ts" | head -5       # {{fieldName}} style
+   grep -r "\${" src/ --include="*.ts" | head -5      # ${variable} style
+   ```
+
+2. **Domain terminology:**
+   - Read main service/business logic files
+   - Identify core domain concepts (e.g., "Template", "Placeholder", "Filter")
+   - Note any custom syntax the project uses
+
+3. **Configuration patterns:**
+   - How are things configured?
+   - Custom DSLs or formats?
+
+**Document in analysis:**
+
+```markdown
+## Domain-Specific Syntax
+
+This project uses `[[fieldName]]` placeholder syntax (NOT `{{fieldName}}`).
+
+### Placeholder Format
+- Simple: `[[fieldName]]`
+- Nested: `[[object.property]]`
+- Filtered: `[[amount | currency]]`
+- Loops: `[[#items]]...[[/items]]`
+
+Source: Found in `src/server/utils/PlaceholderProcessor.ts`
+```
+
+**Why this matters:** The CLAUDE.md must describe the ACTUAL syntax used by the project, not assumed or generic patterns.
+
+### Step 3c: Extended Context Identification
+
+Identify documentation files beyond CLAUDE.md that contain important context:
+
+| Location | What to Look For |
+|----------|------------------|
+| `docs/` | API docs, architecture docs, detailed context |
+| `docs/ai-context/` | AI-specific documentation |
+| `README.md` | Project overview, setup instructions |
+| `CONTRIBUTING.md` | Development patterns |
+| `*.md` in root | Any detailed documentation |
+
+**If extended context exists, note:**
+- File path
+- Size (large files = rich context)
+- Key sections that should be transferred
+
+```markdown
+## Extended Context Files
+
+| File | Size | Key Content |
+|------|------|-------------|
+| `docs/ai-context/CLAUDE.md` | 24KB | Database schemas, env vars, detailed architecture |
+| `README.md` | 5KB | Setup instructions, project overview |
 ```
 
 ### Step 4: Existing Orchestrator Detection
@@ -269,9 +358,50 @@ Based on detected stack and project type, recommend agents:
 |------------|---------|--------|
 | {tech} | {version} | {file where found} |
 
-## Project Structure
+## ACTUAL Directory Structure
 
-{tree or description of structure}
+**CRITICAL: This is the REAL structure - use these exact paths in CLAUDE.md**
+
+```
+{project}/
+├── src/
+│   ├── server/          # Backend code (exact path)
+│   ├── client/          # Frontend code (exact path)
+│   └── shared/          # Shared code (exact path)
+├── tests/               # Test location
+└── ...
+```
+
+**Path Mapping for CLAUDE.md:**
+| Concept | Actual Path | NOT |
+|---------|-------------|-----|
+| Backend | `src/server/` | `backend/` |
+| Frontend | `src/client/` | `frontend/` |
+| Tests | `tests/` | `__tests__/` |
+
+## Domain-Specific Syntax
+
+**CRITICAL: Document the ACTUAL syntax used by this project**
+
+{If the project has custom syntax (placeholders, DSLs, etc.), document it here}
+
+Example:
+- Placeholder format: `[[fieldName]]` (NOT `{{fieldName}}`)
+- Filter syntax: `[[value | filterName(args)]]`
+- Loop syntax: `[[#items]]...[[/items]]`
+
+Source file: `{path to file where syntax is defined}`
+
+## Extended Context Files
+
+Files containing rich context that should be transferred:
+
+| File | Size | Key Content |
+|------|------|-------------|
+| {path} | {size} | {description of valuable content} |
+
+**Sections to transfer to new CLAUDE.md:**
+- {section}: {why it's important}
 
 ## Existing Orchestrator (if any)
 

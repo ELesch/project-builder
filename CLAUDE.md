@@ -194,15 +194,24 @@ When a user starts a session:
 1. Use `@project-discovery` to get existing project path
 2. Use `@project-analyzer` to understand the codebase
    - Detect tech stack from manifest files
+   - **Map ACTUAL directory structure** (not assumed paths)
+   - **Detect domain-specific syntax** (placeholders, DSLs, etc.)
+   - **Identify extended context files** (docs with schemas, env vars)
    - Identify any existing orchestrator framework
    - Document patterns to preserve
 3. Use `@project-migrator` to create orchestrator framework
    - **Copy project to projects directory** (never modify original)
    - **Quarantine conflicting files to `_pre_migration/`**
+   - **Extract domain knowledge** from quarantined files and extended context
    - Use quarantined files as context for customization
    - Create fresh orchestrator framework
+   - **Use ACTUAL paths and syntax** (not generic templates)
    - Create manifest with migration metadata
-4. Provide a summary and next steps
+4. **Verify migration accuracy**
+   - **Path verification**: Every path in CLAUDE.md must exist
+   - **Syntax verification**: Domain syntax must match source code
+   - Fix any discrepancies before reporting success
+5. Provide a summary and next steps
 
 ## Orchestrator Pattern
 

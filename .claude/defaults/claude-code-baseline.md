@@ -418,6 +418,59 @@ Use `/cpm_update` to check for and apply updates.
 
 ## Changelog
 
+### 2.1.0 (2026-01-26)
+
+**Migration Accuracy Improvements**
+
+This release fixes critical issues discovered during migration testing where created CLAUDE.md files contained incorrect paths and domain syntax.
+
+- **Enhanced `@project-analyzer` agent:**
+  - Added Step 3b: Domain-Specific Syntax Detection
+    - Scans source files for project-specific syntax (placeholders, DSLs)
+    - Documents ACTUAL syntax used, not generic patterns
+  - Added Step 3c: Extended Context Identification
+    - Identifies rich context files (docs/, README.md, extended AI context)
+    - Notes key sections that should be transferred
+  - Updated Step 3: Structure Analysis
+    - Now requires reading ACTUAL directories (not assuming paths)
+    - Output includes path mapping table for CLAUDE.md
+  - Updated output template with new required sections
+
+- **Enhanced `@project-migrator` agent:**
+  - Added Step 5b: Extract Domain Knowledge from Quarantine
+    - Reads quarantined files to extract commands, syntax, conventions
+    - Reads extended context files for schemas, env vars, domain concepts
+  - Enhanced Step 7: Create CLAUDE.md
+    - MUST use actual paths from analysis
+    - MUST use actual domain syntax from source files
+    - MUST copy commands from quarantined files
+  - Added Step 10a: Path Verification
+    - Verifies every path in CLAUDE.md exists
+    - Requires fixing mismatches before reporting success
+  - Added Step 10b: Syntax Verification
+    - Verifies domain syntax matches source code
+  - Updated verification checklist with Path and Domain Accuracy sections
+  - Updated output report to include verification status
+
+- **Updated CRITICAL lists:**
+  - "Use ACTUAL directory paths" added to MUST ALWAYS
+  - "Use ACTUAL domain syntax" added to MUST ALWAYS
+  - "Verify CLAUDE.md paths match actual structure" added
+  - "Use assumed directory structures" added to NEVER
+  - "Use generic syntax when project has specific syntax" added to NEVER
+  - "Skip path verification" added to NEVER
+  - "Ignore extended context files" added to NEVER
+
+- **Updated Migration Flow in main CLAUDE.md:**
+  - Added verification step (Step 4)
+  - Emphasized actual paths and syntax throughout
+
+**Why this matters:**
+- Migrations were producing CLAUDE.md files with incorrect paths (e.g., `backend/` instead of `src/server/`)
+- Domain-specific syntax was being replaced with generic patterns (e.g., `{{x}}` instead of `[[x]]`)
+- Extended context (schemas, env vars) was being lost during migration
+- These issues caused confusion when using the migrated project
+
 ### 2.0.0 (2026-01-26)
 
 **BREAKING CHANGE: Context Management Architecture**
