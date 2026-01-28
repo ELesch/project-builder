@@ -19,5 +19,28 @@
 - Run dependency audit: `npm audit`
 - Review access control: Check all protected routes
 
+## Credentials Management
+
+| Aspect | Status | Notes |
+|--------|--------|-------|
+| `.env` gitignored | {{ENV_GITIGNORED}} | |
+| Secrets in env vars | {{SECRETS_IN_ENV}} | |
+| `.env.example` current | {{ENV_EXAMPLE_CURRENT}} | |
+| Startup validation | {{STARTUP_VALIDATION}} | |
+| No hardcoded secrets | {{NO_HARDCODED}} | |
+
+### Environment Variables
+
+| Variable | Purpose | Required | Sensitive |
+|----------|---------|----------|-----------|
+| `DATABASE_URL` | Database connection | Yes | Yes |
+| `NODE_ENV` | Environment mode | Yes | No |
+
+### Secrets Rotation
+
+| Secret | Last Rotated | Next Rotation | Owner |
+|--------|--------------|---------------|-------|
+| | | | |
+
 ## Reporting Issues
 Report security vulnerabilities to: {{SECURITY_CONTACT}}

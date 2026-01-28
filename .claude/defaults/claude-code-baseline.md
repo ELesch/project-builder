@@ -5,7 +5,7 @@
 
 **Baseline Date**: 2026-01-26
 **Claude Code Version**: Latest (as of January 2026)
-**Project Builder Version**: 2.2.0
+**Project Builder Version**: 2.3.0
 
 ---
 
@@ -417,6 +417,68 @@ Use `/cpm_update` to check for and apply updates.
 ---
 
 ## Changelog
+
+### 2.3.0 (2026-01-28)
+
+**Credentials Security - Defense in Depth**
+
+This release adds comprehensive credentials and secrets protection to all created projects, preventing accidental commits of sensitive data.
+
+**New Template Files:**
+
+- **`.gitignore.template`** - Comprehensive gitignore protecting credentials
+  - Blocks `.env` files (except `.env.example`)
+  - Ignores credential files (`.pem`, `.key`, `.p12`, `.pfx`)
+  - Ignores `secrets/` directory
+
+- **`.env.example.template`** - Environment variable documentation template
+  - Placeholder pattern for required variables
+  - Uses `{{PROJECT_NAME}}` placeholders
+
+- **`.claude/hooks/check-secrets.sh.template`** - Claude Code PreToolUse hook
+  - Blocks `git add .env` commands
+  - Blocks commits if `.env` is staged
+  - Scans for hardcoded secrets using regex patterns
+  - Provides helpful error messages
+
+- **`.claude/settings.json.template`** - Claude Code settings with security hooks
+  - Configures PreToolUse hook for Bash commands
+  - Adds deny permissions for reading `.env` files directly
+
+- **`.claude/skills/commit/SKILL.md.template`** - Safe commit skill
+  - Mandatory pre-commit secret checks
+  - Documents proper commit workflow
+  - Instructions for handling detected secrets
+
+**Template Updates:**
+
+- **CLAUDE.md.template** - Added "Credentials & Secrets Management" section
+  - 5 critical rules for handling secrets
+  - Correct environment variable patterns
+  - File tracking table (committed vs gitignored)
+  - Enforcement documentation
+
+- **roster.md.template** - Added `/commit` skill to Skills table
+
+- **security-review.md.template** - Added "Credentials Security" checklist (8 items)
+
+- **SECURITY.md.template** - Added credentials management tracking
+  - Status table for credential hygiene
+  - Environment variables documentation
+  - Secrets rotation tracking
+
+**New Agent:**
+
+- **`@template-updater`** - Agent for updating orchestrator templates
+
+**Enforcement Layers:**
+
+| Layer | Mechanism | Catches |
+|-------|-----------|---------|
+| 1 | `.gitignore` | Accidental staging |
+| 2 | Claude hooks | Claude's git operations |
+| 3 | `/commit` skill | Manual commits via Claude |
+| 4 | CLAUDE.md rules | Hardcoded secrets in code |
 
 ### 2.2.0 (2026-01-26)
 

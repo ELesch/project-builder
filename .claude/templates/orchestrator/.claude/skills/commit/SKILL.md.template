@@ -1,0 +1,45 @@
+---
+name: commit
+description: Safe git commit workflow with credential checking
+disable-model-invocation: false
+allowed-tools: Bash, Read, Grep
+---
+
+## Safe Commit Workflow
+
+This skill ensures no credentials are accidentally committed.
+
+### Pre-Commit Checks (MANDATORY)
+
+Before ANY commit, run these checks:
+
+1. **Verify .env is not staged**:
+   ```bash
+   git diff --cached --name-only | grep -E '\.env' && echo "ABORT: .env is staged!" || echo "OK: No .env files staged"
+   ```
+
+2. **Scan for hardcoded secrets**:
+   ```bash
+   git diff --cached | grep -iE '(api_key|secret|password|token|private_key)\s*[:=]\s*"[^"]{8,}"' && echo "WARNING: Possible secret detected" || echo "OK: No obvious secrets"
+   ```
+
+3. **Verify .env.example is updated** (if new env vars added):
+   - Check if code references new `process.env.X` variables
+   - Ensure they're documented in `.env.example`
+
+### Commit Process
+
+Only after all checks pass:
+
+1. Stage files: `git add <specific-files>` (never `git add .` or `git add -A`)
+2. Review staged: `git diff --cached --stat`
+3. Commit with message following conventions
+
+### If Secrets Are Detected
+
+1. **STOP** - Do not commit
+2. Remove the secret from code
+3. Add to `.env` file
+4. Use `process.env.VARIABLE_NAME` instead
+5. Document in `.env.example` with placeholder
+6. Re-run checks

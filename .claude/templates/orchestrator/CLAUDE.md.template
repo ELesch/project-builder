@@ -23,6 +23,52 @@ This file provides guidance to Claude Code when working with code in this reposi
 
 {{PROJECT_NAME}}: {{PROJECT_DESCRIPTION}}
 
+## Credentials & Secrets Management
+
+**CRITICAL SECURITY POLICY** - All team members and AI agents MUST follow these rules.
+
+### Rules
+
+1. **NEVER** commit `.env` files or any file containing real credentials
+2. **NEVER** hardcode secrets, API keys, passwords, or tokens in source code
+3. **ALWAYS** use environment variables via `process.env`
+4. **ALWAYS** document new env vars in `.env.example` (with placeholder values)
+5. **ALWAYS** run `/commit` skill which includes secret scanning
+
+### Environment Variable Pattern
+
+```typescript
+// CORRECT - Use environment variables
+const apiKey = process.env.API_KEY;
+if (!apiKey) throw new Error('API_KEY not configured');
+
+// WRONG - Never hardcode
+const apiKey = 'sk_live_abc123...'; // NEVER DO THIS
+```
+
+### Files
+
+| File | Purpose | Committed? |
+|------|---------|------------|
+| `.env` | Actual secrets | NO - gitignored |
+| `.env.example` | Template with placeholders | YES |
+| `.env.local` | Local overrides | NO - gitignored |
+
+### Adding New Environment Variables
+
+1. Add to `.env` with real value
+2. Add to `.env.example` with placeholder: `NEW_VAR="your-value-here"`
+3. Add validation in code (fail fast if missing)
+4. Document purpose in `.env.example` comment
+
+### Enforcement
+
+- **Claude Code hooks** block commits containing secrets
+- **Pre-commit hooks** scan for credential patterns
+- **`/commit` skill** includes mandatory secret checks
+
+---
+
 ## Tech Stack Reference
 
 @.claude/tech/stack.md

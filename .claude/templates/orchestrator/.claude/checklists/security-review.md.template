@@ -32,6 +32,17 @@
 - [ ] npm audit clean
 - [ ] No known CVEs
 
+## Credentials Security
+
+- [ ] No `.env` files in repository
+- [ ] No hardcoded secrets in source code
+- [ ] All secrets use `process.env.VARIABLE_NAME`
+- [ ] `.env.example` documents all required variables
+- [ ] Sensitive env vars validated at startup
+- [ ] No secrets in logs or error messages
+- [ ] API keys have minimum required permissions
+- [ ] Secrets rotation schedule documented
+
 ### A07-A10: Auth & Logging
 - [ ] Session management secure
 - [ ] Security events logged

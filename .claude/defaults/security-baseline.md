@@ -36,6 +36,56 @@
 | High security | MFA required | TOTP, WebAuthn preferred |
 | API access | API keys or OAuth | Rotate keys, scope limits |
 
+## Credentials & Secrets Management
+
+> **Critical**: All projects include automated protection against credential leaks.
+
+### Rules (Enforced by Claude Code Hooks)
+
+| Rule | Enforcement |
+|------|-------------|
+| Never commit `.env` files | `.gitignore` + PreToolUse hook blocks `git add .env` |
+| Never hardcode secrets | PreToolUse hook scans for secret patterns |
+| Use environment variables | CLAUDE.md policy + code review |
+| Document in `.env.example` | `/commit` skill checks |
+
+### Environment Variable Pattern
+
+```typescript
+// CORRECT
+const apiKey = process.env.API_KEY;
+if (!apiKey) throw new Error('API_KEY not configured');
+
+// WRONG - Never do this
+const apiKey = 'sk_live_abc123...';
+```
+
+### File Handling
+
+| File | Committed | Purpose |
+|------|-----------|---------|
+| `.env` | NO | Actual secrets |
+| `.env.example` | YES | Placeholder documentation |
+| `.env.local` | NO | Local overrides |
+| `.env.*.local` | NO | Environment-specific local |
+
+### Secrets Rotation
+
+| Secret Type | Rotation Frequency | Notes |
+|-------------|-------------------|-------|
+| API keys | 90 days or on breach | Immediate on suspected compromise |
+| Database passwords | 90 days | Coordinate with deploys |
+| JWT secrets | 180 days | Grace period for active tokens |
+| OAuth client secrets | Annually | Update callback URLs if needed |
+
+### If Secrets Are Accidentally Committed
+
+1. **Immediately rotate** the exposed credential
+2. Remove from git history using `bfg` or `git filter-repo`
+3. Force push (coordinate with team)
+4. Audit access logs for the exposed credential
+5. Document incident
+
 ## Compliance Quick Reference
 
 ### GDPR
