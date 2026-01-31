@@ -418,6 +418,66 @@ Use `/cpm_update` to check for and apply updates.
 
 ## Changelog
 
+### 2.4.0 (2026-01-31)
+
+**Always Plan Mode + Orchestrator Self-Reminder**
+
+This release inverts plan mode behavior and adds mechanisms to prevent orchestrator role drift during long sessions.
+
+**Problem Addressed:**
+- Plan mode was skipped for "trivial" tasks, but the definition was subjective
+- Orchestrators would drift into doing work directly during long sessions
+- No recurring mechanism to remind orchestrators of their role
+- Context degradation caused orchestrators to "forget" delegation rules
+
+**Key Changes to Project Builder:**
+
+- **Replaced "Trivial vs Non-Trivial" with "Plan Mode: Always Enter (Except Extremely Simple)"**
+  - Default behavior: ALWAYS enter plan mode
+  - "Extremely simple" requires ALL criteria: single file, exact instruction, zero ambiguity, no delegation
+  - When in doubt, enter plan mode
+
+- **Added "Orchestrator Management Declaration" section**
+  - MANDATORY declaration when entering plan mode
+  - Format: Task, Agents needed, Sequence, My role
+  - Forces conscious decision about delegation vs direct work
+
+- **Added "Long Task Self-Reminder Protocol" section**
+  - Self-reminder triggers (3+ agents, >3 files, any file write)
+  - Self-reminder checklist table
+  - Recovery pattern for when direct work has begun
+  - Key principle reinforcement
+
+- **Updated Orchestrator Responsibilities** (now 7 items):
+  1. Greet and clarify
+  2. Enter plan mode (NEW)
+  3. Declare management approach (NEW)
+  4. Delegate to agents
+  5. Self-check periodically (NEW)
+  6. Review handoffs
+  7. Summarize results
+
+**New Skill:**
+
+- **`/orchestrator-checkpoint`** - Self-reminder skill for orchestrator role
+  - Identity check: PLAN, DELEGATE, REVIEW, COORDINATE, COMMUNICATE
+  - Constraint verification table
+  - Current task audit questions
+  - Resume guidance
+
+**Template Updates:**
+
+- **CLAUDE.md.template** - Added all new sections (Plan Mode, Declaration, Self-Reminder)
+- **roster.md.template** - Added `/orchestrator-checkpoint` to Skills table
+- **orchestrator-checkpoint/SKILL.md.template** - New skill template for created projects
+- **handoff-full.md** - Added orchestrator checkpoint header
+
+**Impact:**
+- Plan mode is now the default, not the exception
+- Orchestrators must explicitly declare their management approach
+- Built-in reminders prevent role drift during long sessions
+- All created projects inherit these behaviors
+
 ### 2.3.0 (2026-01-28)
 
 **Credentials Security - Defense in Depth**

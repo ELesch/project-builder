@@ -1,5 +1,10 @@
 # Handoff: {{FROM_PHASE}} -> {{TO_PHASE}}
 
+> **ORCHESTRATOR CHECKPOINT**: Before delegating this handoff:
+> - [ ] I am delegating to an AGENT (not doing this myself)
+> - [ ] Work is scoped to MAX 20 files
+> - [ ] I will REVIEW the result, not continue the work myself
+
 > **Max 100 lines** - This is the ONLY context the next agent receives.
 > Drop everything not essential for the next phase.
 

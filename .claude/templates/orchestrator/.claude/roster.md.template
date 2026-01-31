@@ -114,6 +114,7 @@ Skills are reusable workflows that can be invoked by users or agents.
 | `/capture` | Save important knowledge (tech gotchas, preferences, patterns) | Users and agents |
 | `/tech-revalidate` | Check for AI knowledge drift and update validation | Users |
 | `/commit` | Safe commit with secret scanning | Before any git commit |
+| `/orchestrator-checkpoint` | Self-reminder for orchestrator role during long sessions | Orchestrator |
 
 ### Using /tech-revalidate
 

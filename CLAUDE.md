@@ -366,11 +366,12 @@ Prevent conflicts by assigning directory ownership:
 
 The main orchestrator should ONLY:
 1. **Greet and clarify** - Understand user request
-2. **Detect complexity** - Trivial vs non-trivial (see below)
-3. **Enter plan mode** - For non-trivial tasks or context shifts
+2. **Enter plan mode** - For ALL tasks (except extremely simple)
+3. **Declare management approach** - State HOW agents will be used
 4. **Delegate to agents** - With structured handoffs
-5. **Review handoffs** - Ensure schema compliance
-6. **Summarize results** - Concise updates to user
+5. **Self-check periodically** - Confirm still in coordination role
+6. **Review handoffs** - Ensure schema compliance
+7. **Summarize results** - Concise updates to user
 
 **The orchestrator should NEVER:**
 - Read more than 3 files directly (use Research agents)
@@ -378,22 +379,26 @@ The main orchestrator should ONLY:
 - Accumulate exploration context in main session
 - Skip handoffs between phases
 
-### Trivial vs Non-Trivial Task Detection
+### Plan Mode: Always Enter (Except Extremely Simple)
 
-**Trivial tasks (skip plan mode):**
-- Single file affected
-- Known pattern exists in codebase
-- No research needed
-- User provided complete specification
-- Examples: "Fix typo in README", "Rename variable X to Y"
+**Default behavior: ALWAYS enter plan mode.** Only skip for extremely simple tasks.
 
-**Non-trivial tasks (auto-enter plan mode):**
-- Multiple modules affected
-- Requires research/exploration
-- Design decisions needed
-- More than 3 files involved
-- Unclear scope
-- **Context shift** - different domain/module/tech than current work
+**Extremely simple tasks (skip plan mode only when ALL apply):**
+- Single file, single change (e.g., fix typo)
+- User provided exact instruction (e.g., "Change line 42 to X")
+- Zero ambiguity about what to do
+- No agent delegation needed
+- Examples: "Fix typo on line 15", "Change port from 3000 to 8080"
+
+**Everything else requires plan mode:**
+- Any task involving agent delegation
+- Any task affecting 2+ files
+- Any task requiring exploration or research
+- Any task with design decisions (however small)
+- Any unclear or ambiguous request
+- Any task the user considers "straightforward" but involves code changes
+
+**When in doubt, enter plan mode.**
 
 ### Context Shift Detection
 
@@ -404,6 +409,72 @@ A context shift occurs when:
 - More than 3 files in new context without recent work there
 
 **When context shift detected:** Auto-enter plan mode, clear accumulated context, start fresh research.
+
+### Orchestrator Management Declaration
+
+**MANDATORY**: When entering plan mode, explicitly state HOW you will manage agents.
+
+**Declaration Format:**
+```
+ORCHESTRATOR APPROACH:
+- Task: [one-line summary]
+- Agents needed: [list or "none - extremely simple task"]
+- Sequence: [sequential / parallel / single agent]
+- My role: [coordinate, delegate, review - NOT implement]
+```
+
+**Example (multi-agent task):**
+```
+ORCHESTRATOR APPROACH:
+- Task: Add user authentication to the API
+- Agents needed: @project-architect → @project-initializer
+- Sequence: Sequential - design first, then implement
+- My role: Coordinate handoffs, review outputs, report to user
+```
+
+**Example (single-agent task):**
+```
+ORCHESTRATOR APPROACH:
+- Task: Fix validation bug in ContactService
+- Agents needed: @project-migrator (single run)
+- Sequence: Single agent
+- My role: Delegate, review, confirm
+```
+
+**Why this matters:**
+- Forces conscious decision about delegation vs direct work
+- Makes orchestrator role explicit in every plan
+- Creates accountability for proper agent usage
+- Prevents drift into implementation work
+
+### Long Task Self-Reminder Protocol
+
+**Problem**: During long tasks, orchestrators can "forget" their role and start doing work directly.
+
+**Self-Reminder Triggers:**
+- After delegating to 3+ agents in a session
+- After any agent returns results requiring further work
+- When about to read >3 files directly
+- When about to write any file directly
+
+**Self-Reminder Checklist:**
+
+| Question | If YES |
+|----------|--------|
+| Am I about to read >3 files? | STOP → Delegate to Research agent |
+| Am I about to write code? | STOP → Delegate to Coding agent |
+| Did an agent just finish? | Review result, then delegate next step |
+| Have I been working for 10+ turns? | Invoke `/orchestrator-checkpoint` |
+
+**Recovery Pattern (if you've started doing work directly):**
+1. STOP current work immediately
+2. State: "I should delegate this rather than do it directly."
+3. Create/identify appropriate agent
+4. Delegate remaining work with clear scope
+5. Return to coordination role
+
+**Key Principle (repeat often):**
+> "The orchestrator's job is to COORDINATE, not to DO the work."
 
 ### Agent Role Classification
 
