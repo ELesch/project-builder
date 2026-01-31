@@ -3,9 +3,9 @@
 > This document captures what the Project Builder knows about Claude Code.
 > Used by `/cpm_update` to detect when updates are needed.
 
-**Baseline Date**: 2026-01-26
+**Baseline Date**: 2026-01-31
 **Claude Code Version**: Latest (as of January 2026)
-**Project Builder Version**: 2.3.0
+**Project Builder Version**: 2.5.0
 
 ---
 
@@ -417,6 +417,58 @@ Use `/cpm_update` to check for and apply updates.
 ---
 
 ## Changelog
+
+### 2.5.0 (2026-01-31)
+
+**Auditor Agents - Comprehensive Review Perspectives**
+
+This release adds specialized auditor agents to the orchestrator framework for focused code and project reviews.
+
+**New Auditor Agents (8 total):**
+
+| Agent | Focus Area |
+|-------|------------|
+| `dev-auditor-performance` | N+1 queries, bundle size, renders, caching, memory leaks |
+| `dev-auditor-accessibility` | WCAG 2.1 AA, keyboard nav, ARIA, screen readers |
+| `dev-auditor-architecture` | Layer violations, coupling, circular dependencies, dead code |
+| `dev-auditor-testing` | Coverage gaps, test quality, flaky tests, edge cases |
+| `dev-auditor-api` | REST conventions, HTTP methods, status codes, consistency |
+| `dev-auditor-docs` | README completeness, API docs, code comments, accuracy |
+| `dev-auditor-dependencies` | CVEs, license compatibility, outdated packages, bloat |
+| `dev-auditor-errors` | Error boundaries, user messages, logging, graceful degradation |
+
+**New Review Checklists (4 total):**
+
+- `accessibility-review.md.template` - WCAG 2.1 Level A and AA checklist
+- `performance-review.md.template` - Core Web Vitals, database, frontend, API performance
+- `architecture-review.md.template` - Layers, modules, SOLID principles, scalability
+- `api-review.md.template` - REST conventions, HTTP methods, status codes, security
+
+**Key Design Decisions:**
+
+- All auditors use **Review Agent** role classification (read-only, reports only)
+- Auditors can run in parallel with each other and with implementation agents
+- Each auditor has severity levels (CRITICAL, HIGH, MEDIUM, LOW)
+- Structured report format for consistent output
+- Integration with SDLC phase mapping (new AUDIT phase)
+
+**Template Updates:**
+
+- `roster.md.template` - Added Auditor Agents section, updated SDLC mapping, parallel execution matrix
+- `agents/README.md.template` - Added Auditor Agents table
+- `manifest.json.template` - Bumped templateVersion to 1.3.0
+
+**Usage Patterns:**
+
+Pre-deployment review:
+```
+dev-auditor-dependencies → dev-auditor-security → dev-auditor-performance
+```
+
+Accessibility sprint:
+```
+dev-auditor-accessibility → [fix with dev-frontend] → dev-auditor-accessibility (verify)
+```
 
 ### 2.4.0 (2026-01-31)
 

@@ -39,6 +39,21 @@ Specialized agents for the orchestrator/agent pattern.
 | Deploy | `dev-deploy.md` | CI/CD, DevOps |
 | Analyst | `dev-analyst.md` | Plan vs results analysis |
 
+### Auditor Agents
+
+| Agent | File | Expertise |
+|-------|------|-----------|
+| Performance | `dev-auditor-performance.md` | N+1 queries, bundle size, caching |
+| Accessibility | `dev-auditor-accessibility.md` | WCAG 2.1, keyboard nav, ARIA |
+| Architecture | `dev-auditor-architecture.md` | Layers, coupling, boundaries |
+| Testing | `dev-auditor-testing.md` | Coverage, test quality, flakiness |
+| API | `dev-auditor-api.md` | REST conventions, consistency |
+| Documentation | `dev-auditor-docs.md` | README, API docs, comments |
+| Dependencies | `dev-auditor-dependencies.md` | CVEs, licenses, outdated |
+| Errors | `dev-auditor-errors.md` | Error handling, UX, logging |
+
+> **Note:** Auditor agents are read-only. They produce reports but never modify code. Use implementation agents (dev-backend, dev-frontend) to fix issues found by auditors.
+
 ## Agent Pattern
 
 Each agent follows this structure:

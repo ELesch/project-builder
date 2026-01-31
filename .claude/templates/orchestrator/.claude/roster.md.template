@@ -49,12 +49,49 @@ Agents are classified by their role to enforce context discipline:
 | `dev-security` | Security audits, OWASP checks, auth review | Security report |
 | `dev-ops` | Infrastructure review, operational concerns | Ops analysis |
 
+## Auditor Agents (Review Role)
+
+Specialized review agents for comprehensive audits. All auditors are **read-only** - they report issues but never modify code.
+
+| Agent | When to Use | Focus Area | Checklist |
+|-------|-------------|------------|-----------|
+| `dev-auditor-performance` | Pre-deploy, after major features | N+1 queries, bundle size, renders, caching | `performance-review.md` |
+| `dev-auditor-accessibility` | UI changes, pre-launch | WCAG 2.1 AA, keyboard nav, screen readers | `accessibility-review.md` |
+| `dev-auditor-architecture` | Major refactors, new modules | Layer violations, coupling, boundaries | `architecture-review.md` |
+| `dev-auditor-testing` | Coverage review, test quality | Gaps, flaky tests, edge cases | - |
+| `dev-auditor-api` | New endpoints, API changes | REST conventions, consistency, status codes | `api-review.md` |
+| `dev-auditor-docs` | Pre-release, onboarding review | README, API docs, code comments | - |
+| `dev-auditor-dependencies` | Monthly, pre-deploy | CVEs, licenses, outdated, bloat | - |
+| `dev-auditor-errors` | Post-incident, error UX review | Boundaries, messages, logging | - |
+
+### When to Use Auditors
+
+**Pre-deployment review:**
+```
+dev-auditor-dependencies → dev-auditor-security → dev-auditor-performance
+```
+
+**Accessibility sprint:**
+```
+dev-auditor-accessibility → [fix issues with dev-frontend] → dev-auditor-accessibility (verify)
+```
+
+**Architecture health check:**
+```
+dev-auditor-architecture → dev-auditor-testing → [create remediation plan]
+```
+
+**API quality review:**
+```
+dev-auditor-api → dev-auditor-docs → [update documentation]
+```
+
 ## SDLC Phase Mapping
 
 ```
-DESIGN           →  TDD DEVELOP      →  INTEGRATE  →  REVIEW          →  DEPLOY
-dev-architect       dev-test            dev-test      dev-reviewer       dev-deploy
-dev-api             dev-backend                       dev-security       dev-docs
+DESIGN           →  TDD DEVELOP      →  INTEGRATE  →  REVIEW          →  AUDIT           →  DEPLOY
+dev-architect       dev-test            dev-test      dev-reviewer       dev-auditor-*      dev-deploy
+dev-api             dev-backend                       dev-security                          dev-docs
 dev-migration       dev-frontend                      dev-refactor
                     dev-integration
                     dev-data
@@ -102,6 +139,13 @@ The **main orchestrator** spawns agents in sequence (agents cannot spawn other a
 1. `dev-security` → Security audit
 2. `dev-reviewer` → Final review
 3. `dev-deploy` → Deployment config
+
+**Comprehensive review?**
+1. `dev-auditor-dependencies` → Security/license issues
+2. `dev-auditor-performance` → Performance bottlenecks
+3. `dev-auditor-architecture` → Structural issues
+4. `dev-auditor-testing` → Test coverage gaps
+5. `dev-reviewer` → General code quality
 
 ---
 
@@ -259,6 +303,8 @@ Run 3: "Implement Contact module backend"
 
 **Notes:**
 - ✅ **reviewer + security**: Both read-only, different focus
+- ✅ **auditor-* + auditor-***: All auditors can run in parallel (read-only)
+- ✅ **auditor-* + implementation**: Auditors read-only, won't conflict with writes
 - ⚠️ **backend + frontend**: Only if completely separate modules
 - ❌ **test + anything**: Tests depend on implementation being stable
 - ❌ **Same agent twice**: Never run same agent in parallel
