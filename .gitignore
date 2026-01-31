@@ -1,0 +1,28 @@
+# Local files (not checked in)
+*.local.*
+*.local
+.env
+.env.local
+.env.*.local
+
+# Claude Code local files
+.claude/*.local.md
+.claude/*.local.json
+CLAUDE.local.md
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Node (if any scripts)
+node_modules/
+
+# Temp files
+*.tmp
+*.temp

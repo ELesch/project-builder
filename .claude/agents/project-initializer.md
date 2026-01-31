@@ -63,11 +63,38 @@ RESEARCH_NEEDED: What is the current Prisma 7 config pattern for PostgreSQL adap
 - Modify any existing files outside the new project
 - **Skip logging setup** - every project needs proper logging
 
+## User Preferences (Confirmed by Discovery)
+
+@.claude/user-preferences.local.md
+
+By the time this agent runs, the discovery phase should have already confirmed whether to use saved preferences. Check the project brief for:
+
+- `useSharedDatabase: true/false` - Whether to use the shared Supabase instance
+- `databaseCredentials: confirmed` - Whether user confirmed using saved credentials
+
+**When user confirmed using shared database:**
+- Create `.env.local` using saved credentials from preferences
+- Create schema creation script (`scripts/create-schema.mjs`)
+- Run schema creation as part of setup
+- Update preferences file with new schema in "Existing Schemas" table
+- Update preferences file with new project in "Projects Created" table
+
+**When user chose NOT to use shared database (or no preferences exist):**
+- Create `.env.example` with placeholders
+- Document setup steps in ONBOARDING.md
+- After manual setup, offer to save credentials to preferences
+
+**Always update preferences after project creation** with:
+- New project name and date
+- New schema name (if applicable)
+- Any new patterns or credentials the user provided
+
 ## Inputs
 
 - Architecture document from architect phase
 - Project brief from discovery phase (includes projectType, primaryLanguage, mobileApps)
 - Confirmed project directory path
+- User preferences (if available): @.claude/user-preferences.local.md
 - Stack defaults by project type:
   - @.claude/defaults/stacks/web-app.md
   - @.claude/defaults/stacks/backend-api.md

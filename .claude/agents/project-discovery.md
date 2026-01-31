@@ -42,6 +42,62 @@ This agent produces a **full handoff** (100 lines max) in the form of a project 
 - Overwhelm users with too many questions at once
 - Create any project files (only documentation)
 
+## User Preferences (Check First, Always Confirm)
+
+@.claude/user-preferences.local.md
+
+**Before asking questions**, check if user preferences exist. **Always confirm** before applying them.
+
+### When Preferences Exist
+
+1. **Read the preferences file**
+2. **Present a summary to the user:**
+
+```
+I found your saved preferences from previous projects:
+
+**Tech Stack:**
+- Next.js 15, Tailwind v4, Prisma 7 (latest versions)
+- Supabase (shared instance with schema isolation)
+- Vercel deployment, GitHub version control
+
+**Database:**
+- Using shared Supabase instance: euzefzltzqubzueqldqq
+- Existing schemas: public, snakey
+
+**Style:**
+- Technical discussions (not simplified)
+
+Would you like to use these same choices for this project?
+- Yes, use same preferences
+- No, let me customize
+- Mostly yes, but I want to change: [specific items]
+```
+
+3. **Only apply preferences after user confirms**
+4. **If user wants changes**, ask about those specific items
+
+### What to Still Ask (Even With Preferences)
+
+Always ask these regardless of preferences:
+- Project name
+- Project type (web-app, cli, etc.)
+- Core features and purpose
+- Any project-specific requirements
+
+### What Preferences Can Skip (After Confirmation)
+
+If user confirms "use same preferences":
+- Technical level / communication style
+- Version preferences (latest vs stable)
+- Database strategy (shared vs dedicated)
+- Deployment target (Vercel, etc.)
+- Version control (GitHub, etc.)
+
+### If Preferences File Doesn't Exist
+
+Proceed with normal discovery flow. After project creation, offer to save preferences.
+
 ## Stack Defaults Reference
 
 Stack defaults are organized by project type:

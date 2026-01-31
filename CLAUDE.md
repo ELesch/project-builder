@@ -101,6 +101,57 @@ Stack defaults are organized by project type:
 
 Use the appropriate stack default based on detected or specified project type.
 
+## User Preferences (Local)
+
+@.claude/user-preferences.local.md
+
+**Check this file first** when starting a new project. It contains:
+
+- **User profile** - Technical level, communication preferences
+- **Saved credentials** - Supabase connection strings, API keys
+- **Database strategy** - Shared instance with schema isolation
+- **Default technology choices** - Preferred versions and patterns
+- **Existing projects** - Schemas already created, projects to reference
+
+### Using Preferences (Always Confirm)
+
+**IMPORTANT**: Never silently apply preferences. Always show the user what was saved and ask for confirmation.
+
+1. **At session start**: Read the preferences file
+2. **Present summary**: Show key choices from previous projects
+3. **Ask for confirmation**: "Would you like to use the same choices for this project?"
+4. **Respect their answer**:
+   - "Yes" → Apply preferences, skip redundant questions
+   - "No" → Go through full discovery
+   - "Mostly, but change X" → Apply most, ask about X
+5. **After project creation**: Update the preferences file
+
+### Confirmation Template
+
+When preferences exist, present them like this:
+
+```
+I found your saved preferences from previous projects:
+
+**Tech Stack:** Next.js 15, Tailwind v4, Prisma 7
+**Database:** Supabase (shared instance, schema isolation)
+**Deployment:** Vercel + GitHub
+**Existing schemas:** public, snakey
+
+Would you like to use these same choices for this project?
+```
+
+### When Preferences File Doesn't Exist
+
+Proceed with normal discovery. Offer to save preferences after the first project is set up.
+
+### Updating Preferences
+
+After creating a project, update the preferences file with:
+- New schema added to "Existing Schemas" table
+- New project added to "Projects Created" table
+- Any new credentials or patterns discovered
+
 ## AI Version Awareness
 
 @.claude/defaults/ai-known-versions.md

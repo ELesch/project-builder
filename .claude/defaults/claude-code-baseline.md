@@ -5,7 +5,7 @@
 
 **Baseline Date**: 2026-01-31
 **Claude Code Version**: Latest (as of January 2026)
-**Project Builder Version**: 2.6.0
+**Project Builder Version**: 2.7.0
 
 ---
 
@@ -417,6 +417,63 @@ Use `/cpm_update` to check for and apply updates.
 ---
 
 ## Changelog
+
+### 2.7.0 (2026-01-31)
+
+**User Preferences Memory - Faster Project Creation**
+
+This release adds a user preferences system that remembers choices from previous projects to speed up future project creation.
+
+**New Files:**
+
+- **`.gitignore`** - Ignores local files (`*.local.*`, `.env`, etc.)
+- **`.claude/user-preferences.local.md`** - Stores user preferences (gitignored)
+
+**What Gets Saved:**
+
+| Category | Examples |
+|----------|----------|
+| User profile | Technical level, communication preferences |
+| Credentials | Supabase connection strings, API keys |
+| Database strategy | Shared instance with schema isolation |
+| Version preferences | Prefers latest (Next.js 15, Tailwind v4, Prisma 7) |
+| Project history | Schemas created, projects built |
+
+**Key Design Decision: Always Confirm**
+
+Preferences are never silently applied. The flow is:
+
+1. Check if preferences file exists
+2. Present summary: "I found your saved preferences from previous projects..."
+3. Ask: "Would you like to use the same choices for this project?"
+4. Respect answer: Yes / No / Mostly, but change X
+5. Update preferences after project creation
+
+**Agent Updates:**
+
+- **`project-discovery.md`** - Added preferences check with confirmation flow
+- **`project-initializer.md`** - Uses confirmed preferences for `.env.local` creation
+- **`CLAUDE.md`** - Added User Preferences section with confirmation template
+
+**Benefits:**
+
+```
+Before: 10+ questions about tech level, database, versions, credentials
+After:  Confirm preferences → Just project name and specific features
+```
+
+**Example Confirmation:**
+
+```
+I found your saved preferences from previous projects:
+
+Tech Stack: Next.js 15, Tailwind v4, Prisma 7
+Database: Supabase (shared instance, schema isolation)
+Deployment: Vercel + GitHub
+Existing schemas: public, snakey
+
+Would you like to use these same choices for this project?
+```
 
 ### 2.6.0 (2026-01-31)
 
