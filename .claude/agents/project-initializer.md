@@ -1059,7 +1059,7 @@ mkdir {project-name}/docs/RFCS
 ### Step 4: Create Tech Reference File (CRITICAL)
 
 Create `.claude/tech/stack.md` with:
-- AI Version Awareness table (current vs AI-trained, gap levels)
+- AI Version Awareness table (current vs AI-trained, gap levels, confidence, **Context7 availability**)
 - Current versions (from research)
 - Version Gotchas section (do/don't tables for Moderate/Major gaps)
 - Correct installation commands
@@ -1067,6 +1067,11 @@ Create `.claude/tech/stack.md` with:
 - Breaking changes to avoid
 - Links to current documentation
 - **Logging configuration details**
+- **Context7 live documentation notes**
+
+Use the validation report from `@project-tech-validator` to populate:
+- Context7 column in the AI Version Awareness table
+- Confidence levels for each technology
 
 This file will be @-mentioned by other instruction files.
 
@@ -1077,7 +1082,7 @@ Create `.claude/manifest.json` with:
 {
   "orchestrator": {
     "version": "{from .claude/VERSION}",
-    "templateVersion": "1.2.0"
+    "templateVersion": "1.4.0"
   },
   "project": {
     "name": "{project name}",
@@ -1756,12 +1761,12 @@ After initialization, verify:
 
 ## Technology Versions (Validated {date})
 
-| Technology | Version | AI Trained On | Gap | Confidence |
-|------------|---------|---------------|-----|------------|
-| {framework} | {version} | {ai-version} | {gap level} | {confidence} |
-| {language} | {version} | {ai-version} | {gap level} | {confidence} |
-| {logger} | {version} | - | Minor | High |
-| ... | ... | ... | ... | ... |
+| Technology | Version | AI Trained On | Gap | Confidence | Context7 |
+|------------|---------|---------------|-----|------------|----------|
+| {framework} | {version} | {ai-version} | {gap level} | {confidence} | {✓ or -} |
+| {language} | {version} | {ai-version} | {gap level} | {confidence} | {✓ or -} |
+| {logger} | {version} | - | Minor | High | - |
+| ... | ... | ... | ... | ... | ... |
 
 **Confidence Levels:**
 - **High**: AI code likely works as-is

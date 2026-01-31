@@ -82,6 +82,25 @@ Core technologies:
 
 ---
 
+## Live Documentation (MCP)
+
+This project uses [Context7](https://context7.com) to fetch current documentation for libraries with evolving APIs.
+
+**Usage:** Say "use context7" in prompts when:
+- Working with libraries newer than AI training cutoff (May 2025)
+- AI suggests APIs that don't exist or seem outdated
+- Confidence level in `.claude/tech/stack.md` is Medium or Low
+- The Context7 column shows the library is indexed (✓)
+
+**Example:**
+```
+use context7 for Prisma client generation
+```
+
+MCP configuration is in `.mcp.json`. See roster.md for full documentation.
+
+---
+
 ## Claude Code Workflow
 
 This project uses Claude Code's **orchestrator/agent pattern**:

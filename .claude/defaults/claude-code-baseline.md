@@ -5,7 +5,7 @@
 
 **Baseline Date**: 2026-01-31
 **Claude Code Version**: Latest (as of January 2026)
-**Project Builder Version**: 2.5.0
+**Project Builder Version**: 2.6.0
 
 ---
 
@@ -417,6 +417,40 @@ Use `/cpm_update` to check for and apply updates.
 ---
 
 ## Changelog
+
+### 2.6.0 (2026-01-31)
+
+**Context7 MCP Integration - Live Documentation for LLMs**
+
+This release adds Context7 MCP server integration to all created projects, providing live documentation lookup for fast-moving libraries.
+
+**New Template Files:**
+
+- **`.mcp.json.template`** - Context7 MCP server configuration
+
+**Template Updates:**
+
+- **`manifest.json.template`** - Added `mcp` section for MCP server tracking (v1.4.0)
+- **`roster.md.template`** - Added "MCP Servers (External Tools)" section
+- **`CLAUDE.md.template`** - Added "Live Documentation (MCP)" section
+- **`stack.md.template`** - Added Context7 availability column
+
+**Agent Updates:**
+
+- **`project-tech-validator`** - Now checks Context7 library availability during validation
+- **`project-initializer`** - Includes Context7 status in generated stack.md
+
+**Why this matters:**
+
+- LLMs generate broken code when working with libraries newer than training data
+- Context7 fetches up-to-date, version-specific documentation in real-time
+- Eliminates hallucinated APIs and outdated patterns
+- Reduces debugging time for fast-moving frameworks (Next.js, Tailwind, Prisma)
+
+**Usage in created projects:**
+```
+use context7 for Next.js app router
+```
 
 ### 2.5.0 (2026-01-31)
 

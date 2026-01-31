@@ -171,7 +171,25 @@ Create a checklist of things developers should verify:
 - [ ] No deprecated pattern Z is used
 - [ ] Error handling follows current best practices
 
-### Step 4: Integration Analysis
+### Step 4: Check Context7 Availability
+
+For EACH technology, check if live documentation is available via Context7:
+
+1. **Search Context7 Library Index**
+   - Check https://context7.com for the technology
+   - Note: Context7 coverage is best for popular JS/TS libraries
+
+2. **Record Availability**
+   - If indexed: Mark as "✓" in validation report
+   - If not indexed: Mark as "-" in validation report
+
+3. **Note in Report**
+   - Include Context7 column in technology summary table
+   - Recommend Context7 usage for Medium/Low confidence technologies that are indexed
+
+**Why this matters:** Context7 provides real-time documentation lookup, which is especially valuable for technologies where AI confidence is low.
+
+### Step 5: Integration Analysis
 
 Research how technologies work TOGETHER:
 
@@ -185,7 +203,7 @@ Research how technologies work TOGETHER:
 
 Identify integration-specific gotchas that may not appear in individual docs.
 
-### Step 5: Compile Validation Report
+### Step 6: Compile Validation Report
 
 ## Validation Report Template
 
@@ -198,13 +216,13 @@ Project Type: {type}
 
 ## Executive Summary
 
-| Technology | Version | Confidence | Key Concerns |
-|------------|---------|------------|--------------|
-| Next.js | 15.x | Medium | Server Actions patterns evolved |
-| React | 19.x | Low | Significant new APIs |
-| Prisma | 7.x | Medium | New config pattern |
-| Tailwind | 4.x | Low | CSS-first approach is new |
-| ... | ... | ... | ... |
+| Technology | Version | Confidence | Context7 | Key Concerns |
+|------------|---------|------------|----------|--------------|
+| Next.js | 15.x | Medium | ✓ | Server Actions patterns evolved |
+| React | 19.x | Low | ✓ | Significant new APIs |
+| Prisma | 7.x | Medium | ✓ | New config pattern |
+| Tailwind | 4.x | Low | ✓ | CSS-first approach is new |
+| ... | ... | ... | ... | ... |
 
 ## Detailed Findings
 
@@ -348,6 +366,7 @@ Before completing the validation report, verify:
 
 - [ ] Every technology in the stack has been researched
 - [ ] Confidence levels are justified with evidence
+- [ ] Context7 availability checked for each technology
 - [ ] Gotchas are specific and actionable
 - [ ] Verification tasks are testable
 - [ ] Integration concerns are documented

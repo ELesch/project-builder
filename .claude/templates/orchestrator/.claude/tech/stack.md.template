@@ -12,14 +12,14 @@
 > Code patterns from AI assistance may reflect older versions. Consult the
 > "Version Gotchas" section when working with technologies marked Medium/Low confidence.
 
-| Technology | Current | AI Trained On | Gap | Confidence |
-|------------|---------|---------------|-----|------------|
-| Next.js | {{NEXTJS_VERSION}} | 14.x | {{NEXTJS_GAP}} | {{NEXTJS_CONFIDENCE}} |
-| React | {{REACT_VERSION}} | 18.x | {{REACT_GAP}} | {{REACT_CONFIDENCE}} |
-| TypeScript | {{TYPESCRIPT_VERSION}} | 5.3 | {{TYPESCRIPT_GAP}} | {{TYPESCRIPT_CONFIDENCE}} |
-| Prisma | {{PRISMA_VERSION}} | 7.x | {{PRISMA_GAP}} | {{PRISMA_CONFIDENCE}} |
-| Tailwind CSS | {{TAILWIND_VERSION}} | 3.x | {{TAILWIND_GAP}} | {{TAILWIND_CONFIDENCE}} |
-| shadcn/ui | {{SHADCN_VERSION}} | 0.8.x | {{SHADCN_GAP}} | {{SHADCN_CONFIDENCE}} |
+| Technology | Current | AI Trained On | Gap | Confidence | Context7 |
+|------------|---------|---------------|-----|------------|----------|
+| Next.js | {{NEXTJS_VERSION}} | 14.x | {{NEXTJS_GAP}} | {{NEXTJS_CONFIDENCE}} | {{NEXTJS_CONTEXT7}} |
+| React | {{REACT_VERSION}} | 18.x | {{REACT_GAP}} | {{REACT_CONFIDENCE}} | {{REACT_CONTEXT7}} |
+| TypeScript | {{TYPESCRIPT_VERSION}} | 5.3 | {{TYPESCRIPT_GAP}} | {{TYPESCRIPT_CONFIDENCE}} | {{TYPESCRIPT_CONTEXT7}} |
+| Prisma | {{PRISMA_VERSION}} | 7.x | {{PRISMA_GAP}} | {{PRISMA_CONFIDENCE}} | {{PRISMA_CONTEXT7}} |
+| Tailwind CSS | {{TAILWIND_VERSION}} | 3.x | {{TAILWIND_GAP}} | {{TAILWIND_CONFIDENCE}} | {{TAILWIND_CONTEXT7}} |
+| shadcn/ui | {{SHADCN_VERSION}} | 0.8.x | {{SHADCN_GAP}} | {{SHADCN_CONFIDENCE}} | {{SHADCN_CONTEXT7}} |
 {{ADDITIONAL_VERSION_GAPS}}
 
 **Gap Levels**: Minor | Moderate | **Major**
@@ -41,6 +41,16 @@ Run `/tech-revalidate` when:
 - You upgraded major dependencies
 - Starting work after a long break
 - You notice AI suggesting outdated patterns
+
+### Context7 Live Documentation
+
+Libraries marked with ✓ in the Context7 column have live documentation available. When working with these libraries:
+
+1. Say "use context7 for [library]" in your prompts
+2. Context7 fetches current, version-specific documentation
+3. AI responses use up-to-date APIs instead of training data
+
+**Check library availability:** https://context7.com
 
 ## Developer Prerequisites
 

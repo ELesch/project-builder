@@ -1,7 +1,7 @@
 {
   "orchestrator": {
     "version": "{{ORCHESTRATOR_VERSION}}",
-    "templateVersion": "1.3.0"
+    "templateVersion": "1.4.0"
   },
   "project": {
     "name": "{{PROJECT_NAME}}",
@@ -42,6 +42,13 @@
     "library": "{{LOGGING_LIBRARY}}",
     "errorTracking": "{{ERROR_TRACKING}}",
     "aggregation": "{{LOG_AGGREGATION}}"
+  },
+  "mcp": {
+    "servers": ["context7"],
+    "context7": {
+      "enabled": true,
+      "purpose": "Live documentation lookup"
+    }
   },
   "migration": {
     "migratedFrom": {{MIGRATED_FROM}},

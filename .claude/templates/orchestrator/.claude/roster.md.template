@@ -160,6 +160,36 @@ Skills are reusable workflows that can be invoked by users or agents.
 | `/commit` | Safe commit with secret scanning | Before any git commit |
 | `/orchestrator-checkpoint` | Self-reminder for orchestrator role during long sessions | Orchestrator |
 
+---
+
+## MCP Servers (External Tools)
+
+MCP (Model Context Protocol) servers provide live access to external tools and data.
+
+| Server | Purpose | Trigger |
+|--------|---------|---------|
+| `context7` | Fetch current documentation for libraries | Say "use context7" in prompts |
+
+### Using Context7
+
+When working with libraries that have known AI training gaps (see `.claude/tech/stack.md`), use Context7 to fetch current documentation:
+
+**In prompts:**
+```
+use context7 for Next.js routing
+```
+
+**When to use:**
+- Library version is newer than AI training cutoff
+- AI suggests deprecated or non-existent APIs
+- Working with fast-moving frameworks (Next.js, Tailwind, Prisma)
+- Confidence level in stack.md is Medium or Low
+- Context7 column shows checkmark (✓) in stack.md
+
+**Supported libraries:** https://context7.com
+
+**Note:** Requires Node.js >= 18.0.0 and MCP client support.
+
 ### Using /tech-revalidate
 
 Run this skill when:
