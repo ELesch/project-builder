@@ -3,9 +3,9 @@
 > This document captures what the Project Builder knows about Claude Code.
 > Used by `/cpm_update` to detect when updates are needed.
 
-**Baseline Date**: 2026-01-31
-**Claude Code Version**: Latest (as of January 2026)
-**Project Builder Version**: 2.9.0
+**Baseline Date**: 2026-02-01
+**Claude Code Version**: Latest (as of February 2026)
+**Project Builder Version**: 2.10.0
 
 ---
 
@@ -417,6 +417,65 @@ Use `/cpm_update` to check for and apply updates.
 ---
 
 ## Changelog
+
+### 2.10.0 (2026-02-01)
+
+**Orchestrator Performance Analyzer - Automated Compliance Analysis**
+
+Adds `/analyze-orchestrator` skill that parses Claude Code session transcripts to evaluate orchestrator pattern compliance and detect anti-patterns.
+
+**New Files:**
+
+- **`.claude/scripts/transcript-parser.mjs`** - JSONL parsing and metric extraction from Claude Code session transcripts
+- **`.claude/scripts/orchestrator-rules.mjs`** - Rule definitions and evaluation logic for orchestrator compliance
+- **`.claude/scripts/analyze-session.mjs`** - CLI tool for running analysis
+- **`.claude/skills/analyze-orchestrator/SKILL.md`** - Skill definition and documentation
+
+**Rules Evaluated:**
+
+| Rule | Severity | Detection |
+|------|----------|-----------|
+| Plan Mode Usage | Warning | EnterPlanMode for non-trivial tasks |
+| Agent Delegation | Error | Task tool calls present |
+| File Read Limit | Warning | ≤3 consecutive reads in main context |
+| No Direct Code Write | Error | No Write/Edit to code files in main |
+| Explore Agent Usage | Warning | Explore agent for >5 reads |
+| Batch File Limit | Warning | ≤20 files per agent delegation |
+
+**Usage:**
+
+```bash
+# Analyze most recent session
+node .claude/scripts/analyze-session.mjs
+
+# Analyze specific session
+node .claude/scripts/analyze-session.mjs abc123
+
+# List available sessions
+node .claude/scripts/analyze-session.mjs --list
+
+# Batch analysis of all sessions
+node .claude/scripts/analyze-session.mjs --batch
+```
+
+**Output:**
+
+- Single session: `.claude/audit/analysis/{session-id}-analysis.md`
+- Batch: `.claude/audit/analysis/batch-analysis-{date}.md`
+
+**Documentation Updates:**
+
+- **CLAUDE.md** - Added `/analyze-orchestrator` to Audit Trail section, updated Key Directories
+- **.claude/roster.md** - Added Skills section with all available skills
+- **.gitignore** - Added `.claude/audit/analysis/` for generated reports
+
+**Benefits:**
+
+- Automated detection of orchestrator anti-patterns
+- Quantified compliance scoring (0-100%)
+- Trend analysis across sessions with `--batch`
+- Actionable recommendations for improvement
+- Integrates with existing audit trail system
 
 ### 2.9.0 (2026-01-31)
 

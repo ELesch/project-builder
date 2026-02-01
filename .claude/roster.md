@@ -634,3 +634,39 @@ Created projects include `.claude/manifest.json` tracking:
   "migration": { "migratedFrom": null, "originalPath": null, "preMigrationBackup": null }
 }
 ```
+
+## Skills
+
+Project Builder skills for common workflows:
+
+| Skill | Purpose | When to Use |
+|-------|---------|-------------|
+| `/capture` | Persist knowledge to project files | When discovering patterns to remember |
+| `/audit-decision` | Record significant decisions | Before/after major architectural choices |
+| `/audit-summary` | Generate session retrospective | After project creation/migration |
+| `/analyze-orchestrator` | Evaluate orchestrator compliance | After work to verify patterns were followed |
+| `/cpm_update` | Update Project Builder | When Claude Code capabilities change |
+
+### /analyze-orchestrator
+
+Parses Claude Code session transcripts to detect orchestrator anti-patterns:
+
+**Usage:**
+```
+/analyze-orchestrator [session-id] [--batch] [--list]
+```
+
+**Rules evaluated:**
+- Plan mode usage for non-trivial tasks
+- Agent delegation (vs. direct work)
+- File read limits (≤3 in main context)
+- No direct code writes in main context
+- Explore agent usage for >5 reads
+- Batch file limits (≤20 per delegation)
+
+**Output:** Markdown report in `.claude/audit/analysis/`
+
+**When to use:**
+- After completing project creation/migration
+- During retrospectives
+- Periodically with `--batch` for trends

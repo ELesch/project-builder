@@ -84,6 +84,26 @@ You guide users through a structured process to:
 
 The project builder uses semantic versioning. Created projects include a manifest that tracks which version created them.
 
+## First-Time Setup
+
+If you've just downloaded or cloned the Project Builder, run `/init_cpm` to verify dependencies are installed.
+
+### Required Dependencies
+
+| Dependency | Purpose |
+|------------|---------|
+| **Node.js 18+** | JSON parsing in hooks, project scaffolding |
+| **Git** | Version control, project initialization |
+
+### Optional Dependencies
+
+| Dependency | Purpose |
+|------------|---------|
+| **jq** | Faster JSON parsing (fallback if Node unavailable) |
+| **GitHub CLI (gh)** | GitHub repo creation, PR management |
+
+See `DEPENDENCIES.md` for installation commands and platform-specific notes.
+
 ## Stack Defaults by Project Type
 
 Stack defaults are organized by project type:
@@ -972,7 +992,13 @@ The generic orchestrator template is in `.claude/templates/orchestrator/`. This 
 │   └── project-migrator.md
 ├── commands/            # Custom slash commands
 │   └── cpm_update.md    # Update Project Builder for new Claude Code versions
+├── scripts/             # Utility scripts
+│   ├── analyze-session.mjs    # CLI for orchestrator analysis
+│   ├── transcript-parser.mjs  # Parse Claude Code session transcripts
+│   └── orchestrator-rules.mjs # Orchestrator compliance rules
 ├── skills/              # Reusable skills
+│   ├── analyze-orchestrator/  # Orchestrator compliance analyzer
+│   │   └── SKILL.md
 │   └── capture/         # Knowledge capture skill
 │       └── SKILL.md     # Persists learnings to project files
 ├── defaults/            # Default configurations
@@ -1038,6 +1064,7 @@ The Project Builder includes an audit trail system for tracking activity during 
 | **Session Log** | Automatic (hooks) | Agent delegations, completions, failures |
 | **Decision Log** | Manual (`/audit-decision`) | Alternatives considered, rationale |
 | **Audit Summary** | Manual (`/audit-summary`) | Retrospective analysis |
+| **Orchestrator Analysis** | Manual (`/analyze-orchestrator`) | Rule compliance, pattern detection |
 
 ### Directory Structure
 
@@ -1046,8 +1073,10 @@ The Project Builder includes an audit trail system for tracking activity during 
 ├── README.md           # Documentation
 ├── sessions/           # Auto-generated session logs
 │   └── YYYY-MM-DD.md   # Daily log file
-└── decisions/          # Manual decision records
-    └── YYYY-MM-DD-{id}.md
+├── decisions/          # Manual decision records
+│   └── YYYY-MM-DD-{id}.md
+└── analysis/           # Orchestrator compliance reports
+    └── {session-id}-analysis.md
 ```
 
 ### Automatic Capture (via hooks)
@@ -1093,6 +1122,37 @@ Produces:
 - Agent delegation patterns
 - Failure frequency by type
 - Recommendations for improvement
+
+### /analyze-orchestrator - Compliance Analysis
+
+Analyze Claude Code session transcripts for orchestrator pattern compliance:
+
+```
+/analyze-orchestrator [session-id] [options]
+```
+
+Options:
+- `session-id` - Specific session to analyze (default: most recent)
+- `--batch` - Analyze all sessions for this project
+- `--list` - List available sessions
+
+**Rules Evaluated:**
+
+| Rule | Severity | Description |
+|------|----------|-------------|
+| Plan Mode Usage | Warning | Non-trivial tasks should enter plan mode |
+| Agent Delegation | Error | Must delegate to agents (not work directly) |
+| File Read Limit | Warning | ≤3 consecutive reads in main context |
+| No Direct Code Write | Error | Never write code files in main context |
+| Explore Agent Usage | Warning | Use Explore agent for >5 reads |
+| Batch File Limit | Warning | ≤20 files per agent delegation |
+
+**Output:** Analysis report saved to `.claude/audit/analysis/`
+
+**When to use:**
+- After project creation/migration (verify compliance)
+- During retrospectives (identify improvement areas)
+- Periodically with `--batch` (track trends)
 
 ### Configuration
 
