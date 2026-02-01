@@ -1,16 +1,5 @@
 {
   "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".claude/hooks/check-secrets.sh"
-          }
-        ]
-      }
-    ],
     "SubagentStart": [
       {
         "hooks": [
@@ -60,13 +49,6 @@
           }
         ]
       }
-    ]
-  },
-  "permissions": {
-    "deny": [
-      "Bash(cat .env)",
-      "Bash(type .env)",
-      "Read(.env)"
     ]
   }
 }

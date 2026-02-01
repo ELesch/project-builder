@@ -1,7 +1,7 @@
 {
   "orchestrator": {
     "version": "{{ORCHESTRATOR_VERSION}}",
-    "templateVersion": "1.4.0"
+    "templateVersion": "1.6.0"
   },
   "project": {
     "name": "{{PROJECT_NAME}}",
@@ -54,5 +54,10 @@
     "migratedFrom": {{MIGRATED_FROM}},
     "originalPath": {{ORIGINAL_PATH}},
     "preMigrationBackup": {{PRE_MIGRATION_BACKUP}}
+  },
+  "audit": {
+    "enabled": true,
+    "sessionsDir": ".claude/audit/sessions",
+    "decisionsDir": ".claude/audit/decisions"
   }
 }

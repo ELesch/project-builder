@@ -49,8 +49,41 @@ RESEARCH_NEEDED: What is the current Prisma 7 config pattern for PostgreSQL adap
 - Customize all template variables
 - Create the `.claude/tech/stack.md` file with researched versions
 - **Set up logging infrastructure** based on discovery requirements
+- **Set up and verify services that the project actually needs** (see Service Verification below)
+- **Run health check and verify project builds/runs**
 - Verify all files are created correctly
-- Report what was created
+- Report what was created AND what was verified working
+- **Prompt user to run `/app-design` as next step** for new projects
+
+## Service Verification (Based on Project Type)
+
+| Project Type | Verify Database? | Verify Hosting? | Verify Build? |
+|--------------|------------------|-----------------|---------------|
+| web-app (stateful) | YES | If configured | YES |
+| web-app (static/stateless) | NO | If configured | YES |
+| backend-api (stateful) | YES | If configured | YES |
+| backend-api (stateless) | NO | If configured | YES |
+| cli-tool | NO | NO | YES |
+| library | NO | NO | YES (tests) |
+| desktop-app | Sometimes | NO | YES |
+| data-pipeline | External sources | If configured | YES |
+
+**Stateless examples:**
+- Serverless functions that proxy to other APIs
+- Static site generators
+- API gateways without persistence
+- Microservices that transform data without storing it
+
+**Key Principle:** Set up and verify ALL services the project needs. The goal is a project ready for App Design - all infrastructure working, just waiting for features.
+
+**Services to set up (based on discovery):**
+- Database (if stateful)
+- Hosting/deployment
+- Auth provider (if users)
+- Storage (if file uploads)
+- Any other services identified in discovery
+
+**After setup, the project should be ready for `/app-design` - no more infrastructure work needed.**
 
 ## CRITICAL: NEVER DO THESE
 
@@ -62,6 +95,8 @@ RESEARCH_NEEDED: What is the current Prisma 7 config pattern for PostgreSQL adap
 - Create files outside the designated project directory
 - Modify any existing files outside the new project
 - **Skip logging setup** - every project needs proper logging
+- **Skip verification of services the project uses** - projects must work, not just exist
+- **Hand off a project that doesn't build/run** - verify before completing
 
 ## User Preferences (Confirmed by Discovery)
 
@@ -117,6 +152,10 @@ By the time this agent runs, the discovery phase should have already confirmed w
 - `.claude/runbooks/` directory (based on ops model)
 - `.claude/TECH_DEBT.md` for debt tracking
 - `.claude/tech/dependencies.md` with dependency health
+- `.claude/audit/` directory with audit trail system
+- `.claude/hooks/audit-hooks.sh` for automatic activity capture
+- `.claude/skills/audit-decision/` for decision recording
+- `.claude/skills/audit-summary/` for retrospective analysis
 - `src/lib/logger.ts` with configured logging
 - `ONBOARDING.md` in project root
 - Summary of created files
@@ -962,6 +1001,13 @@ mkdir {project-name}/.claude/plans
 mkdir {project-name}/.claude/results
 mkdir {project-name}/.claude/checklists
 mkdir {project-name}/.claude/runbooks
+mkdir {project-name}/.claude/audit
+mkdir {project-name}/.claude/audit/sessions
+mkdir {project-name}/.claude/audit/decisions
+mkdir {project-name}/.claude/hooks
+mkdir {project-name}/.claude/skills
+mkdir {project-name}/.claude/skills/audit-decision
+mkdir {project-name}/.claude/skills/audit-summary
 mkdir {project-name}/docs
 mkdir {project-name}/docs/DECISIONS
 mkdir {project-name}/docs/DESIGNS
@@ -1481,6 +1527,26 @@ Create `ONBOARDING.md` in project root with:
 4. `.claude/PROCESS_LOG.md` - Empty template
 5. `.claude/roster.md` - Agent selection guide
 
+### Step 6b: Create Audit Trail System
+
+Deploy the audit trail infrastructure from templates:
+
+1. `.claude/audit/README.md` - Audit system documentation
+2. `.claude/hooks/audit-hooks.sh` - Hook script for automatic capture
+3. `.claude/skills/audit-decision/SKILL.md` - Decision recording skill
+4. `.claude/skills/audit-summary/SKILL.md` - Summary analysis skill
+
+**Ensure hooks are executable:**
+```bash
+chmod +x .claude/hooks/audit-hooks.sh
+```
+
+The settings.json template already includes hook registrations for:
+- `SubagentStart` - Captures agent delegations
+- `SubagentStop` - Captures agent completions
+- `PostToolUseFailure` - Captures tool failures
+- `SessionStart` / `SessionEnd` - Captures session boundaries
+
 ### Step 7: Create Agents
 
 For each agent specified in architecture:
@@ -1740,6 +1806,15 @@ After initialization, verify:
 ### Logging
 - [ ] **Logger file exists at language-appropriate path** (src/lib/logger.ts, app/core/logging.py, internal/logger/logger.go, etc.)
 
+### Audit Trail
+- [ ] `.claude/audit/README.md` exists
+- [ ] `.claude/audit/sessions/` directory exists
+- [ ] `.claude/audit/decisions/` directory exists
+- [ ] `.claude/hooks/audit-hooks.sh` exists and is executable
+- [ ] `.claude/skills/audit-decision/SKILL.md` exists
+- [ ] `.claude/skills/audit-summary/SKILL.md` exists
+- [ ] `.claude/settings.json` has audit hook registrations
+
 ### Environment
 - [ ] **Environment config includes all required variables** (.env.example created)
 - [ ] **`.env.local` created with actual credentials** (if provisioned during init)
@@ -1847,24 +1922,62 @@ After initialization, verify:
 - .claude/runbooks/{selected runbooks}
 - .claude/tech/dependencies.md (audit results)
 - .claude/TECH_DEBT.md
+- .claude/audit/README.md (audit trail system)
+- .claude/hooks/audit-hooks.sh (activity capture)
+- .claude/skills/audit-decision/SKILL.md
+- .claude/skills/audit-summary/SKILL.md
 - {logger file at language-appropriate location}
 - ONBOARDING.md
 
-## Next Steps
+## Verification Status
 
-{If services deferred:}
-1. **Set up required services** (see ONBOARDING.md):
+| Check | Status |
+|-------|--------|
+| Dependencies installed | ✅ Passed |
+| Build succeeded | ✅ Passed |
+| {Services configured - list what applies} | ✅ Verified |
+| Dev server runs | ✅ Passed |
+
+**Services Configured:**
+- [ ] Database: {provider} - Connected ✅
+- [ ] Hosting: {provider} - Linked ✅
+- [ ] Auth: {provider} - Configured ✅
+- [ ] Storage: {provider} - Configured ✅
+(List only services that apply to this project)
+
+**Project Status: READY FOR APP DESIGN**
+
+All infrastructure is set up and verified. The project is ready to design features.
+
+## Next Step: Start Designing Your App
+
+**To begin, open Claude Code in your new project:**
+
+```bash
+# 1. Open a new terminal
+# 2. Navigate to your project
+cd {project-path}
+
+# 3. Start Claude Code
+claude
+
+# 4. Run the App Design Phase
+/app-design
+```
+
+The App Design Phase will guide you through designing your features, pages, and user interface. Once complete, the development agents will build your app from that design.
+
+{If services were deferred (not recommended):}
+⚠️ **Before running /app-design, set up required services** (see ONBOARDING.md):
    - [ ] Create Supabase project
    - [ ] Create Vercel project
-   - [ ] Create Sentry project (if using)
-2. Copy credentials to `.env` file
+   - [ ] Copy credentials to `.env.local`
+   - [ ] Run `npm run db:push` to create tables
 
-{Always:}
-1. `cd {project-name}` - Navigate to project
-2. Run setup commands from README.md (uses current versions)
-3. Read CLAUDE.md for development conventions
-4. **Review `.claude/tech/stack.md` for version gotchas** (important!)
-5. Start your first feature!
+{After App Design is complete:}
+- Read CLAUDE.md for development conventions
+- **Review `.claude/tech/stack.md` for version gotchas** (important!)
+- Implementation agents will build from your design
 
 ## Quick Commands (Current as of {date})
 
@@ -2006,15 +2119,42 @@ azd up --preview  # Preview what would be deployed
 - Endpoints are accessible
 - Logs show no connection errors
 
-**Health check verification checklist:**
-- [ ] Dependencies install without errors
-- [ ] Build/compile succeeds
-- [ ] Dev server starts (if applicable)
-- [ ] Database connects (if applicable)
-- [ ] Tests pass (if tests exist)
-- [ ] Basic functionality works
+**MANDATORY Health Check Verification (Must Pass Before Handoff):**
 
-**If health check fails:**
+| Check | Required For | Must Pass? |
+|-------|--------------|------------|
+| Dependencies install | All | YES |
+| Build/compile succeeds | All | YES |
+| Database connects | **Only if project uses database** | YES (if applicable) |
+| Dev server starts | web-app, backend-api | YES |
+| Schema pushed to database | **Only if project uses database** | YES (if applicable) |
+| Tests pass | If tests exist | YES |
+
+**Verification by project type:**
+
+| Project Type | Dependencies | Build | Database | Dev Server |
+|--------------|--------------|-------|----------|------------|
+| web-app (stateful) | ✅ | ✅ | ✅ | ✅ |
+| web-app (stateless) | ✅ | ✅ | ⬜ Skip | ✅ |
+| backend-api (stateful) | ✅ | ✅ | ✅ | ✅ |
+| backend-api (stateless) | ✅ | ✅ | ⬜ Skip | ✅ |
+| cli-tool | ✅ | ✅ | ⬜ N/A | ⬜ N/A |
+| library | ✅ | ✅ | ⬜ N/A | ⬜ N/A |
+| desktop-app | ✅ | ✅ | ⬜ If used | ✅ |
+| data-pipeline | ✅ | ✅ | ⬜ External | ⬜ Script |
+
+**DO NOT hand off a project until applicable checks pass:**
+- [ ] `npm install` (or equivalent) completes without errors
+- [ ] `npm run build` (or equivalent) completes without errors
+- [ ] Database connection verified (**if project uses database**)
+- [ ] `npm run dev` shows the app running (**if applicable**)
+
+**If ANY applicable check fails:**
+1. FIX the issue before proceeding
+2. Only hand off a working project
+3. If truly unfixable, clearly document what's broken and why
+
+**If health check fails (troubleshooting):**
 1. Check error messages for missing dependencies
 2. Verify environment variables are set correctly
 3. Check database connection strings

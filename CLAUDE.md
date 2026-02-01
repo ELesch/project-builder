@@ -211,9 +211,9 @@ When a user starts a session:
    - **Ask about mobile apps** (for web-app and backend-api)
    - Adapt question complexity based on their technical background
    - **For non-technical users: make recommendations with yes/no confirmations**
-   - **Ask about version control and service provisioning timing**
+   - **Default to service provisioning NOW** (database, hosting)
 2. Use `@project-architect` agent to design the structure
-3. Use `@project-tech-validator` agent to validate AI knowledge **(NEW)**
+3. Use `@project-tech-validator` agent to validate AI knowledge
    - **Research EVERY technology in the stack** (not just post-cutoff versions)
    - **Assess AI confidence level** (High/Medium/Low/Unknown)
    - **Identify sparse training data scenarios** (technology existed but limited docs)
@@ -226,8 +226,19 @@ When a user starts a session:
    - Create `.claude/tech/stack.md` with versions, gotchas, AND confidence levels
    - Create `.claude/manifest.json` for version tracking
    - **Set up logging infrastructure (language-appropriate)**
-   - **Guide service provisioning if "during-init" selected**
-5. Provide a summary and next steps
+   - **Set up database and verify connection** (if project needs database)
+   - **Run health check** (must pass before handoff)
+5. **Verify project works before handoff**
+   - Dependencies install without errors
+   - Build/compile succeeds
+   - Database connects (only if project uses database)
+   - Dev server starts (for web/backend projects)
+6. Provide summary and **prompt user to run `/app-design`** for App Design Phase
+   - All infrastructure is set up and verified (database, hosting, auth, etc.)
+   - Project is READY for feature design - no more service setup needed
+   - App Design Phase designs features, pages, user flows
+   - Creates blueprint that implementation agents follow
+   - Results in complete, professional applications
 
 ### GitHub Clone Flow
 
@@ -803,9 +814,19 @@ The generic orchestrator can be customized for:
 - [ ] **Technology validation is complete** (confidence levels assigned)
 - [ ] **Validation artifacts ready** (gotchas, verification tasks)
 - [ ] Version control choice confirmed (GitHub recommended)
-- [ ] Service provisioning timing decided
+- [ ] **Database provisioning ready** (credentials available or shared instance confirmed)
 - [ ] User has reviewed and approved the plan
 - [ ] Directory name and location confirmed
+
+### Before handoff (MANDATORY - project must work):
+- [ ] Dependencies install without errors (`npm install` or equivalent)
+- [ ] Build completes without errors (`npm run build` or equivalent)
+- [ ] **Database connection verified** (only if project uses database - not for stateless/CLI/library)
+- [ ] Dev server starts successfully (for web-app, backend-api)
+- [ ] Schema pushed to database (only if project uses Prisma/ORM)
+- [ ] **User prompted to run `/app-design`** for App Design Phase
+
+**Note:** Not all projects need databases. Stateless microservices, CLI tools, libraries, and static sites don't require database verification.
 
 ### Before migrating an existing project:
 - [ ] Source project path confirmed (local or GitHub URL)
@@ -849,21 +870,29 @@ Orchestrator: [After discovery completes]
               easy to deploy. Here's the plan...
               [Delegates to @project-architect]
 
-Orchestrator: Ready to create your project? Would you like to set up
-              the online services (database, hosting) now, or later?
+Orchestrator: Ready to create your project. I'll set up the database now
+              so everything works from the start. I'll guide you through it.
+              [Guides user through Supabase setup]
+              [Creates project and verifies database connection]
+              [Runs health check - build passes, dev server starts]
 
-User: Let's do it later.
-
-Orchestrator: [Delegates to @project-initializer]
-              [Agent researches current versions, identifies gaps, creates gotchas]
               Your project is ready at ../taskflow/
 
-              Note: Some technologies have updates since my training. I've
-              documented the differences in .claude/tech/stack.md so you
-              can verify the code patterns are current.
+              ✅ Dependencies installed
+              ✅ Build passed
+              ✅ Database connected
+              ✅ Dev server runs
 
-              Your next steps are in ONBOARDING.md - it includes setting up
-              the database and hosting when you're ready.
+              **Next Step: Start designing your app!**
+
+              1. Open a new terminal
+              2. Navigate to your project: cd ../taskflow
+              3. Start Claude Code: claude
+              4. Run: /app-design
+
+              The App Design Phase will guide you through designing your
+              features, pages, and user interface. Once complete, the
+              development agents will build your app from that design.
 ```
 
 ## Example Session (GitHub Clone)
@@ -997,6 +1026,101 @@ Target: @{optional file path}
 | `spec` | `.claude/REQUIREMENTS.md` |
 
 This skill is included in all created projects, enabling the orchestrator framework to learn as it works.
+
+## Audit Trail System
+
+The Project Builder includes an audit trail system for tracking activity during project creation and development. This helps with debugging, retrospectives, and framework improvement.
+
+### What Gets Tracked
+
+| Component | Capture Method | Purpose |
+|-----------|----------------|---------|
+| **Session Log** | Automatic (hooks) | Agent delegations, completions, failures |
+| **Decision Log** | Manual (`/audit-decision`) | Alternatives considered, rationale |
+| **Audit Summary** | Manual (`/audit-summary`) | Retrospective analysis |
+
+### Directory Structure
+
+```
+.claude/audit/
+├── README.md           # Documentation
+├── sessions/           # Auto-generated session logs
+│   └── YYYY-MM-DD.md   # Daily log file
+└── decisions/          # Manual decision records
+    └── YYYY-MM-DD-{id}.md
+```
+
+### Automatic Capture (via hooks)
+
+The following events are automatically logged to session files:
+
+| Event | What's Captured |
+|-------|-----------------|
+| `SubagentStart` | Agent name, task description |
+| `SubagentStop` | Agent completion status |
+| `PostToolUseFailure` | Tool name, error message |
+| `SessionStart/End` | Session boundaries |
+
+### /audit-decision - Record Decisions
+
+Use when making significant decisions:
+
+```
+/audit-decision
+```
+
+Records:
+- What decision was made
+- Alternatives considered (with pros/cons)
+- Why this choice was made
+- Constraints that influenced the decision
+
+**When to use:**
+- Technology choices
+- Architecture decisions
+- Trade-off resolutions
+- Changing previous decisions
+
+### /audit-summary - Analyze Patterns
+
+Generate insights from session logs:
+
+```
+/audit-summary
+```
+
+Produces:
+- Agent delegation patterns
+- Failure frequency by type
+- Recommendations for improvement
+
+### Configuration
+
+Audit hooks are configured in `.claude/settings.json`:
+
+```json
+{
+  "hooks": {
+    "SubagentStart": [{"hooks": [{"type": "command", "command": ".claude/hooks/audit-hooks.sh"}]}],
+    "SubagentStop": [{"hooks": [{"type": "command", "command": ".claude/hooks/audit-hooks.sh"}]}],
+    "PostToolUseFailure": [{"hooks": [{"type": "command", "command": ".claude/hooks/audit-hooks.sh"}]}]
+  }
+}
+```
+
+### Created Projects
+
+All created projects include the audit trail system. The manifest.json tracks:
+
+```json
+{
+  "audit": {
+    "enabled": true,
+    "sessionsDir": ".claude/audit/sessions",
+    "decisionsDir": ".claude/audit/decisions"
+  }
+}
+```
 
 ## Risk Mitigation Features
 

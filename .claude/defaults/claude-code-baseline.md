@@ -5,7 +5,7 @@
 
 **Baseline Date**: 2026-01-31
 **Claude Code Version**: Latest (as of January 2026)
-**Project Builder Version**: 2.7.0
+**Project Builder Version**: 2.9.0
 
 ---
 
@@ -417,6 +417,190 @@ Use `/cpm_update` to check for and apply updates.
 ---
 
 ## Changelog
+
+### 2.9.0 (2026-01-31)
+
+**Audit Trail System - Process Tracking for Framework Improvement**
+
+Adds comprehensive audit trail to track activity during project creation and development.
+
+**New Files (Project Builder):**
+
+- **`.claude/audit/README.md`** - Audit system documentation
+- **`.claude/audit/sessions/`** - Auto-generated session logs directory
+- **`.claude/audit/decisions/`** - Manual decision records directory
+- **`.claude/hooks/audit-hooks.sh`** - Hook script for automatic capture
+- **`.claude/settings.json`** - Hook registrations for audit events
+- **`.claude/skills/audit-decision/SKILL.md`** - Decision recording skill
+- **`.claude/skills/audit-summary/SKILL.md`** - Retrospective analysis skill
+
+**New Template Files (for created projects):**
+
+- **`.claude/templates/orchestrator/.claude/audit/README.md.template`**
+- **`.claude/templates/orchestrator/.claude/hooks/audit-hooks.sh.template`**
+- **`.claude/templates/orchestrator/.claude/skills/audit-decision/SKILL.md.template`**
+- **`.claude/templates/orchestrator/.claude/skills/audit-summary/SKILL.md.template`**
+
+**Template Updates:**
+
+- **`settings.json.template`** - Added audit hook registrations:
+  - `SubagentStart` - Captures agent delegations
+  - `SubagentStop` - Captures agent completions
+  - `PostToolUseFailure` - Captures tool failures
+  - `SessionStart` / `SessionEnd` - Session boundaries
+
+- **`manifest.json.template`** - Added audit section, bumped templateVersion to 1.6.0
+
+- **`roster.md.template`** - Added `/audit-decision` and `/audit-summary` to Skills table
+
+**Project Builder Changes:**
+
+- **`project-initializer.md`** - Deploy audit system to created projects:
+  - Creates `.claude/audit/` directory structure
+  - Creates hooks and skills
+  - Added to verification checklist
+
+- **`CLAUDE.md`** - Added "Audit Trail System" section documenting:
+  - What gets tracked
+  - Directory structure
+  - Skills usage
+  - Configuration
+
+**What Gets Tracked:**
+
+| Component | Capture Method | Purpose |
+|-----------|----------------|---------|
+| Session Log | Automatic (hooks) | Agent delegations, completions, failures |
+| Decision Log | Manual (`/audit-decision`) | Alternatives considered, rationale |
+| Audit Summary | Manual (`/audit-summary`) | Retrospective analysis |
+
+**Session Log Entry Format:**
+
+```markdown
+### 10:15:00 - Agent Delegated: dev-backend
+
+| Field | Value |
+|-------|-------|
+| Timestamp | 2026-01-31T10:15:00 |
+| Agent | dev-backend |
+| Task | Implement user endpoints |
+| Status | In Progress |
+```
+
+**Decision Record Structure:**
+
+- Decision summary
+- Alternatives considered (with pros/cons)
+- Rationale for choice
+- Constraints that influenced decision
+- Expected consequences
+
+**Benefits:**
+
+- Debug why project creation went wrong
+- Identify patterns in failures
+- Improve agent prompts based on outcomes
+- Enable retrospective analysis
+- Track significant architectural decisions
+
+### 2.8.0 (2026-01-31)
+
+**App Design Phase + Mandatory Connection Verification**
+
+This release adds an App Design Phase to created projects and makes database connection verification mandatory before project handoff.
+
+**Problem Addressed:**
+- Projects were handed off as scaffolding that didn't actually work
+- Users had to set up databases after handoff, leading to incomplete projects
+- No guidance on designing app features, pages, and UI before implementation
+- Resulted in incomplete features and inconsistent UIs
+
+**New Orchestrator Template Files:**
+
+- **`dev-designer.md.template`** - New agent for App Design Phase
+  - Guides users through feature discovery
+  - Creates page inventories and user flows
+  - Defines component hierarchies
+  - Specifies data requirements per component
+  - Produces implementation blueprint
+
+- **`app-design/SKILL.md.template`** - New skill `/app-design`
+  - User-invoked skill for App Design Phase
+  - Guides through structured design questions
+  - Creates `.claude/design/app-design.md`
+
+**Template Updates:**
+
+- **`CLAUDE.md.template`** - Added App Design Phase section
+  - Documents when and how to run `/app-design`
+  - Explains implementation flow: PROJECT → APP DESIGN → IMPLEMENTATION
+
+- **`roster.md.template`** - Updated with:
+  - `dev-designer` agent in Design & Architecture section
+  - `/app-design` skill in Skills table
+  - "Using /app-design" documentation section
+  - Updated SDLC Phase Mapping with APP DESIGN phase
+
+- **`agents/README.md.template`** - Added `dev-designer` to agent table
+
+- **`manifest.json.template`** - Bumped templateVersion to 1.5.0
+
+**Project Builder Changes:**
+
+- **`project-discovery.md`** - Database setup now defaults to "during-init"
+  - Discourages deferring service provisioning
+  - Clear messaging that deferring leads to incomplete projects
+
+- **`project-initializer.md`** - Mandatory verification before handoff
+  - Added connection verification to CRITICAL MUST ALWAYS section
+  - Made health check mandatory (not optional)
+  - Updated output report with verification status
+  - Clear handoff with step-by-step instructions to start Claude Code in project
+
+- **`CLAUDE.md`** (Project Builder) - Updated workflow:
+  - New Project Flow includes verification step
+  - Added "Before handoff" quality gate
+  - Updated example session to show new workflow
+
+**New Workflow:**
+
+```
+Discovery → Architecture → Tech Validation → Initialize → VERIFY → HANDOFF
+                                                  ↓
+                                            ✅ Deps install
+                                            ✅ Build passes
+                                            ✅ DB connects
+                                            ✅ Dev runs
+                                                  ↓
+                                          HANDOFF MESSAGE:
+                                          "Open terminal → cd project → claude → /app-design"
+                                                  ↓
+                                          [User starts Claude Code in project]
+                                                  ↓
+                                          /app-design → Implementation
+```
+
+**Key Design Decisions:**
+
+1. **Set up ALL services the project needs** - Database, hosting, auth, storage, etc.
+2. **Verify everything that's configured** - All services must work before handoff
+3. **Smart about what's needed** - Don't force DB for stateless apps, but DO set up what IS needed
+4. **Ready for App Design** - Handoff = infrastructure complete, ready to design features
+5. **Clear handoff status** - Report shows all services configured and verified
+6. **Explicit next step** - Handoff tells user exactly how to start: open terminal → cd to project → start Claude Code → run /app-design
+
+**Goal:** When the project is handed off, ALL infrastructure is working. The user runs `/app-design` to design features, then implementation agents build them. No more service setup needed.
+
+**Services to consider during discovery:**
+
+| Service | When Needed |
+|---------|-------------|
+| Database | Stateful apps (user data, content) |
+| Hosting | All deployed apps |
+| Auth | Apps with user accounts |
+| Storage | File uploads, images |
+| Email | Notifications, verification |
+| Payments | E-commerce, subscriptions |
 
 ### 2.7.0 (2026-01-31)
 
