@@ -19,6 +19,7 @@ Specialized agents for the orchestrator/agent pattern.
 
 | Agent | File | Expertise |
 |-------|------|-----------|
+| Designer | `dev-designer.md` | App design, features, pages, user flows |
 | Architect | `dev-architect.md` | System design, ADRs |
 | API | `dev-api.md` | REST design, contracts |
 | Database | `dev-database.md` | Query optimization, indexes |

@@ -385,20 +385,66 @@ No questions needed - use sensible defaults:
 
 ### Phase 6c: Service Provisioning
 
-**For non-technical users:**
-> "This project will need some online services set up (like a database and hosting). I can either:"
-> 1. "Guide you through setting these up now, before we create the project"
-> 2. "Create the project first, then you set up services when you're ready"
+**First, determine if this project needs a database:**
 
-Ask: "Would you like to set up services now or later?" (now/later)
-- **Now**: Pause and guide through service setup
-- **Later**: Project includes setup instructions as first tasks
+| Project Type | Typically Needs Database? |
+|--------------|---------------------------|
+| web-app | Yes, unless static/stateless |
+| backend-api | Yes, unless stateless microservice |
+| cli-tool | No |
+| library | No |
+| desktop-app | Sometimes (local storage) |
+| data-pipeline | External sources (not provisioned here) |
+
+**Ask about data persistence (for web-app and backend-api):**
+
+**For non-technical users:**
+> "Will your app need to save and retrieve data (like user accounts, posts, or records)?"
+- **Yes** → Database needed, set it up now
+- **No** → Stateless/static, skip database
 
 **For technical users:**
-- "Provision services during initialization, or defer?"
-  - **Now**: I'll guide you through provisioning
-  - **Later**: Project README includes setup as first steps
-  - **Already provisioned**: Provide credentials/URLs
+> "Does this need persistent data storage, or is it stateless?"
+- **Stateful** → Which database? (Supabase, Firebase, MongoDB, etc.)
+- **Stateless** → No database (e.g., serverless functions, static sites, API proxies)
+
+**When database IS needed - set up now (recommended):**
+
+> "I'll help you set up the database now. This ensures your project works right from the start."
+
+- **Now (recommended)**: I'll guide you through provisioning and verify connections
+- **Already provisioned**: Provide credentials/URLs (will verify they work)
+- **Defer**: Only if you have a specific reason - project will need manual setup
+
+**When database is NOT needed:**
+- Skip database provisioning entirely
+- Still set up hosting if applicable (Vercel, Azure, etc.)
+- Project can be verified without database connection
+
+**Hosting (all project types that deploy):**
+
+| Hosting | Best For |
+|---------|----------|
+| Vercel | Next.js, static sites, serverless functions |
+| Azure | .NET, containers, enterprise |
+| AWS Lambda | Serverless microservices |
+| Railway | Simple APIs with or without DB |
+| Netlify | Static sites, JAMstack |
+
+**Key Principle:** Set up ALL services the project needs during initialization. The goal is to hand off a project that's ready for App Design - all infrastructure working, just waiting for features to be designed and built.
+
+**Services to consider:**
+
+| Service Type | Examples | When Needed |
+|--------------|----------|-------------|
+| Database | Supabase, Firebase, MongoDB | Stateful apps |
+| Hosting | Vercel, Azure, AWS | All deployed apps |
+| Auth | Supabase Auth, Auth0, Clerk | Apps with user accounts |
+| Storage | S3, Supabase Storage, Azure Blob | Apps with file uploads |
+| Email | Resend, SendGrid | Apps that send emails |
+| Payments | Stripe | E-commerce, subscriptions |
+
+**Ask about each service type that might be needed**, then set up ALL of them before handoff.
 
 **Database Options (by project type):**
 

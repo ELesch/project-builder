@@ -101,6 +101,67 @@ MCP configuration is in `.mcp.json`. See roster.md for full documentation.
 
 ---
 
+## App Design Phase (New Projects)
+
+**IMPORTANT**: For new projects or major features, complete the App Design Phase BEFORE writing implementation code.
+
+### Why Design First?
+
+Jumping straight to code leads to:
+- Incomplete features discovered late
+- Inconsistent UI and missing pages
+- Unclear data requirements
+- Rework and wasted effort
+
+### When to Run App Design
+
+Run `/app-design` when:
+- Starting a new project after tech stack is ready
+- Adding a major new feature (multiple pages)
+- Implementation keeps going off-track
+- You realize you don't have a clear picture of all pages
+
+### What Gets Designed
+
+| Artifact | Description |
+|----------|-------------|
+| Feature Specs | User stories and acceptance criteria |
+| Page Inventory | Every page/screen with URL and purpose |
+| User Flows | Diagrams of key workflows |
+| Component Trees | UI hierarchy for each page |
+| Data Requirements | What each component needs |
+| Priority Order | What to build first |
+
+### How to Use
+
+```
+/app-design
+```
+
+This invokes `dev-designer` to guide you through:
+1. Feature discovery questions
+2. Page inventory creation
+3. User flow mapping
+4. Component hierarchy design
+5. Data requirements definition
+
+**Output:** `.claude/design/app-design.md` - the blueprint for implementation.
+
+### Implementation Flow
+
+```
+PROJECT CREATION → APP DESIGN → IMPLEMENTATION
+    (tech stack)     (features)    (code)
+                         ↓
+                dev-designer creates
+                app-design.md
+                         ↓
+            dev-frontend/dev-backend
+            follow the design
+```
+
+---
+
 ## Claude Code Workflow
 
 This project uses Claude Code's **orchestrator/agent pattern**:
