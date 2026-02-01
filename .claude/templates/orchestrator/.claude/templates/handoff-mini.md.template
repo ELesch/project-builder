@@ -1,0 +1,27 @@
+# Mini Handoff: {{TASK_NAME}}
+
+> **To:** {{TARGET_AGENT}}
+> **Type:** Targeted research / Quick fix / Small change
+
+## Task
+
+{{BRIEF_DESCRIPTION}}
+
+## Files
+
+**Modify:** `{{PATH}}`
+**Reference:** `{{PATH}}`
+**Boundary:** Do not touch `{{PATH}}`
+
+## Context
+
+{{2-3_SENTENCES_OF_CONTEXT}}
+
+## Done When
+
+- [ ] {{SINGLE_CRITERION}}
+- [ ] Tests pass
+
+## Report
+
+Return: {{EXPECTED_OUTPUT}}

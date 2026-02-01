@@ -1,0 +1,111 @@
+# Agent Handoff: {{TASK_NAME}}
+
+> **From:** Orchestrator (or {{SOURCE_AGENT}})
+> **To:** {{TARGET_AGENT}}
+> **Date:** {{DATE}}
+
+## Task Summary
+
+**Goal:** {{ONE_LINE_GOAL}}
+
+**Why:** {{BRIEF_CONTEXT_WHY_THIS_TASK_MATTERS}}
+
+## Scope
+
+### Files to Create
+
+| File Path | Purpose |
+|-----------|---------|
+| `{{PATH}}` | {{PURPOSE}} |
+
+### Files to Modify
+
+| File Path | Change Type | What to Change |
+|-----------|-------------|----------------|
+| `{{PATH}}` | Add/Update/Remove | {{DESCRIPTION}} |
+
+### Files to Reference (Read-Only)
+
+| File Path | What to Learn |
+|-----------|---------------|
+| `{{PATH}}` | {{PATTERN_OR_CONTEXT}} |
+
+### Boundaries (Do NOT Touch)
+
+- `{{PATH_OR_PATTERN}}` - {{REASON}}
+
+## Technical Context
+
+### Relevant Patterns
+
+**From existing code:**
+- {{PATTERN_NAME}}: See `{{PATH}}` for example
+- {{PATTERN_NAME}}: See `{{PATH}}` for example
+
+**From tech stack:**
+- Version: {{TECH}} {{VERSION}} - see `.claude/tech/stack.md`
+- Gotcha: {{KNOWN_ISSUE_IF_ANY}}
+
+### Dependencies
+
+**This task depends on:**
+- {{DEPENDENCY}} (status: complete/pending)
+
+**Other tasks depend on this:**
+- {{DEPENDENT_TASK}}
+
+## Acceptance Criteria
+
+- [ ] {{CRITERION_1}}
+- [ ] {{CRITERION_2}}
+- [ ] All tests pass
+- [ ] No TypeScript errors
+- [ ] Follows existing patterns
+
+## Constraints
+
+**Must:**
+- {{MUST_DO}}
+
+**Must Not:**
+- {{MUST_NOT_DO}}
+
+**Should:**
+- {{SHOULD_DO}}
+
+## Test Strategy
+
+**Tests to write:**
+- `{{TEST_PATH}}`: {{TEST_DESCRIPTION}}
+
+**Tests to verify pass:**
+- `{{EXISTING_TEST}}`: Should still pass
+
+## Verification
+
+**How orchestrator will verify:**
+1. Run `/verify-agent`
+2. Check: {{SPECIFIC_VERIFICATION}}
+3. Test: `npm test -- --testPathPattern="{{PATTERN}}"`
+
+## On Completion
+
+**Report back with:**
+1. Files created/modified (list)
+2. Test results (pass/fail count)
+3. Any issues encountered
+4. Suggested next steps
+
+**If blocked:**
+- Return `RESEARCH_NEEDED: {{question}}` - do NOT explore
+- Return `BLOCKED: {{issue}}` - orchestrator will handle
+
+---
+
+## Anti-Context (Do Not Load)
+
+These are NOT relevant to this task:
+- {{UNRELATED_MODULE}}
+- {{UNRELATED_AREA}}
+
+Focus only on the scope defined above.

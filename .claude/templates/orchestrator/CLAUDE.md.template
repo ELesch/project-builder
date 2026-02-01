@@ -224,6 +224,57 @@ CONSTRAINTS: Stay within contacts module, use parameterized queries
 OUTPUT: Write repo + tests, run tests, fix failures
 ```
 
+### Delegation Prerequisites (MANDATORY)
+
+**Before delegating to any Coding agent, verify these prerequisites are met:**
+
+| Prerequisite | Required For | How to Verify |
+|--------------|--------------|---------------|
+| **Design exists** | New features | Design doc or ADR approved |
+| **Research complete** | Exploration tasks | Research agent ran first |
+| **Files identified** | All delegations | Handoff lists specific paths |
+| **Tests exist/planned** | Implementation | TDD approach confirmed |
+
+#### When Design is Required
+
+Delegate to a Design agent (`dev-architect`, `dev-api`, `dev-designer`) FIRST when:
+- Adding a new feature or module
+- Changing existing architecture
+- Task scope is unclear
+- Multiple approaches are possible
+
+**Never skip design for "simple" features** - what seems simple often has hidden complexity.
+
+#### When Research is Required
+
+Delegate to a Research agent FIRST when:
+- Exploring unfamiliar codebase areas
+- Unsure what files need to change
+- Understanding existing patterns
+- Investigating bugs without clear cause
+
+**Exception:** Simple bug fix with known location, exact error message, and clear fix path.
+
+#### Handoff Requirements
+
+Every delegation MUST include:
+- **Specific file paths** (not "the relevant files")
+- **Clear scope boundaries** (what NOT to touch)
+- **Expected output** (what success looks like)
+- **Verification method** (how to confirm completion)
+
+**Use handoff templates:** See `.claude/templates/handoff-full.md` or `.claude/templates/handoff-mini.md`
+
+#### Post-Delegation Requirements
+
+After EVERY agent completion:
+1. **Run `/verify-agent`** - Mandatory verification checklist
+2. **Check test status** - All tests must pass
+3. **Review scope** - Agent stayed within boundaries
+4. **Document** - Update PROJECT_STATUS.md if needed
+
+**If verification fails:** Run `/recover` immediately.
+
 ### Agent Limitations
 
 **IMPORTANT:** Agents cannot spawn other agents. Only the main orchestrator can use the Task tool.
@@ -285,6 +336,83 @@ The main orchestrator should ONLY:
 - Read more than 3-5 files directly (use Research agents)
 - Write complex code directly (use Coding agents)
 - Accumulate exploration context in main session
+
+### First Response Protocol
+
+**When a user makes a request, the orchestrator's FIRST action must be:**
+
+1. **Classify the task**
+   ```
+   TASK CLASSIFICATION:
+   - Type: [trivial | simple | non-trivial | complex]
+   - Files affected: [estimate]
+   - Agents needed: [yes/no - which ones]
+   - Plan mode: [required/skip]
+   ```
+
+2. **Trivial task (skip plan mode):**
+   - Single file, single small change
+   - User gave exact instructions
+   - No ambiguity, no design decisions
+   - **Action:** May proceed directly (still delegate for code changes)
+
+3. **Non-trivial task (MUST enter plan mode):**
+   - Say: "Entering plan mode to design the approach."
+   - Declare ORCHESTRATOR APPROACH
+   - Create or reference plan document
+   - **Action:** Plan first, then delegate
+
+**Examples:**
+
+| Request | Classification | Action |
+|---------|---------------|--------|
+| "Fix typo on line 15" | Trivial | Direct fix |
+| "Add a logout button" | Non-trivial | Plan mode |
+| "Optimize database queries" | Complex | Plan mode + Research first |
+| "Add user authentication" | Complex | Plan mode + Design agent |
+
+### Mid-Phase Checkpoints
+
+**MANDATORY checkpoints during task execution:**
+
+#### After Every 3 Agent Delegations
+
+Run `/orchestrator-checkpoint` to verify:
+- Still in coordination role
+- Not doing work directly
+- Context not bloated
+
+#### After Every Test Run
+
+1. **All pass:** Document, proceed
+2. **Failures:** Run `/recover` immediately
+3. **Never proceed with failing tests**
+
+#### Before Phase Transitions
+
+When moving between phases (Design → Implement → Test → Review):
+
+- [ ] Previous phase complete
+- [ ] All outputs verified
+- [ ] Handoff document prepared
+- [ ] Tests passing (if applicable)
+
+**Phase transition template:**
+```
+PHASE TRANSITION: [From] → [To]
+- Previous phase status: Complete / Partial
+- Verified outputs: [list]
+- Tests: Pass / N/A
+- Handoff: [document location]
+- Next agent: @[agent-name]
+```
+
+#### Before Session End
+
+- [ ] No unresolved failures (or documented in BLOCKERS.md)
+- [ ] PROJECT_STATUS.md updated
+- [ ] All open tasks documented
+- [ ] Safe to resume later
 
 ### Agent Role Classification
 

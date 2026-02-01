@@ -16,6 +16,41 @@
 
 - {{What this feature explicitly won't do}}
 
+## Phase Flow
+
+```mermaid
+graph LR
+    A[Design] --> B[Tests RED]
+    B --> C[Implement GREEN]
+    C --> D[Refactor]
+    D --> E[Review]
+    E --> F[Complete]
+
+    A1[dev-architect] -.-> A
+    A2[dev-api] -.-> A
+    B1[dev-test] -.-> B
+    C1[dev-backend] -.-> C
+    C2[dev-frontend] -.-> C
+    D1[dev-refactor] -.-> D
+    E1[dev-reviewer] -.-> E
+    E2[dev-security] -.-> E
+```
+
+## Completion Tracking
+
+| Phase | Agent | Status | Verified | Notes |
+|-------|-------|--------|----------|-------|
+| Design | dev-architect | [ ] Pending | [ ] | |
+| Design | dev-api | [ ] Pending | [ ] | |
+| Tests (RED) | dev-test | [ ] Pending | [ ] | |
+| Implement | dev-backend | [ ] Pending | [ ] | |
+| Implement | dev-frontend | [ ] Pending | [ ] | |
+| Refactor | dev-refactor | [ ] Pending | [ ] | |
+| Review | dev-reviewer | [ ] Pending | [ ] | |
+| Review | dev-security | [ ] Pending | [ ] | |
+
+**Legend:** [ ] Pending | [~] In Progress | [x] Complete | [-] Skipped
+
 ## Design
 
 ### User Flow

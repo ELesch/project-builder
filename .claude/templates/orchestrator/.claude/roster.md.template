@@ -163,6 +163,9 @@ Skills are reusable workflows that can be invoked by users or agents.
 | `/tech-revalidate` | Check for AI knowledge drift and update validation | Users |
 | `/commit` | Safe commit with secret scanning | Before any git commit |
 | `/orchestrator-checkpoint` | Self-reminder for orchestrator role during long sessions | Orchestrator |
+| `/verify-agent` | **Mandatory** verification after every agent delegation | Orchestrator |
+| `/recover` | Error recovery when agents fail or tests break | Orchestrator |
+| `/parallel-check` | Pre-flight safety check before parallel agent execution | Orchestrator |
 | `/audit-decision` | Record significant decisions with alternatives and rationale | Users |
 | `/audit-summary` | Analyze session logs and generate insights | Users |
 
@@ -313,6 +316,85 @@ Analyze session logs for patterns and insights:
 - Generating progress reports
 
 **Output:** `.claude/audit/summary-{YYYY-MM-DD}.md`
+
+### Using /verify-agent (MANDATORY)
+
+**Run after EVERY agent delegation:**
+
+```
+/verify-agent
+```
+
+**What it verifies:**
+1. **File inventory** - Expected files created/modified
+2. **Test status** - All tests pass
+3. **Code quality** - No debug code, proper error handling
+4. **Scope compliance** - Agent stayed within boundaries
+5. **Integration** - Build succeeds, types check
+
+**Decision tree after verification:**
+- All pass → Proceed to next agent
+- Test failures → Run `/recover`
+- Scope violation → Document and escalate
+- Quality issues → Re-delegate fix
+
+**Never proceed without verification.**
+
+### Using /recover
+
+**Invoke immediately when:**
+- Agent returns errors
+- Tests fail after agent completion
+- Build breaks
+- Unexpected state detected
+
+```
+/recover
+```
+
+**What it does:**
+1. Classifies the failure (test, build, agent, scope, conflict)
+2. Assesses impact (small <5 files, large 5+ files)
+3. Recommends strategy (targeted fix vs rollback)
+4. Provides recovery commands
+5. Ensures documentation in BLOCKERS.md or LEARNINGS.md
+
+**Recovery strategies:**
+- **Small scope:** Targeted fix with same agent
+- **Large scope:** Rollback and retry with smaller batches
+- **Unknown cause:** Research agent to diagnose first
+
+**Never end a session with unresolved failures.**
+
+### Using /parallel-check
+
+**Run BEFORE launching agents in parallel:**
+
+```
+/parallel-check
+```
+
+**What it checks:**
+1. Agent compatibility matrix lookup
+2. Directory conflict detection
+3. File conflict detection
+4. Dependency analysis (does B need A's output?)
+5. Resource contention (same tests, config, tables?)
+
+**Outputs:**
+- **SAFE** - Proceed with parallel
+- **CONDITIONAL** - Proceed with explicit boundaries
+- **UNSAFE** - Run sequentially instead
+
+**Common safe patterns:**
+- `dev-reviewer` + `dev-security` (both read-only)
+- `dev-auditor-*` + `dev-auditor-*` (all read-only)
+- Different modules with no overlap
+
+**Always unsafe:**
+- Same agent twice
+- `dev-test` + anything (tests need stable code)
+- Any two agents modifying same directory
 
 ---
 

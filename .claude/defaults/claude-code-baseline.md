@@ -5,7 +5,7 @@
 
 **Baseline Date**: 2026-02-01
 **Claude Code Version**: Latest (as of February 2026)
-**Project Builder Version**: 2.10.0
+**Project Builder Version**: 2.11.0
 
 ---
 
@@ -417,6 +417,57 @@ Use `/cpm_update` to check for and apply updates.
 ---
 
 ## Changelog
+
+### 2.11.0 (2026-02-01)
+
+**Orchestrator Pattern Improvements - Verification, Recovery, and Checkpoints**
+
+Addresses deficiencies identified in compliance analysis to improve orchestrator reliability and pattern adherence.
+
+**New Skills (3):**
+
+| Skill | Purpose |
+|-------|---------|
+| `/verify-agent` | **Mandatory** verification after every agent delegation - checks files, tests, quality, scope |
+| `/recover` | Structured error recovery when agents fail or tests break |
+| `/parallel-check` | Pre-flight safety check before running agents in parallel |
+
+**New Runbook:**
+
+- **`agent-failure.md.template`** - Runbook for handling test failures, build breaks, scope violations, and unknown errors
+
+**New Templates:**
+
+- **`handoff-full.md.template`** - Complete handoff document for agent delegations
+- **`handoff-mini.md.template`** - Minimal handoff for quick tasks
+
+**CLAUDE.md.template Updates:**
+
+- **Delegation Prerequisites (MANDATORY)** section - Design gate, research gate, handoff requirements
+- **First Response Protocol** - Task classification on first user request
+- **Mid-Phase Checkpoints** - Mandatory checkpoints every 3 agents, after tests, before phase transitions
+
+**roster.md.template Updates:**
+
+- Added `/verify-agent`, `/recover`, `/parallel-check` to Skills table
+- Added detailed usage sections for each new skill
+
+**plan.md.template Updates:**
+
+- Added Mermaid phase flow diagram
+- Added Completion Tracking table with status and verification columns
+
+**Template Version:** 1.7.0
+
+**Benefits:**
+
+- Catches problems immediately after agent completion (not at end of session)
+- Structured recovery prevents accumulating failures
+- Explicit handoffs ensure agents have clear scope
+- Checkpoints prevent orchestrator role drift
+- Pre-flight checks prevent unsafe parallel execution
+
+**Target:** Improve compliance scores from ~62% to 85%+
 
 ### 2.10.0 (2026-02-01)
 
