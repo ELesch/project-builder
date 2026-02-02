@@ -418,6 +418,48 @@ Use `/cpm_update` to check for and apply updates.
 
 ## Changelog
 
+### 2.15.0 (2026-02-02)
+
+**Mandatory Plan Mode - Domain Agent Selection for Every Prompt**
+
+Removes the "extremely simple" exception from plan mode. Plan mode is now **mandatory for every user prompt** to ensure proper domain agent selection.
+
+**Why This Change:**
+
+AI training data has a knowledge gap with current package versions. Domain agents embed version-specific patterns that the orchestrator may lack. Skipping plan mode risks using stale patterns.
+
+**Key Changes:**
+
+- **Removed "extremely simple" exception** - No more skipping plan mode
+- **Plan mode is MANDATORY for every prompt** - No exceptions
+- **Expanded declaration format** to include:
+  - Task type (implement / research / debug / review)
+  - Technologies involved
+  - Domain agents with versions (e.g., `dev-nextjs-15`, `dev-prisma-7`)
+
+**New Declaration Format:**
+```
+ORCHESTRATOR APPROACH:
+- Task: [one-line summary]
+- Task type: [implement / research / debug / review]
+- Technologies: [list technologies involved]
+- Agents needed: [domain agents with version]
+- Sequence: [sequential / parallel / single agent]
+- My role: [coordinate, delegate, review - NOT implement]
+```
+
+**Rationale:**
+
+1. Domain agents have embedded version-specific patterns
+2. Orchestrator may have stale knowledge for newer packages
+3. Proper agent selection requires conscious identification
+4. "Extremely simple" was subjective and led to bypassing
+
+**Files Changed:**
+
+- `CLAUDE.md` - Updated Plan Mode section
+- `CLAUDE.md.template` - Updated Plan Mode section for created projects
+
 ### 2.14.0 (2026-02-01)
 
 **Role-Specific Domain Agents with Shared Knowledge**

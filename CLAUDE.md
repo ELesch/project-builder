@@ -464,26 +464,34 @@ The main orchestrator should ONLY:
 - Accumulate exploration context in main session
 - Skip handoffs between phases
 
-### Plan Mode: Always Enter (Except Extremely Simple)
+### Plan Mode: MANDATORY for Every Prompt
 
-**Default behavior: ALWAYS enter plan mode.** Only skip for extremely simple tasks.
+**ALWAYS enter plan mode for every user prompt. No exceptions.**
 
-**Extremely simple tasks (skip plan mode only when ALL apply):**
-- Single file, single change (e.g., fix typo)
-- User provided exact instruction (e.g., "Change line 42 to X")
-- Zero ambiguity about what to do
-- No agent delegation needed
-- Examples: "Fix typo on line 15", "Change port from 3000 to 8080"
+**Why this is mandatory:**
 
-**Everything else requires plan mode:**
-- Any task involving agent delegation
-- Any task affecting 2+ files
-- Any task requiring exploration or research
-- Any task with design decisions (however small)
-- Any unclear or ambiguous request
-- Any task the user considers "straightforward" but involves code changes
+AI training data has a cutoff date (May 2025). Package versions evolve faster than training data. This creates a **knowledge gap** between what the orchestrator knows and what current packages actually do.
 
-**When in doubt, enter plan mode.**
+**Domain agents solve this** by embedding version-specific patterns:
+- `dev-nextjs-15` knows Next.js 15 patterns the orchestrator may not
+- `dev-prisma-7` knows Prisma 7's `defineConfig()` pattern
+- `dev-tailwind-v4` knows CSS-first configuration
+
+**The orchestrator's job is to identify and delegate to the right agents** - not to implement directly with potentially stale knowledge.
+
+**Plan mode ensures:**
+1. Correct agent identification based on task and technology
+2. Version-specific expertise applied to every code change
+3. Knowledge gaps addressed by agents with embedded patterns
+4. Proper handoffs between research, implementation, and review
+
+**For every prompt:**
+1. Enter plan mode
+2. Identify the task type (implement, research, debug, review)
+3. Identify the technologies involved
+4. Select the appropriate domain agent(s)
+5. Declare the orchestrator approach
+6. Execute via agent delegation
 
 ### Context Shift Detection
 
@@ -503,7 +511,9 @@ A context shift occurs when:
 ```
 ORCHESTRATOR APPROACH:
 - Task: [one-line summary]
-- Agents needed: [list or "none - extremely simple task"]
+- Task type: [implement / research / debug / review]
+- Technologies: [list technologies involved]
+- Agents needed: [domain agents with version, e.g., dev-nextjs-15, dev-prisma-7]
 - Sequence: [sequential / parallel / single agent]
 - My role: [coordinate, delegate, review - NOT implement]
 ```
@@ -512,18 +522,33 @@ ORCHESTRATOR APPROACH:
 ```
 ORCHESTRATOR APPROACH:
 - Task: Add user authentication to the API
-- Agents needed: @project-architect → @project-initializer
-- Sequence: Sequential - design first, then implement
+- Task type: implement
+- Technologies: Next.js 15, Prisma 7
+- Agents needed: @dev-nextjs-15 (routes), @dev-prisma-7 (schema)
+- Sequence: Sequential - schema first, then routes
 - My role: Coordinate handoffs, review outputs, report to user
 ```
 
-**Example (single-agent task):**
+**Example (research task):**
 ```
 ORCHESTRATOR APPROACH:
-- Task: Fix validation bug in ContactService
-- Agents needed: @project-migrator (single run)
+- Task: Understand how the contact form saves data
+- Task type: research
+- Technologies: Next.js 15, Prisma 7
+- Agents needed: @explore-nextjs-15 (form handling), @explore-prisma-7 (database layer)
+- Sequence: Parallel - both can investigate independently
+- My role: Synthesize findings, report to user
+```
+
+**Example (debug task):**
+```
+ORCHESTRATOR APPROACH:
+- Task: Fix why user creation fails silently
+- Task type: debug
+- Technologies: Prisma 7
+- Agents needed: @debug-prisma-7
 - Sequence: Single agent
-- My role: Delegate, review, confirm
+- My role: Delegate, review diagnosis, then delegate fix to @dev-prisma-7
 ```
 
 **Why this matters:**
