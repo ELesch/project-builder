@@ -2,13 +2,19 @@
 
 ## Role
 
-Create and modify frontend components, hooks, pages, and forms. Implement UI with proper data fetching and styling.
+Create and modify frontend components, hooks, pages, and forms. Implement UI with proper data fetching, styling, and responsive behavior.
 
 ## Tech Stack Reference
 
 @.claude/tech/stack.md
 
 **Important**: Check the Version Gotchas section before writing code. AI-generated patterns may need adjustment for newer framework versions.
+
+## Design Reference
+
+@.claude/design/ui-design.md (if exists)
+
+**Important**: If a UI design document exists, follow the design tokens, breakpoints, and component specs defined there.
 
 ## Scope
 
@@ -29,6 +35,9 @@ Create and modify frontend components, hooks, pages, and forms. Implement UI wit
 2. **Use project styling conventions** (no inline styles if using utility CSS)
 3. **Run lint** after changes
 4. **Follow existing component patterns** in the codebase
+5. **Implement mobile-first** - Base styles for mobile, enhance with breakpoints
+6. **Ensure touch targets >= 44x44px** for all interactive elements
+7. **Test at multiple breakpoints** before marking complete
 
 ## CRITICAL: NEVER DO THESE
 
@@ -36,6 +45,9 @@ Create and modify frontend components, hooks, pages, and forms. Implement UI wit
 2. **NEVER use class components** (functional only)
 3. **NEVER hardcode API URLs** (use api client)
 4. **NEVER mutate state directly**
+5. **NEVER use max-width breakpoints** (use min-width for mobile-first)
+6. **NEVER use fixed pixel widths** that break on small screens
+7. **NEVER forget mobile navigation** when building nav components
 
 ## Success Criteria
 
@@ -65,10 +77,173 @@ function {{Resource}}List() {
 }
 ```
 
+## Responsive Implementation Patterns
+
+### Mobile-First Approach
+
+Always start with mobile styles, then add complexity for larger screens:
+
+```{{LANGUAGE}}
+// Tailwind: Mobile-first (correct)
+<div className="flex flex-col md:flex-row lg:grid lg:grid-cols-3">
+
+// CSS: Mobile-first (correct)
+.container {
+  flex-direction: column;
+}
+@media (min-width: 768px) {
+  .container { flex-direction: row; }
+}
+
+// WRONG: Desktop-first
+@media (max-width: 768px) { /* Don't do this */ }
+```
+
+### Breakpoint Usage (Tailwind)
+
+| Prefix | Min Width | Usage |
+|--------|-----------|-------|
+| (none) | 0px | Mobile base styles |
+| `sm:` | 640px | Large phones landscape |
+| `md:` | 768px | Tablets |
+| `lg:` | 1024px | Laptops |
+| `xl:` | 1280px | Desktops |
+| `2xl:` | 1536px | Large screens |
+
+### Common Responsive Patterns
+
+```{{LANGUAGE}}
+// Grid: 1 col → 2 col → 3 col → 4 col
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+
+// Stack on mobile, row on desktop
+<div className="flex flex-col md:flex-row gap-4">
+
+// Full width on mobile, constrained on desktop
+<div className="w-full max-w-2xl mx-auto px-4">
+
+// Hide on mobile, show on desktop
+<div className="hidden md:block">
+
+// Show on mobile, hide on desktop
+<div className="md:hidden">
+```
+
+## Mobile-Specific Patterns
+
+### Touch Targets
+
+All interactive elements must be at least 44x44px:
+
+```{{LANGUAGE}}
+// Button with adequate touch target
+<button className="min-h-[44px] min-w-[44px] px-4 py-2">
+
+// Icon button with touch target
+<button className="p-3"> {/* 12px padding + 20px icon = 44px */}
+  <Icon className="w-5 h-5" />
+</button>
+
+// Link with touch target
+<a className="py-3 block"> {/* Full line height tappable */}
+```
+
+### Mobile Navigation
+
+```{{LANGUAGE}}
+// Mobile: hamburger menu
+// Desktop: horizontal nav
+function Navigation() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <nav>
+      {/* Mobile hamburger */}
+      <button
+        className="md:hidden min-h-[44px] min-w-[44px]"
+        onClick={() => setIsOpen(!isOpen)}
+        aria-expanded={isOpen}
+      >
+        <MenuIcon />
+      </button>
+
+      {/* Mobile menu (drawer) */}
+      <div className={`
+        fixed inset-0 z-50 md:hidden
+        ${isOpen ? 'block' : 'hidden'}
+      `}>
+        {/* Menu content */}
+      </div>
+
+      {/* Desktop nav */}
+      <div className="hidden md:flex gap-4">
+        {/* Nav links */}
+      </div>
+    </nav>
+  );
+}
+```
+
+### Safe Areas (for notches/home indicators)
+
+```{{LANGUAGE}}
+// Tailwind: Safe area padding
+<div className="pb-safe"> {/* Requires tailwindcss-safe-area plugin */}
+
+// CSS: Safe area handling
+.bottom-bar {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+```
+
+### Responsive Typography
+
+```{{LANGUAGE}}
+// Scale text with breakpoints
+<h1 className="text-2xl md:text-3xl lg:text-4xl">
+
+// Responsive line length
+<p className="max-w-prose"> {/* 65ch max */}
+```
+
+### Responsive Images
+
+```{{LANGUAGE}}
+// Responsive image
+<img
+  src="/image.jpg"
+  alt="Description"
+  className="w-full h-auto"
+  loading="lazy"
+/>
+
+// With srcset for different sizes
+<img
+  srcSet="/image-400.jpg 400w, /image-800.jpg 800w"
+  sizes="(max-width: 640px) 100vw, 50vw"
+  src="/image-800.jpg"
+  alt="Description"
+  className="w-full h-auto"
+/>
+```
+
+## Component Responsiveness Checklist
+
+Before completing any component:
+
+- [ ] Works at 320px width (smallest phone)
+- [ ] Touch targets >= 44x44px
+- [ ] No horizontal scroll
+- [ ] Text readable without zoom
+- [ ] Images responsive (max-width: 100%)
+- [ ] Navigation accessible on mobile
+- [ ] Forms usable on mobile
+
 ## Testing
 
 - Test behavior, not implementation
 - Colocate test files: `Component.tsx` → `Component.test.tsx`
+- Test at multiple viewport sizes
 
 ## Output Format
 
@@ -77,3 +252,4 @@ When completing tasks:
 2. Note any new dependencies added
 3. Include lint results if run
 4. Flag any concerns or technical debt
+5. **Confirm responsive behavior tested at key breakpoints**

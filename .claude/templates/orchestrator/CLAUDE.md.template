@@ -150,15 +150,67 @@ This invokes `dev-designer` to guide you through:
 ### Implementation Flow
 
 ```
-PROJECT CREATION → APP DESIGN → IMPLEMENTATION
-    (tech stack)     (features)    (code)
-                         ↓
-                dev-designer creates
-                app-design.md
-                         ↓
-            dev-frontend/dev-backend
-            follow the design
+PROJECT CREATION → APP DESIGN → UI DESIGN → IMPLEMENTATION
+    (tech stack)     (features)   (visual)     (code)
+                         ↓           ↓
+                dev-designer   dev-ui-designer
+                         ↓           ↓
+                app-design.md   ui-design.md
+                                     ↓
+                          dev-frontend/dev-backend
+                          follow both designs
 ```
+
+---
+
+## UI Design Phase
+
+**When to use:** After App Design when you need professional, consistent UI across breakpoints.
+
+### What Gets Designed
+
+| Artifact | Description |
+|----------|-------------|
+| Design Tokens | Colors, typography, spacing, borders |
+| Responsive Strategy | Breakpoints, mobile-first approach |
+| Component Specs | Variants, sizes, states for each component |
+| Page Layouts | Mobile, tablet, desktop layouts (ASCII diagrams) |
+| Touch Targets | Minimum sizes, spacing requirements |
+
+### How to Use
+
+Delegate to `dev-ui-designer` after App Design is complete:
+
+```
+@dev-ui-designer Create visual design specifications for [project name].
+CONTEXT: Reference .claude/design/app-design.md for pages and components.
+OUTPUT: Create .claude/design/ui-design.md with design tokens and responsive specs.
+```
+
+**Output:** `.claude/design/ui-design.md` - the visual design system.
+
+### Design System Template
+
+A design system template is available at `.claude/templates/design-system.md` with:
+- Color tokens (light/dark mode)
+- Typography scale
+- Spacing scale (4px base)
+- Breakpoints (Tailwind defaults)
+- Component variants
+- Touch target requirements
+
+### When to Skip UI Design
+
+You can skip UI Design for:
+- Simple CRUD apps with minimal UI
+- Admin dashboards using existing component libraries
+- Prototypes where visual polish isn't needed yet
+
+Always use UI Design for:
+- User-facing applications
+- Projects requiring mobile support
+- Applications needing dark mode
+- Projects with brand requirements
 
 ---
 
@@ -204,6 +256,65 @@ PROACTIVELY use custom agents for all implementation work. Agent definitions are
 **Agent Roster:** @.claude/roster.md *(Read this file for agent selection guidance)*
 
 **Tech Stack:** @.claude/tech/stack.md *(Agents should reference this for current versions)*
+
+### Domain Agents (Technology-Specific)
+
+This project includes **domain-specific agents** organized by **role** (what they do) and **technology** (what they know).
+
+#### The Four Agent Roles
+
+| Task Type | Agent Prefix | Purpose | Write Scope |
+|-----------|--------------|---------|-------------|
+| **Implement** | `dev-` | Build features, write code | Code (15 max) |
+| **Research** | `explore-` | Investigate codebase, find patterns | Reports only |
+| **Debug** | `debug-` | Diagnose issues, trace errors | Reports only |
+| **Review** | `audit-` | Review code for patterns/practices | Reports only |
+
+#### Agent Selection: Two-Step Process
+
+**Step 1: What task type?**
+```
+Building/implementing → dev-{technology}
+Understanding/researching → explore-{technology}
+Diagnosing/debugging → debug-{technology}
+Reviewing/auditing → audit-{technology}
+```
+
+**Step 2: What technology?**
+{{DOMAIN_AGENTS_TABLE}}
+
+#### Quick Selection Examples
+
+| Task | Agent | Why |
+|------|-------|-----|
+| "Add a user profile page" | `dev-nextjs-15` | Building feature (implement) |
+| "How does auth work here?" | `explore-nextjs-15` | Understanding code (research) |
+| "Why won't the form submit?" | `debug-nextjs-15` | Diagnosing issue (debug) |
+| "Check patterns before deploy" | `audit-nextjs-15` | Reviewing code (audit) |
+
+#### Delegation Priority
+
+1. **Task-appropriate domain agent exists** → Use it (e.g., `explore-prisma-7` for research)
+2. **Only `dev-` exists for technology** → Use it for implementation, generic for other tasks
+3. **Shared knowledge exists** → Reference alongside any agent (e.g., logging-pino.md)
+4. **No domain agent** → Fall back to generic agent (e.g., `dev-frontend`)
+
+#### Why Multiple Roles?
+
+For technologies with **Medium** or **Low** confidence (where AI may make mistakes):
+- **`explore-`**: Safe investigation without accidental modifications
+- **`debug-`**: Focused diagnosis with relevant Bash access
+- **`audit-`**: Pattern compliance review before deployment
+- **`dev-`**: Implementation with embedded correct patterns
+
+For **High** confidence technologies, only `dev-` is needed (or just shared knowledge).
+
+#### Shared Knowledge Files
+
+Cross-cutting knowledge is in `.claude/agents/knowledge/`:
+{{SHARED_KNOWLEDGE_LIST}}
+
+These files are @-referenced by domain agents but can also be read directly for patterns.
 
 ### Crafting Agent Prompts
 

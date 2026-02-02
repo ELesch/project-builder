@@ -20,6 +20,7 @@ Specialized agents for the orchestrator/agent pattern.
 | Agent | File | Expertise |
 |-------|------|-----------|
 | Designer | `dev-designer.md` | App design, features, pages, user flows |
+| UI Designer | `dev-ui-designer.md` | Visual design, responsive strategy, design tokens |
 | Architect | `dev-architect.md` | System design, ADRs |
 | API | `dev-api.md` | REST design, contracts |
 | Database | `dev-database.md` | Query optimization, indexes |
@@ -52,6 +53,7 @@ Specialized agents for the orchestrator/agent pattern.
 | Documentation | `dev-auditor-docs.md` | README, API docs, comments |
 | Dependencies | `dev-auditor-dependencies.md` | CVEs, licenses, outdated |
 | Errors | `dev-auditor-errors.md` | Error handling, UX, logging |
+| Responsive | `dev-auditor-responsive.md` | Mobile-first CSS, breakpoints, touch targets |
 
 > **Note:** Auditor agents are read-only. They produce reports but never modify code. Use implementation agents (dev-backend, dev-frontend) to fix issues found by auditors.
 

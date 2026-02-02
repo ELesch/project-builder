@@ -14,7 +14,26 @@ Create the actual project directory and files based on the architecture document
 
 This agent receives handoffs from:
 - `@project-architect` - Architecture document (what to create)
-- `@project-tech-validator` - Validation report (confidence levels, gotchas)
+- `@project-tech-validator` - Validation report (confidence levels, gotchas, **template selection**)
+
+### Agent Generation Delegation
+
+This agent delegates to:
+- `@project-agent-generator` - Creates domain-specific agents with embedded knowledge
+
+**Workflow:**
+```
+Initializer receives validation report
+    ↓
+Initializer delegates to @project-agent-generator
+    ↓
+Agent-generator returns:
+  - Domain agent files
+  - Shared knowledge files
+  - domainAgents manifest section
+    ↓
+Initializer continues with remaining setup
+```
 
 ### Batching Requirement
 
@@ -1547,15 +1566,36 @@ The settings.json template already includes hook registrations for:
 - `PostToolUseFailure` - Captures tool failures
 - `SessionStart` / `SessionEnd` - Captures session boundaries
 
-### Step 7: Create Agents
+### Step 7: Generate Domain-Specific Agents
 
+**NEW in 2.13.0:** Use the `@project-agent-generator` to create domain-specific agents with embedded version knowledge.
+
+**Delegate to @project-agent-generator with:**
+- Architecture document (tech decisions)
+- Validation report (confidence levels, template selection)
+- Knowledge templates index: `.claude/defaults/agent-knowledge/index.json`
+
+**The agent generator will:**
+1. Create domain agents (e.g., `dev-nextjs-15`, `dev-prisma-7`) with embedded patterns
+2. Create shared knowledge files in `.claude/agents/knowledge/`
+3. Return manifest domainAgents section
+
+**If agent-generator unavailable (fallback):**
 For each agent specified in architecture:
-
 1. Copy from generic template
 2. Add @-mention to `.claude/tech/stack.md`
 3. Customize for project tech stack
 4. Add project-specific constraints
 5. **Add logging guidance** to agents that write code
+
+**Domain agents supersede generic agents:**
+| Generic Agent | Superseded By |
+|---------------|---------------|
+| `dev-frontend` | `dev-nextjs-15`, `dev-tailwind-v4` |
+| `dev-backend` | `dev-prisma-7` |
+| `dev-database` | `dev-prisma-7` |
+
+All agents still @-mention `.claude/tech/stack.md` for reference, but patterns are embedded.
 
 ### Step 8: Create Templates
 

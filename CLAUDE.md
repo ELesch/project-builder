@@ -239,8 +239,10 @@ When a user starts a session:
    - **Identify sparse training data scenarios** (technology existed but limited docs)
    - **Generate validation patterns** developers can test
    - **Create verification tasks** for Medium/Low confidence technologies
+   - **Select knowledge templates** for domain agent generation
    - Produces validation report feeding into initializer
 4. Use `@project-initializer` agent to create the project
+   - Delegates to `@project-agent-generator` to create domain-specific agents
    - **Use validation report for confidence-aware file generation**
    - **Use appropriate stack default based on project type**
    - Create `.claude/tech/stack.md` with versions, gotchas, AND confidence levels
@@ -322,12 +324,13 @@ You are the **orchestrator**. You:
 Use the Task tool to delegate to agents:
 
 ```
-@project-discovery      → Gather requirements, detect new vs migration vs GitHub
-@project-architect      → Design project structure (new projects)
-@project-tech-validator → Validate AI knowledge for each technology (new projects)
-@project-initializer    → Research tech + create files (new projects & GitHub clones)
-@project-analyzer       → Analyze existing codebase (local migrations)
-@project-migrator       → Create orchestrator for existing local project
+@project-discovery       → Gather requirements, detect new vs migration vs GitHub
+@project-architect       → Design project structure (new projects)
+@project-tech-validator  → Validate AI knowledge for each technology (new projects)
+@project-agent-generator → Create domain-specific agents from knowledge templates (new in 2.13.0)
+@project-initializer     → Research tech + create files (new projects & GitHub clones)
+@project-analyzer        → Analyze existing codebase (local migrations)
+@project-migrator        → Create orchestrator for existing local project
 ```
 
 Read `.claude/roster.md` for detailed agent selection guidance.

@@ -1,7 +1,7 @@
 {
   "orchestrator": {
     "version": "{{ORCHESTRATOR_VERSION}}",
-    "templateVersion": "1.7.0"
+    "templateVersion": "1.10.0"
   },
   "project": {
     "name": "{{PROJECT_NAME}}",
@@ -26,6 +26,29 @@
     },
     "confidenceLevels": {
       {{CONFIDENCE_LEVELS}}
+    }
+  },
+  "domainAgents": {
+    "knowledgeFiles": {
+      {{KNOWLEDGE_FILES}}
+    },
+    "generated": {
+      {{DOMAIN_AGENTS_GENERATED}}
+    },
+    "registry": {
+      "byTechnology": {
+        {{DOMAIN_AGENTS_BY_TECHNOLOGY}}
+      },
+      "byRole": {
+        {{DOMAIN_AGENTS_BY_ROLE}}
+      },
+      "supersessionMap": {
+        {{DOMAIN_AGENTS_SUPERSESSION_MAP}}
+      }
+    },
+    "sharedKnowledge": [{{SHARED_KNOWLEDGE_FILES}}],
+    "templateSources": {
+      {{DOMAIN_AGENTS_TEMPLATE_SOURCES}}
     }
   },
   "versionControl": {

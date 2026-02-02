@@ -70,7 +70,10 @@ AI training has limitations beyond version cutoffs:
 - Validation findings feed into:
   - Initializer's `.claude/tech/stack.md` (initial creation)
   - Initializer's `.claude/manifest.json` `techValidation` section
+  - **Agent Generator's domain agent creation** (template selection)
 - Created projects can re-run validation via `/tech-revalidate` skill
+
+**New:** The validation report now includes a **Knowledge Template Selection** section that maps each technology to pre-built knowledge templates in `.claude/defaults/agent-knowledge/`. This enables the `@project-agent-generator` to create domain-specific agents with embedded version knowledge.
 
 ## Validation Process
 
@@ -360,6 +363,54 @@ Is version released before AI training cutoff (May 2025)?
 - Look for new features/requirements
 - Validate build commands
 
+### Step 7: Select Knowledge Templates
+
+Match technologies to pre-built knowledge templates for agent generation.
+
+**Load template index:**
+@.claude/defaults/agent-knowledge/index.json
+
+**For each technology, determine template match:**
+
+1. **Check for exact version match** in index.json
+   - e.g., `nextjs-15` for Next.js 15.x
+2. **Check for compatible version range**
+   - Template `versionRange` covers detected version
+3. **Note template metadata:**
+   - `aiConfidence` from template
+   - `context7Available`
+   - `dependencies` (other templates needed)
+   - `supersedes` (older template this replaces)
+
+**Output template selection table:**
+
+```markdown
+## Knowledge Template Selection
+
+| Technology | Version | Template Match | Template Confidence |
+|------------|---------|----------------|---------------------|
+| Next.js | 15.x | frameworks/nextjs-15 | Medium |
+| React | 19.x | frameworks/react-19 | Low |
+| Prisma | 7.x | databases/prisma-7 | Medium |
+| Tailwind | 4.x | styling/tailwind-4 | Low |
+| Pino | 9.x | cross-cutting/logging-pino | High |
+| Vitest | 2.x | cross-cutting/testing-vitest | High |
+
+### Integration Templates
+| Integration | Template |
+|-------------|----------|
+| Next.js + Prisma | integrations/nextjs-prisma |
+
+### No Template Available
+| Technology | Action |
+|------------|--------|
+| {tech} | Generate minimal agent, use Context7 heavily |
+```
+
+**This table feeds into `@project-agent-generator`** for domain-specific agent creation.
+
+---
+
 ## Output Quality Checklist
 
 Before completing the validation report, verify:
@@ -372,3 +423,6 @@ Before completing the validation report, verify:
 - [ ] Integration concerns are documented
 - [ ] Test patterns can actually validate knowledge
 - [ ] Do/Don't tables are ready for stack.md
+- [ ] **Knowledge template selection table included**
+- [ ] **Integration templates identified**
+- [ ] **Missing templates flagged for minimal agent generation**

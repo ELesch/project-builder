@@ -1,0 +1,248 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "2.0.0",
+  "lastUpdated": "2026-02-01",
+  "aiTrainingCutoff": "2025-05",
+
+  "templates": {
+    "frameworks": {
+      "nextjs-15": {
+        "file": "frameworks/nextjs-15.md",
+        "technology": "nextjs",
+        "version": "15",
+        "versionRange": ">=15.0.0 <16.0.0",
+        "aiConfidence": "Medium",
+        "context7Available": true,
+        "dependencies": ["react-19"],
+        "supersedes": "nextjs-14",
+        "knowledgeFile": "nextjs-15",
+        "supersededAgents": ["dev-frontend"]
+      },
+      "react-19": {
+        "file": "frameworks/react-19.md",
+        "technology": "react",
+        "version": "19",
+        "versionRange": ">=19.0.0 <20.0.0",
+        "aiConfidence": "Low",
+        "context7Available": true,
+        "dependencies": [],
+        "supersedes": "react-18",
+        "knowledgeFile": "react-19",
+        "supersededAgents": []
+      }
+    },
+
+    "databases": {
+      "prisma-7": {
+        "file": "databases/prisma-7.md",
+        "technology": "prisma",
+        "version": "7",
+        "versionRange": ">=7.0.0 <8.0.0",
+        "aiConfidence": "Medium",
+        "context7Available": true,
+        "dependencies": [],
+        "supersedes": "prisma-5",
+        "knowledgeFile": "prisma-7",
+        "supersededAgents": ["dev-backend", "dev-database"]
+      }
+    },
+
+    "styling": {
+      "tailwind-4": {
+        "file": "styling/tailwind-4.md",
+        "technology": "tailwindcss",
+        "version": "4",
+        "versionRange": ">=4.0.0 <5.0.0",
+        "aiConfidence": "Low",
+        "context7Available": true,
+        "dependencies": [],
+        "supersedes": "tailwind-3",
+        "knowledgeFile": "tailwind-4",
+        "supersededAgents": ["dev-frontend"]
+      }
+    },
+
+    "languages": {
+      "typescript-5.5": {
+        "file": "languages/typescript-5.5.md",
+        "technology": "typescript",
+        "version": "5.5",
+        "versionRange": ">=5.5.0 <6.0.0",
+        "aiConfidence": "Medium",
+        "context7Available": false,
+        "dependencies": [],
+        "supersedes": "typescript-5.3",
+        "knowledgeFile": "typescript-5",
+        "supersededAgents": [],
+        "shared": true
+      }
+    },
+
+    "cross-cutting": {
+      "logging-pino": {
+        "file": "cross-cutting/logging-pino.md",
+        "technology": "pino",
+        "version": "9",
+        "versionRange": ">=8.0.0",
+        "aiConfidence": "High",
+        "context7Available": false,
+        "dependencies": [],
+        "knowledgeFile": "logging-pino",
+        "shared": true,
+        "sharedKnowledge": true
+      },
+      "testing-vitest": {
+        "file": "cross-cutting/testing-vitest.md",
+        "technology": "vitest",
+        "version": "2",
+        "versionRange": ">=1.0.0",
+        "aiConfidence": "High",
+        "context7Available": true,
+        "dependencies": [],
+        "knowledgeFile": "testing-vitest",
+        "shared": true,
+        "sharedKnowledge": true
+      }
+    },
+
+    "integrations": {
+      "nextjs-prisma": {
+        "file": "integrations/nextjs-prisma.md",
+        "technologies": ["nextjs", "prisma"],
+        "versions": {"nextjs": "15", "prisma": "7"},
+        "aiConfidence": "Medium",
+        "context7Available": true,
+        "dependencies": ["nextjs-15", "prisma-7"],
+        "knowledgeFile": null,
+        "integration": true
+      }
+    }
+  },
+
+  "roleTemplates": {
+    "dev": {
+      "prefix": "dev",
+      "classification": "Coding",
+      "description": "Implementation agent - builds features, writes code",
+      "tools": ["Read", "Grep", "Edit", "Write", "Bash"],
+      "readScope": "Focused (15 files max)",
+      "writeScope": "Code files (15 max)",
+      "templateFile": "dev-TEMPLATE.md.template"
+    },
+    "explore": {
+      "prefix": "explore",
+      "classification": "Research",
+      "description": "Research agent - investigates codebase, finds patterns",
+      "tools": ["Read", "Grep", "Glob", "WebFetch", "WebSearch"],
+      "readScope": "Broad (10+ files OK)",
+      "writeScope": "Reports only",
+      "templateFile": "explore-TEMPLATE.md.template"
+    },
+    "debug": {
+      "prefix": "debug",
+      "classification": "Research",
+      "description": "Debugging agent - diagnoses issues, traces errors",
+      "tools": ["Read", "Grep", "Glob", "Bash"],
+      "readScope": "Broad (10+ files OK)",
+      "writeScope": "Reports only",
+      "templateFile": "debug-TEMPLATE.md.template"
+    },
+    "audit": {
+      "prefix": "audit",
+      "classification": "Review",
+      "description": "Audit agent - reviews code for patterns and best practices",
+      "tools": ["Read", "Grep", "Glob"],
+      "readScope": "Broad read",
+      "writeScope": "Reports only",
+      "templateFile": "audit-tech-TEMPLATE.md.template"
+    }
+  },
+
+  "roleGenerationRules": {
+    "High": {
+      "roles": ["dev"],
+      "rationale": "High confidence - only implementation agent needed"
+    },
+    "Medium": {
+      "roles": ["dev", "explore", "debug", "audit"],
+      "rationale": "Medium confidence - full agent suite for verification and investigation"
+    },
+    "Low": {
+      "roles": ["dev", "explore", "debug", "audit"],
+      "rationale": "Low confidence - all agents needed, heavy reliance on Context7"
+    },
+    "Unknown": {
+      "roles": ["dev", "explore", "debug", "audit"],
+      "rationale": "Unknown confidence - all agents for maximum flexibility"
+    }
+  },
+
+  "lookup": {
+    "byTechnology": {
+      "nextjs": ["nextjs-15"],
+      "react": ["react-19"],
+      "prisma": ["prisma-7"],
+      "tailwindcss": ["tailwind-4"],
+      "typescript": ["typescript-5.5"],
+      "pino": ["logging-pino"],
+      "vitest": ["testing-vitest"]
+    },
+
+    "byProjectType": {
+      "web-app": {
+        "primary": ["nextjs-15", "react-19", "prisma-7", "tailwind-4"],
+        "shared": ["logging-pino", "testing-vitest", "typescript-5.5"],
+        "integrations": ["nextjs-prisma"]
+      },
+      "backend-api": {
+        "primary": ["prisma-7"],
+        "shared": ["logging-pino", "testing-vitest", "typescript-5.5"],
+        "integrations": []
+      },
+      "cli-tool": {
+        "primary": [],
+        "shared": ["logging-pino", "typescript-5.5"],
+        "integrations": []
+      },
+      "library": {
+        "primary": [],
+        "shared": ["testing-vitest", "typescript-5.5"],
+        "integrations": []
+      }
+    },
+
+    "supersessionMap": {
+      "dev-frontend": ["dev-nextjs-15", "dev-tailwind-v4", "dev-react-19"],
+      "dev-backend": ["dev-prisma-7"],
+      "dev-database": ["dev-prisma-7"]
+    }
+  },
+
+  "sharedKnowledgeFiles": {
+    "logging": {
+      "pino": "cross-cutting/logging-pino.md",
+      "structlog": "cross-cutting/logging-structlog.md",
+      "zerolog": "cross-cutting/logging-zerolog.md"
+    },
+    "testing": {
+      "vitest": "cross-cutting/testing-vitest.md",
+      "jest": "cross-cutting/testing-jest.md",
+      "pytest": "cross-cutting/testing-pytest.md"
+    }
+  },
+
+  "agentGeneration": {
+    "frontmatterTemplate": {
+      "required": ["name", "role"],
+      "roleFields": ["classification", "tools", "readScope", "writeScope"]
+    },
+    "outputDirectory": ".claude/agents",
+    "knowledgeDirectory": ".claude/agents/knowledge",
+    "namingPatterns": {
+      "dev": "dev-{technology}-{version}",
+      "explore": "explore-{technology}-{version}",
+      "debug": "debug-{technology}-{version}",
+      "audit": "audit-{technology}-{version}"
+    }
+  }
+}

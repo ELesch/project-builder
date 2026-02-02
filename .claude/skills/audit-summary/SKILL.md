@@ -7,9 +7,28 @@ description: |
   Use for retrospective analysis, debugging patterns, and framework improvement.
 disable-model-invocation: true
 allowed-tools: Read, Glob, Write
+context: fork
+model: haiku
 ---
 
 You are analyzing audit trail data to generate insights about project activity. This helps identify patterns, diagnose issues, and improve agent performance.
+
+## Arguments
+
+This skill accepts an optional path argument:
+
+| Usage | Description |
+|-------|-------------|
+| `/audit-summary` | Analyze current project's audit logs |
+| `/audit-summary ../other-project` | Analyze another project's audit logs |
+| `/audit-summary /absolute/path/to/project` | Analyze using absolute path |
+
+**Path resolution:**
+- If no path provided: Use `.claude/audit/` (current project)
+- If relative path provided: Resolve from current working directory
+- If absolute path provided: Use directly
+
+The path should point to the **project root** (containing `.claude/audit/`), not the audit directory itself.
 
 ## When to Use This Skill
 
@@ -17,17 +36,25 @@ You are analyzing audit trail data to generate insights about project activity. 
 - **Debugging** - Trace what led to a failure or issue
 - **Improvement** - Identify patterns for better agent prompts
 - **Reporting** - Generate summaries for stakeholders
+- **Cross-project analysis** - Audit other projects from a central location
 
 ## Process
 
 ### Step 1: Gather Audit Data
 
+**Determine the audit path:**
+1. Check if a path argument was provided
+2. If yes, use `{path}/.claude/audit/`
+3. If no, use `.claude/audit/` (current project)
+
 Use Glob to find available logs:
 
 ```
-.claude/audit/sessions/*.md
-.claude/audit/decisions/*.md
+{audit_path}/sessions/*.md
+{audit_path}/decisions/*.md
 ```
+
+If analyzing another project, verify the path exists first. If not found, report the error clearly.
 
 Ask user about scope:
 - **All time** - Analyze all available logs
@@ -74,7 +101,9 @@ Calculate metrics:
 
 ### Step 4: Generate Summary Report
 
-Create report at: `.claude/audit/summary-{YYYY-MM-DD}.md`
+Create report at: `{audit_path}/summary-{YYYY-MM-DD}.md`
+
+(If analyzing another project, write the summary to that project's audit directory, not the current one.)
 
 Use this format:
 
@@ -207,7 +236,7 @@ When user mentions specific agent:
 
 ## Examples
 
-### Example 1: Weekly Retrospective
+### Example 1: Weekly Retrospective (Current Project)
 
 ```
 /audit-summary
@@ -217,7 +246,15 @@ When user mentions specific agent:
 
 **Generates:** Summary with agent usage, failures, and recommendations.
 
-### Example 2: Debug Session
+### Example 2: Another Project
+
+```
+/audit-summary ../speed-networker
+```
+
+**Generates:** Summary for the speed-networker project, written to `../speed-networker/.claude/audit/summary-{date}.md`
+
+### Example 3: Debug Session
 
 ```
 /audit-summary
@@ -227,7 +264,7 @@ When user mentions specific agent:
 
 **Generates:** Failure-focused report for that date.
 
-### Example 3: Agent Performance
+### Example 4: Agent Performance
 
 ```
 /audit-summary
@@ -236,6 +273,14 @@ When user mentions specific agent:
 "How has dev-backend been performing?"
 
 **Generates:** Agent-specific analysis with comparison to baseline.
+
+### Example 5: Absolute Path
+
+```
+/audit-summary /home/user/projects/my-app
+```
+
+**Generates:** Summary for the project at the specified absolute path.
 
 ## Guidelines
 

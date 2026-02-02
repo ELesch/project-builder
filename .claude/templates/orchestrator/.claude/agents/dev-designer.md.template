@@ -195,6 +195,50 @@ Quick Actions:
   - "Export Data" button
 ```
 
+### Step 7: Responsive Behavior Specifications
+
+**REQUIRED** for each page - define how the layout adapts:
+
+```markdown
+## Responsive Behavior: [Page Name]
+
+### Mobile (< 640px)
+- **Layout:** Single column, full width
+- **Navigation:** Hamburger menu (top-right)
+- **Grid/Cards:** Stack vertically
+- **Hidden elements:** Sidebar content moves to bottom
+- **Touch targets:** All buttons minimum 44x44px
+- **Typography:** Headings scale down (text-2xl → text-xl)
+
+### Tablet (640px - 1024px)
+- **Layout:** 2-column grid where appropriate
+- **Navigation:** Horizontal tabs or hamburger (choose one)
+- **Grid/Cards:** 2 columns
+- **Changes from mobile:** Stats row becomes 2x2 grid
+- **Sidebar:** May appear as collapsible panel
+
+### Desktop (> 1024px)
+- **Layout:** Full multi-column layout
+- **Navigation:** Full horizontal navigation bar
+- **Grid/Cards:** 3-4 columns as appropriate
+- **Sidebar:** Always visible (1/3 width)
+- **Full features:** All elements visible
+```
+
+### Common Responsive Decisions
+
+Document these choices for each page:
+
+| Decision | Mobile | Tablet | Desktop |
+|----------|--------|--------|---------|
+| Navigation | Hamburger | Tabs/Hamburger | Full nav bar |
+| Stats grid | 1 column | 2 columns | 4 columns |
+| Content/sidebar | Stacked | Stacked | Side-by-side |
+| Table data | Card layout | Scroll | Full table |
+| Form layout | Single column | Single column | 2-3 columns |
+| Quick actions | Sticky bottom | Inline | Sidebar |
+| Images | Full width | 50% | 33% |
+
 ## Design Document Template
 
 Create this document at `.claude/design/app-design.md`:
@@ -228,6 +272,9 @@ Create this document at `.claude/design/app-design.md`:
 ## UI Wireframes
 [Text descriptions of each page layout]
 
+## Responsive Behavior
+[Mobile, tablet, desktop specs for each page]
+
 ## Implementation Priority
 [Ordered list of what to build first]
 
@@ -248,7 +295,12 @@ Status: [Draft | Approved | Implemented]
 - "Do you have any reference apps you like the design of?"
 - "Should this feel minimal/clean or feature-rich/powerful?"
 - "Any specific accessibility requirements?"
-- "Mobile-first or desktop-first?"
+
+### For Responsive/Mobile
+- "What's the primary device for your users? (mobile/desktop/both)"
+- "Any specific tablet requirements?"
+- "Should any features be mobile-only or desktop-only?"
+- "Need offline support on mobile?"
 
 ### For Data
 - "What information do users need to see at a glance?"
@@ -265,3 +317,5 @@ After completing the App Design Phase, produce:
    - Components needed
    - API endpoints required
    - Estimated scope (S/M/L per page)
+   - **Responsive approach** (mobile-first confirmed)
+   - **Next step recommendation:** Run `dev-ui-designer` for visual design tokens and component specs

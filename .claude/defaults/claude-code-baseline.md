@@ -5,7 +5,7 @@
 
 **Baseline Date**: 2026-02-01
 **Claude Code Version**: Latest (as of February 2026)
-**Project Builder Version**: 2.11.0
+**Project Builder Version**: 2.12.0
 
 ---
 
@@ -417,6 +417,274 @@ Use `/cpm_update` to check for and apply updates.
 ---
 
 ## Changelog
+
+### 2.14.0 (2026-02-01)
+
+**Role-Specific Domain Agents with Shared Knowledge**
+
+Refactors the domain agent system so that version-specific knowledge is stored **once** in shared knowledge files, and multiple role-specific agents @-reference that shared knowledge.
+
+**Architecture Change:**
+
+- **Before:** Knowledge embedded into `dev-*` agents only
+- **After:** Knowledge in `knowledge/` folder, referenced by `dev-`, `explore-`, `debug-`, `audit-` agents
+
+**New Directory Structure (Created Projects):**
+
+```
+.claude/agents/
+├── knowledge/                   # Shared knowledge (NEW location)
+│   ├── nextjs-15.md            # Next.js 15 patterns
+│   ├── prisma-7.md             # Prisma 7 patterns
+│   ├── tailwind-4.md           # Tailwind v4 patterns
+│   ├── logging-pino.md         # Cross-cutting (existing)
+│   └── testing-vitest.md       # Cross-cutting (existing)
+├── dev-nextjs-15.md            # Implementation (modified)
+├── explore-nextjs-15.md        # Research (NEW)
+├── debug-nextjs-15.md          # Debugging (NEW)
+├── audit-nextjs-15.md          # Review (NEW)
+└── ... (same for other technologies)
+```
+
+**The Four Agent Roles:**
+
+| Role | Prefix | Purpose | Tools | Write Scope |
+|------|--------|---------|-------|-------------|
+| Implementation | `dev-` | Build features | Read, Grep, Edit, Write, Bash | Code (15 max) |
+| Research | `explore-` | Investigate, understand | Read, Grep, Glob, WebFetch, WebSearch | Reports only |
+| Debugging | `debug-` | Diagnose issues | Read, Grep, Glob, Bash | Reports only |
+| Review | `audit-` | Code review | Read, Grep, Glob | Reports only |
+
+**Role Generation by Confidence:**
+
+| Confidence | Roles Generated | Rationale |
+|------------|-----------------|-----------|
+| High | `dev-` only | AI confident - implementation sufficient |
+| Medium | All 4 roles | Moderate confidence - need investigation tools |
+| Low | All 4 roles | Low confidence - full support suite needed |
+| Unknown | All 4 roles | Unknown - maximum flexibility |
+
+**New Role Agent Templates:**
+
+- **`explore-TEMPLATE.md.template`** - Base template for exploration agents
+- **`debug-TEMPLATE.md.template`** - Base template for debugging agents
+- **`audit-tech-TEMPLATE.md.template`** - Base template for tech-specific audit agents
+
+**Index.json Updates (v2.0.0):**
+
+- Added `roleTemplates` section with tool definitions for each role
+- Added `roleGenerationRules` mapping confidence levels to roles
+- Changed `agentName` to `knowledgeFile` in template entries
+- Updated `agentGeneration.namingPatterns` for all 4 roles
+
+**Project-Agent-Generator Updates:**
+
+- Deploys knowledge files to `.claude/agents/knowledge/`
+- Generates 1-4 roles per technology based on confidence
+- Uses @-references instead of embedding knowledge
+- Creates `byRole` registry in manifest
+
+**Template Updates:**
+
+- **`manifest.json.template`** - Added `knowledgeFiles`, `byRole` registry (v1.10.0)
+- **`CLAUDE.md.template`** - Added "Four Agent Roles" section with selection guide
+- **`roster.md.template`** - Added task-type routing, role-based selection flow
+
+**Benefits:**
+
+- Single source of truth for technology knowledge
+- Role-appropriate tool restrictions
+- Safe exploration without accidental modifications
+- Focused debugging with targeted access
+- Pattern compliance review before deployment
+- Smaller agent files (~50-100 lines vs 200+ embedded)
+
+**Agent Selection Flow:**
+
+```
+1. What task type?
+   ├── Building → dev-{tech}
+   ├── Research → explore-{tech}
+   ├── Debug → debug-{tech}
+   └── Review → audit-{tech}
+
+2. What technology?
+   └── Check domain agents table
+```
+
+**Example Usage:**
+
+```
+Task: "The contact form isn't saving to database"
+
+1. debug-prisma-7 → Diagnoses: "Constraint violation on email"
+2. dev-prisma-7 → Implements fix
+3. audit-prisma-7 → Verifies fix follows patterns
+```
+
+### 2.13.0 (2026-02-01)
+
+**Domain-Specific Agents - Version-Aware Code Generation**
+
+Creates technology-specific agents with embedded version knowledge instead of generic agents referencing shared stack.md.
+
+**New Agent:**
+
+- **`@project-agent-generator`** - Assembles domain agents from pre-built knowledge templates
+
+**New Directory Structure:**
+
+```
+.claude/defaults/agent-knowledge/
+├── README.md                           # Documentation
+├── index.json                          # Template registry
+├── frameworks/
+│   ├── nextjs-15.md                   # Next.js 15 patterns
+│   └── react-19.md                    # React 19 patterns
+├── databases/
+│   └── prisma-7.md                    # Prisma 7 patterns
+├── styling/
+│   └── tailwind-4.md                  # Tailwind v4 patterns
+├── cross-cutting/
+│   ├── logging-pino.md                # Pino logging patterns
+│   └── testing-vitest.md              # Vitest patterns
+└── integrations/
+    └── nextjs-prisma.md               # Integration patterns
+```
+
+**Generated Domain Agents:**
+
+| Agent | Technology | Supersedes |
+|-------|------------|------------|
+| `dev-nextjs-15` | Next.js 15 | `dev-frontend` |
+| `dev-prisma-7` | Prisma 7 | `dev-backend` |
+| `dev-tailwind-v4` | Tailwind CSS v4 | `dev-frontend` |
+| `dev-react-19` | React 19 | `dev-frontend` |
+
+**Shared Knowledge Files:**
+
+- `.claude/agents/knowledge/logging-pino.md`
+- `.claude/agents/knowledge/testing-vitest.md`
+
+**Agent Updates:**
+
+- **`project-tech-validator.md`** - Added Step 7: Select Knowledge Templates
+- **`project-initializer.md`** - Added delegation to `@project-agent-generator`
+- **`project-migrator.md`** - Added delegation to `@project-agent-generator`
+
+**Template Updates:**
+
+- **`manifest.json.template`** - Added `domainAgents` section (v1.9.0)
+- **`CLAUDE.md.template`** - Added Domain Agents section
+- **`roster.md.template`** - Added Domain Agents section with routing
+
+**Knowledge Template Format:**
+
+```yaml
+---
+technology: nextjs
+version: "15"
+versionRange: ">=15.0.0 <16.0.0"
+aiConfidence: Medium
+context7Available: true
+dependencies: [react-19]
+supersedes: nextjs-14
+---
+
+# Critical Patterns
+[Version-specific Do/Don't tables, code examples]
+```
+
+**Benefits:**
+
+- Version-specific patterns embedded in agents
+- Context7 instructions for low-confidence technologies
+- Intelligent delegation based on technology, not just domain
+- Knowledge layering: templates + validator research + Context7
+- Supersession: domain agents replace generic agents for their technology
+
+**New Workflow:**
+
+```
+Discovery → Architect → Tech-Validator → AGENT-GENERATOR → Initializer
+                              ↓
+                     Selects templates
+                     from index.json
+                              ↓
+                     Creates domain agents
+                     with embedded patterns
+```
+
+### 2.12.0 (2026-02-01)
+
+**UI Design & Responsive Layout Improvements**
+
+Adds professional UI design and responsive layout expertise to the orchestrator framework to produce desktop and mobile-ready interfaces.
+
+**New Agents (2):**
+
+| Agent | Role | Purpose |
+|-------|------|---------|
+| `dev-ui-designer` | Research | Visual design, design systems, responsive strategy, component specs |
+| `dev-auditor-responsive` | Review | Verify responsive implementation, mobile testing, breakpoint compliance |
+
+**New Checklist:**
+
+- **`responsive-review.md.template`** - Comprehensive responsive design checklist covering mobile-first CSS, touch targets, viewport handling, navigation, typography, images, forms, tables, and performance
+
+**New Template:**
+
+- **`design-system.md.template`** - Design system template with color tokens, typography scale, spacing scale, breakpoints, border radius, shadows, animation tokens, and component variants
+
+**Agent Enhancements:**
+
+- **`dev-frontend.md.template`:**
+  - Added Design Reference section linking to ui-design.md
+  - Added responsive implementation patterns (mobile-first CSS, breakpoint usage)
+  - Added mobile-specific patterns (touch targets, navigation, safe areas)
+  - Added component responsiveness checklist
+  - Added critical rules for responsive development
+
+- **`dev-designer.md.template`:**
+  - Added Step 7: Responsive Behavior Specifications
+  - Added responsive questions to ask users
+  - Added responsive handoff table for mobile/tablet/desktop
+  - Updated output to recommend UI Design phase
+
+**Documentation Updates:**
+
+- **`CLAUDE.md.template`:**
+  - Added UI Design Phase section
+  - Updated implementation flow diagram to include UI DESIGN phase
+  - Added when to use/skip UI Design guidance
+
+- **`roster.md.template`:**
+  - Added `dev-ui-designer` to Design & Architecture Agents
+  - Added `dev-auditor-responsive` to Auditor Agents
+  - Updated SDLC Phase Mapping with UI DESIGN phase
+  - Added "Using dev-ui-designer" section
+
+- **`agents/README.md.template`:**
+  - Added UI Designer to Design & Architecture table
+  - Added Responsive to Auditor Agents table
+
+**Template Version:** 1.8.0
+
+**New Workflow:**
+
+```
+APP DESIGN → UI DESIGN → DESIGN → TDD DEVELOP → INTEGRATE → REVIEW → AUDIT → DEPLOY
+dev-designer  dev-ui-designer  dev-architect  dev-test    dev-test   dev-reviewer  dev-auditor-*  dev-deploy
+```
+
+**Benefits:**
+
+- Mobile-first design approach enforced
+- Consistent design tokens across projects
+- Responsive layouts specified before implementation
+- Touch target requirements documented
+- Responsive audit catches issues before deployment
+- Professional UI output for both desktop and mobile
 
 ### 2.11.0 (2026-02-01)
 

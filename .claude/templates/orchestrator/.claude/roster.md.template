@@ -13,6 +13,111 @@ Agents are classified by their role to enforce context discipline:
 | **Testing** | Implementation + patterns | Test files only | MUST stay focused on test scope |
 | **Review** | Broad read | Reports only | Read-only analysis |
 
+## Domain Agents (Technology-Specific)
+
+Domain agents are organized by **role** (what they do) and **technology** (what they know).
+
+### Role-Based Agent Selection
+
+**First, determine the task type, then select the appropriate role:**
+
+| Task Type | Agent Prefix | Purpose | Tools | Write Scope |
+|-----------|--------------|---------|-------|-------------|
+| **Implement** | `dev-` | Build features, write code | Read, Grep, Edit, Write, Bash | Code (15 max) |
+| **Research** | `explore-` | Investigate codebase, find patterns | Read, Grep, Glob, WebFetch, WebSearch | Reports only |
+| **Debug** | `debug-` | Diagnose issues, trace errors | Read, Grep, Glob, Bash | Reports only |
+| **Review** | `audit-` | Review code for patterns/practices | Read, Grep, Glob | Reports only |
+
+### Agent Selection Flow
+
+```
+1. What task type?
+   │
+   ├── Building/implementing → Use dev-{technology}
+   │
+   ├── Understanding/researching → Use explore-{technology}
+   │
+   ├── Diagnosing/debugging → Use debug-{technology}
+   │
+   └── Reviewing/auditing → Use audit-{technology}
+
+2. What technology?
+   │
+   └── Check domain agents table below for available agents
+```
+
+### Domain Agents by Technology
+
+| Technology | dev | explore | debug | audit | Confidence | Context7 |
+|------------|-----|---------|-------|-------|------------|----------|
+{{DOMAIN_AGENTS_ROLE_TABLE}}
+
+### Task-Type Examples
+
+| Task | Agent | Why |
+|------|-------|-----|
+| "Add a user profile page" | `dev-nextjs-15` | Building feature |
+| "How does auth work in this app?" | `explore-nextjs-15` | Understanding code |
+| "Why is the form not submitting?" | `debug-nextjs-15` | Diagnosing issue |
+| "Check Next.js patterns before deploy" | `audit-nextjs-15` | Reviewing code |
+| "Implement database query" | `dev-prisma-7` | Building feature |
+| "Find where user data is stored" | `explore-prisma-7` | Understanding code |
+| "Why is the query slow?" | `debug-prisma-7` | Diagnosing issue |
+
+### Shared Knowledge Files
+
+Cross-cutting concerns are in `.claude/agents/knowledge/`:
+
+| File | Purpose | Referenced By |
+|------|---------|---------------|
+{{SHARED_KNOWLEDGE_TABLE}}
+
+Agents @-reference these files but you can also read them directly for patterns.
+
+### Supersession Rules
+
+When a domain agent exists, it **supersedes** generic agents for its technology:
+
+| If Using... | Use This | Not This |
+|-------------|----------|----------|
+{{SUPERSESSION_TABLE}}
+
+**Why supersession?** Domain agents have:
+- Version-specific patterns via knowledge files
+- Role-appropriate tool restrictions
+- Context7 instructions for low-confidence areas
+- Focused scope based on task type
+
+### When All 4 Roles Exist
+
+For technologies with Medium or Low confidence, all 4 roles are generated:
+
+```
+Task: "The contact form isn't saving to database"
+
+1. FIRST: Use debug-prisma-7 to diagnose
+   → Returns: "Database constraint violation on email field"
+
+2. THEN: Use dev-prisma-7 to implement fix
+   → Updates schema and migration
+
+3. FINALLY: Use audit-prisma-7 to verify
+   → Confirms fix follows patterns
+```
+
+### When Only dev- Exists
+
+For High confidence technologies, only `dev-` agents are generated. Use generic agents for other tasks:
+
+```
+Technology has High confidence (e.g., Pino)
+→ dev-pino exists (if any agents generated)
+→ Use generic dev-backend/dev-frontend for exploration
+→ Use shared knowledge file directly for patterns
+```
+
+---
+
 ## Implementation Agents (Coding Role)
 
 | Agent | When to Use | Scope | Max Files |
@@ -37,6 +142,7 @@ Agents are classified by their role to enforce context discipline:
 | Agent | When to Use | Output |
 |-------|-------------|--------|
 | `dev-designer` | App Design Phase - features, pages, user flows, components | Design document |
+| `dev-ui-designer` | UI Design Phase - visual design, responsive strategy, design tokens | UI design document |
 | `dev-architect` | System architecture, module boundaries, ADRs | Design documents |
 | `dev-api` | REST endpoint design, validation schemas, API contracts | API specifications |
 | `dev-database` | Query optimization, EXPLAIN analysis, data modeling | Analysis reports |
@@ -64,6 +170,7 @@ Specialized review agents for comprehensive audits. All auditors are **read-only
 | `dev-auditor-docs` | Pre-release, onboarding review | README, API docs, code comments | - |
 | `dev-auditor-dependencies` | Monthly, pre-deploy | CVEs, licenses, outdated, bloat | - |
 | `dev-auditor-errors` | Post-incident, error UX review | Boundaries, messages, logging | - |
+| `dev-auditor-responsive` | UI changes, pre-deploy | Mobile-first, breakpoints, touch targets | `responsive-review.md` |
 
 ### When to Use Auditors
 
@@ -90,15 +197,20 @@ dev-auditor-api → dev-auditor-docs → [update documentation]
 ## SDLC Phase Mapping
 
 ```
-APP DESIGN       →  DESIGN           →  TDD DEVELOP      →  INTEGRATE  →  REVIEW          →  AUDIT           →  DEPLOY
-dev-designer        dev-architect       dev-test            dev-test      dev-reviewer       dev-auditor-*      dev-deploy
-                    dev-api             dev-backend                       dev-security                          dev-docs
-                    dev-migration       dev-frontend                      dev-refactor
-                                        dev-integration
-                                        dev-data
+APP DESIGN       →  UI DESIGN        →  DESIGN           →  TDD DEVELOP      →  INTEGRATE  →  REVIEW          →  AUDIT           →  DEPLOY
+dev-designer        dev-ui-designer     dev-architect       dev-test            dev-test      dev-reviewer       dev-auditor-*      dev-deploy
+                                        dev-api             dev-backend                       dev-security                          dev-docs
+                                        dev-migration       dev-frontend                      dev-refactor
+                                                            dev-integration
+                                                            dev-data
 ```
 
-**Note:** APP DESIGN phase (using `/app-design`) should run at the start of new projects or major features to create the implementation blueprint.
+**Phase descriptions:**
+- **APP DESIGN:** Feature discovery, page inventory, user flows (what to build)
+- **UI DESIGN:** Visual design tokens, responsive strategy, component specs (how it looks)
+- **DESIGN:** Technical architecture, API contracts, database schema (how it works)
+
+**Note:** APP DESIGN phase (using `/app-design`) should run at the start of new projects or major features. Follow with UI DESIGN (`dev-ui-designer`) for visual specifications before implementation.
 
 ## TDD Workflow
 
@@ -195,7 +307,35 @@ Run this skill at the start of a new project or major feature:
 
 **Implementation flow after design:**
 ```
-/app-design → [design approved] → dev-migration → dev-backend → dev-frontend → dev-test
+/app-design → dev-ui-designer → [design approved] → dev-migration → dev-backend → dev-frontend → dev-test
+```
+
+### Using dev-ui-designer
+
+Run this agent after App Design to create visual specifications:
+
+```
+Delegate to @dev-ui-designer with the app-design.md document.
+```
+
+**What it does:**
+1. Defines design tokens (colors, typography, spacing)
+2. Creates responsive breakpoint strategy
+3. Specifies component variants and sizes
+4. Documents page layouts at each breakpoint
+5. Establishes touch target requirements
+
+**Output:** `.claude/design/ui-design.md` - visual design specifications for implementation.
+
+**When to use:**
+- After App Design, before implementation
+- When UI looks inconsistent across the app
+- When mobile experience needs improvement
+- When creating a design system
+
+**Implementation flow:**
+```
+dev-designer (features, pages) → dev-ui-designer (visual design) → dev-frontend (implementation)
 ```
 
 ---

@@ -1,0 +1,312 @@
+# Design System: {{PROJECT_NAME}}
+
+> Design tokens and patterns for consistent UI implementation.
+
+## Color Tokens
+
+### Brand Colors
+
+| Token | Light Mode | Dark Mode | Usage |
+|-------|------------|-----------|-------|
+| `primary` | #3B82F6 | #60A5FA | Primary actions, links, focus rings |
+| `primary-hover` | #2563EB | #3B82F6 | Hover state for primary |
+| `primary-active` | #1D4ED8 | #2563EB | Active/pressed state |
+| `secondary` | #6B7280 | #9CA3AF | Secondary actions, muted text |
+
+### Semantic Colors
+
+| Token | Light Mode | Dark Mode | Usage |
+|-------|------------|-----------|-------|
+| `success` | #10B981 | #34D399 | Success states, confirmations |
+| `warning` | #F59E0B | #FBBF24 | Warnings, caution states |
+| `error` | #EF4444 | #F87171 | Errors, destructive actions |
+| `info` | #3B82F6 | #60A5FA | Informational messages |
+
+### Neutral Colors
+
+| Token | Light Mode | Dark Mode | Usage |
+|-------|------------|-----------|-------|
+| `background` | #FFFFFF | #111827 | Page background |
+| `surface` | #F9FAFB | #1F2937 | Cards, elevated surfaces |
+| `surface-hover` | #F3F4F6 | #374151 | Hover on surfaces |
+| `border` | #E5E7EB | #374151 | Borders, dividers |
+| `border-subtle` | #F3F4F6 | #1F2937 | Subtle separators |
+
+### Text Colors
+
+| Token | Light Mode | Dark Mode | Usage |
+|-------|------------|-----------|-------|
+| `text-primary` | #111827 | #F9FAFB | Primary text, headings |
+| `text-secondary` | #6B7280 | #9CA3AF | Secondary text, captions |
+| `text-muted` | #9CA3AF | #6B7280 | Disabled, placeholder |
+| `text-inverse` | #FFFFFF | #111827 | Text on dark backgrounds |
+
+---
+
+## Typography Scale
+
+### Font Family
+
+| Role | Font Stack |
+|------|------------|
+| Sans | `Inter, system-ui, -apple-system, sans-serif` |
+| Mono | `JetBrains Mono, Menlo, Monaco, monospace` |
+
+### Type Scale
+
+| Token | Size | Line Height | Weight | Usage |
+|-------|------|-------------|--------|-------|
+| `text-xs` | 12px (0.75rem) | 16px (1rem) | 400 | Captions, badges, labels |
+| `text-sm` | 14px (0.875rem) | 20px (1.25rem) | 400 | Secondary text, metadata |
+| `text-base` | 16px (1rem) | 24px (1.5rem) | 400 | Body text (default) |
+| `text-lg` | 18px (1.125rem) | 28px (1.75rem) | 500 | Emphasized text, subheadings |
+| `text-xl` | 20px (1.25rem) | 28px (1.75rem) | 600 | Section titles |
+| `text-2xl` | 24px (1.5rem) | 32px (2rem) | 700 | Page titles |
+| `text-3xl` | 30px (1.875rem) | 36px (2.25rem) | 700 | Hero headings |
+| `text-4xl` | 36px (2.25rem) | 40px (2.5rem) | 800 | Display text |
+
+### Font Weights
+
+| Token | Weight | Usage |
+|-------|--------|-------|
+| `font-normal` | 400 | Body text |
+| `font-medium` | 500 | Emphasized text |
+| `font-semibold` | 600 | Subheadings, buttons |
+| `font-bold` | 700 | Headings |
+| `font-extrabold` | 800 | Display, hero text |
+
+---
+
+## Spacing Scale
+
+### Base Unit: 4px
+
+| Token | Value | Tailwind | Usage |
+|-------|-------|----------|-------|
+| `space-0` | 0 | `p-0` | Reset spacing |
+| `space-0.5` | 2px | `p-0.5` | Micro spacing |
+| `space-1` | 4px | `p-1` | Tight gaps |
+| `space-2` | 8px | `p-2` | Compact spacing |
+| `space-3` | 12px | `p-3` | Default gaps |
+| `space-4` | 16px | `p-4` | Standard padding |
+| `space-5` | 20px | `p-5` | Medium spacing |
+| `space-6` | 24px | `p-6` | Section padding |
+| `space-8` | 32px | `p-8` | Large gaps |
+| `space-10` | 40px | `p-10` | XL spacing |
+| `space-12` | 48px | `p-12` | Section margins |
+| `space-16` | 64px | `p-16` | Page sections |
+| `space-20` | 80px | `p-20` | Major sections |
+| `space-24` | 96px | `p-24` | Hero spacing |
+
+---
+
+## Breakpoints
+
+### Mobile-First (min-width)
+
+| Name | Min Width | Target Devices | Tailwind Prefix |
+|------|-----------|----------------|-----------------|
+| (base) | 0px | Mobile phones (portrait) | None |
+| `sm` | 640px | Large phones (landscape) | `sm:` |
+| `md` | 768px | Tablets (portrait) | `md:` |
+| `lg` | 1024px | Tablets (landscape), laptops | `lg:` |
+| `xl` | 1280px | Desktops | `xl:` |
+| `2xl` | 1536px | Large desktops | `2xl:` |
+
+### Container Max Widths
+
+| Breakpoint | Container Max Width |
+|------------|---------------------|
+| sm | 640px |
+| md | 768px |
+| lg | 1024px |
+| xl | 1280px |
+| 2xl | 1400px |
+
+---
+
+## Border Radius
+
+| Token | Value | Tailwind | Usage |
+|-------|-------|----------|-------|
+| `rounded-none` | 0 | `rounded-none` | Sharp corners |
+| `rounded-sm` | 4px | `rounded-sm` | Subtle rounding |
+| `rounded` | 6px | `rounded` | Default radius |
+| `rounded-md` | 8px | `rounded-md` | Cards, inputs |
+| `rounded-lg` | 12px | `rounded-lg` | Large cards, modals |
+| `rounded-xl` | 16px | `rounded-xl` | Feature cards |
+| `rounded-2xl` | 24px | `rounded-2xl` | Hero elements |
+| `rounded-full` | 9999px | `rounded-full` | Circles, pills |
+
+---
+
+## Shadows (Elevation)
+
+| Token | Shadow | Usage |
+|-------|--------|-------|
+| `shadow-none` | none | Flat elements |
+| `shadow-sm` | `0 1px 2px rgba(0,0,0,0.05)` | Subtle lift |
+| `shadow` | `0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06)` | Cards at rest |
+| `shadow-md` | `0 4px 6px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06)` | Elevated cards |
+| `shadow-lg` | `0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05)` | Dropdowns, popovers |
+| `shadow-xl` | `0 20px 25px rgba(0,0,0,0.1), 0 10px 10px rgba(0,0,0,0.04)` | Modals, dialogs |
+
+---
+
+## Animation Tokens
+
+### Durations
+
+| Token | Duration | Usage |
+|-------|----------|-------|
+| `duration-75` | 75ms | Micro interactions |
+| `duration-100` | 100ms | Quick feedback |
+| `duration-150` | 150ms | Button hover (default) |
+| `duration-200` | 200ms | Small animations |
+| `duration-300` | 300ms | Medium animations |
+| `duration-500` | 500ms | Page transitions |
+
+### Easings
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `ease-linear` | `linear` | Progress bars |
+| `ease-in` | `cubic-bezier(0.4, 0, 1, 1)` | Exit animations |
+| `ease-out` | `cubic-bezier(0, 0, 0.2, 1)` | Enter animations |
+| `ease-in-out` | `cubic-bezier(0.4, 0, 0.2, 1)` | Default (most animations) |
+
+### Common Animations
+
+| Animation | Properties |
+|-----------|------------|
+| Fade in | `opacity: 0 → 1`, `duration-200`, `ease-out` |
+| Fade out | `opacity: 1 → 0`, `duration-150`, `ease-in` |
+| Slide up | `translateY: 8px → 0`, `duration-200`, `ease-out` |
+| Scale in | `scale: 0.95 → 1`, `duration-200`, `ease-out` |
+| Spin | `rotate: 0 → 360`, `duration-1000`, `linear`, `infinite` |
+
+---
+
+## Component Variants
+
+### Button
+
+| Variant | Background | Text | Border | Usage |
+|---------|------------|------|--------|-------|
+| `primary` | primary | white | none | Main actions |
+| `secondary` | surface | text-primary | border | Secondary actions |
+| `ghost` | transparent | text-secondary | none | Tertiary actions |
+| `danger` | error | white | none | Destructive actions |
+| `link` | transparent | primary | none | Inline actions |
+
+| Size | Height | Padding | Font Size |
+|------|--------|---------|-----------|
+| `sm` | 32px | 12px 16px | text-sm |
+| `md` | 40px | 12px 20px | text-base |
+| `lg` | 48px | 16px 24px | text-lg |
+
+### Input
+
+| State | Border | Background |
+|-------|--------|------------|
+| Default | border | background |
+| Hover | border (darker) | background |
+| Focus | primary (ring) | background |
+| Error | error | background |
+| Disabled | border-subtle | surface |
+
+| Size | Height | Font Size |
+|------|--------|-----------|
+| `sm` | 36px | text-sm |
+| `md` | 44px | text-base |
+| `lg` | 52px | text-lg |
+
+### Card
+
+| Variant | Background | Border | Shadow |
+|---------|------------|--------|--------|
+| Default | surface | border | shadow-sm |
+| Elevated | surface | none | shadow-md |
+| Outlined | transparent | border | none |
+| Interactive | surface | border | shadow → shadow-md on hover |
+
+---
+
+## Touch Targets
+
+| Element | Minimum Size | Recommended |
+|---------|--------------|-------------|
+| Buttons | 44x44px | 48x48px |
+| Icon buttons | 44x44px | 48x48px |
+| Links (tappable) | 44px height | - |
+| Form inputs | 44px height | 48px height |
+| Checkboxes | 44x44px tap area | - |
+| Radio buttons | 44x44px tap area | - |
+| List items (interactive) | 48px height | - |
+
+### Spacing Between Targets
+
+- Minimum gap: 8px
+- Recommended gap: 12px
+
+---
+
+## Z-Index Scale
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `z-0` | 0 | Base layer |
+| `z-10` | 10 | Dropdowns |
+| `z-20` | 20 | Sticky headers |
+| `z-30` | 30 | Fixed navigation |
+| `z-40` | 40 | Overlays, backdrops |
+| `z-50` | 50 | Modals, dialogs |
+| `z-[100]` | 100 | Toasts, notifications |
+
+---
+
+## Implementation Notes
+
+### Tailwind CSS
+
+These tokens map to Tailwind's default configuration. Customize in `tailwind.config.js` if needed:
+
+```javascript
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          DEFAULT: '#3B82F6',
+          hover: '#2563EB',
+          active: '#1D4ED8',
+        },
+        // ... other colors
+      },
+    },
+  },
+};
+```
+
+### CSS Variables
+
+For non-Tailwind projects, use CSS custom properties:
+
+```css
+:root {
+  --color-primary: #3B82F6;
+  --color-primary-hover: #2563EB;
+  --space-4: 16px;
+  --text-base: 16px;
+  /* ... */
+}
+
+[data-theme="dark"] {
+  --color-primary: #60A5FA;
+  /* ... */
+}
+```
+
+---
+
+*Generated by dev-ui-designer on {{DATE}}*

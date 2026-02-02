@@ -292,14 +292,27 @@ Create root `CLAUDE.md` informed by:
 
    NOT generic paths.
 
-### Step 8: Create Agents
+### Step 8: Generate Domain-Specific Agents
 
+**NEW in 2.13.0:** Use the `@project-agent-generator` to create domain-specific agents.
+
+**Delegate to @project-agent-generator with:**
+- Analysis document (detected tech stack)
+- Tech validation findings (from Step 5)
+- Knowledge templates index: `.claude/defaults/agent-knowledge/index.json`
+
+**The agent generator will:**
+1. Create domain agents (e.g., `dev-nextjs-15`, `dev-prisma-7`) with embedded patterns
+2. Create shared knowledge files in `.claude/agents/knowledge/`
+3. Return manifest domainAgents section
+
+**If agent-generator unavailable (fallback):**
 Select and customize agents based on:
 - Recommended agents from analysis
 - Detected tech stack
 - Patterns found in quarantined files
 
-All agents @-mention `.claude/tech/stack.md`.
+All agents still @-mention `.claude/tech/stack.md` for reference.
 
 ### Step 9: Create Manifest
 
