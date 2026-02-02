@@ -159,12 +159,13 @@ async function main() {
 
       // Console summary
       console.log(`\nOrchestrator Analysis Complete`);
-      console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+      console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
       console.log(`Session: ${result.sessionId}`);
+      console.log(`Version: ${result.orchestratorVersion} (Template: ${result.templateVersion})`);
       console.log(`Duration: ${formatDuration(metrics.duration)}`);
       console.log(`Score: ${result.score}%`);
       console.log(`Violations: ${result.violations} (${result.errorCount} errors, ${result.warningCount} warnings)`);
-      console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+      console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
 
       if (result.violations > 0) {
         console.log(`\nViolations:`);

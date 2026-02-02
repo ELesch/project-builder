@@ -22,17 +22,51 @@ export const SEVERITY = {
 };
 
 /**
+ * Compare semantic versions (returns -1, 0, or 1)
+ */
+function compareVersions(v1, v2) {
+  if (!v1 || !v2) return 0;
+  const parts1 = v1.split('.').map(Number);
+  const parts2 = v2.split('.').map(Number);
+  for (let i = 0; i < 3; i++) {
+    const a = parts1[i] || 0;
+    const b = parts2[i] || 0;
+    if (a < b) return -1;
+    if (a > b) return 1;
+  }
+  return 0;
+}
+
+/**
  * Rule definitions for orchestrator compliance
+ *
+ * Version-aware: Rules adjust based on orchestratorVersion in metrics
  */
 export const RULES = {
   PLAN_MODE_USAGE: {
     id: 'PLAN_MODE_USAGE',
     name: 'Plan Mode Usage',
-    description: 'Non-trivial tasks should enter plan mode',
-    severity: SEVERITY.WARNING,
+    description: 'Plan mode requirements (version-dependent)',
+    severity: SEVERITY.WARNING, // Default, may be overridden by evaluate
     evaluate: (metrics) => {
+      const version = metrics.orchestratorVersion;
+
+      // v2.15.0+ requires plan mode for EVERY prompt (mandatory)
+      if (version && compareVersions(version, '2.15.0') >= 0) {
+        if (metrics.planModeEntered) {
+          return { passed: true, message: 'Plan mode was entered (required in v2.15.0+)' };
+        }
+        return {
+          passed: false,
+          message: 'Plan mode not entered (MANDATORY in v2.15.0+)',
+          recommendation: 'v2.15.0 requires EnterPlanMode for EVERY prompt - no exceptions',
+          severity: SEVERITY.ERROR // Override to error for v2.15.0+
+        };
+      }
+
+      // v2.14.x and earlier: plan mode recommended for non-trivial tasks
       if (metrics.isTrivial) {
-        return { passed: true, message: 'Trivial task - plan mode optional' };
+        return { passed: true, message: 'Trivial task - plan mode optional (pre-v2.15.0)' };
       }
       if (metrics.planModeEntered) {
         return { passed: true, message: 'Plan mode was entered' };
@@ -174,7 +208,9 @@ export function evaluateRules(metrics) {
 
   for (const rule of Object.values(RULES)) {
     const evaluation = rule.evaluate(metrics);
-    const weight = weights[rule.severity];
+    // Allow rules to override severity based on version
+    const effectiveSeverity = evaluation.severity || rule.severity;
+    const weight = weights[effectiveSeverity];
     totalWeight += weight;
 
     if (evaluation.passed) {
@@ -185,7 +221,7 @@ export function evaluateRules(metrics) {
       ruleId: rule.id,
       ruleName: rule.name,
       description: rule.description,
-      severity: rule.severity,
+      severity: effectiveSeverity,
       passed: evaluation.passed,
       message: evaluation.message,
       details: evaluation.details,
@@ -200,6 +236,8 @@ export function evaluateRules(metrics) {
 
   return {
     sessionId: metrics.sessionId,
+    orchestratorVersion: metrics.orchestratorVersion || 'unknown',
+    templateVersion: metrics.templateVersion || 'unknown',
     score,
     totalRules: results.length,
     passed: results.filter(r => r.passed).length,
@@ -212,7 +250,9 @@ export function evaluateRules(metrics) {
       isTrivial: metrics.isTrivial,
       delegationCount: metrics.delegationCount,
       mainReadCount: metrics.mainReadCount,
-      mainCodeWriteCount: metrics.mainCodeWriteCount + metrics.mainCodeEditCount
+      mainCodeWriteCount: metrics.mainCodeWriteCount + metrics.mainCodeEditCount,
+      orchestratorVersion: metrics.orchestratorVersion,
+      templateVersion: metrics.templateVersion
     }
   };
 }
@@ -229,6 +269,7 @@ export function generateReport(result) {
   lines.push(`# Orchestrator Analysis: ${result.sessionId}`);
   lines.push('');
   lines.push(`**Analysis Date:** ${new Date().toISOString()}`);
+  lines.push(`**Orchestrator Version:** ${result.orchestratorVersion} (Template: ${result.templateVersion})`);
   lines.push(`**Session Duration:** ${formatDuration(metrics.duration)}`);
   lines.push(`**Complexity:** ${metrics.isTrivial ? 'Trivial' : 'Non-trivial'}`);
   lines.push('');

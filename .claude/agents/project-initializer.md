@@ -1762,6 +1762,7 @@ If GitHub, database, and hosting were all set up during init, complete the deplo
 | Variable | Replace With |
 |----------|--------------|
 | `{{ORCHESTRATOR_VERSION}}` | Current version from .claude/VERSION |
+| `{{TEMPLATE_VERSION}}` | Current version from .claude/templates/orchestrator/TEMPLATE_VERSION |
 | `{{CREATION_METHOD}}` | "initialization" or "github-clone" |
 | `{{MIGRATED_FROM}}` | `null` or `"existing-project"` |
 | `{{ORIGINAL_PATH}}` | `null` or source path (quoted string) |

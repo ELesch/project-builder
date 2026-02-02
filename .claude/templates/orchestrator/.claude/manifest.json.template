@@ -1,7 +1,7 @@
 {
   "orchestrator": {
     "version": "{{ORCHESTRATOR_VERSION}}",
-    "templateVersion": "1.10.0"
+    "templateVersion": "{{TEMPLATE_VERSION}}"
   },
   "project": {
     "name": "{{PROJECT_NAME}}",

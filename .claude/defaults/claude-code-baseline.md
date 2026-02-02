@@ -418,6 +418,37 @@ Use `/cpm_update` to check for and apply updates.
 
 ## Changelog
 
+### 2.16.0 (2026-02-02)
+
+**Version-Aware Session Analysis - Orchestrator Version in Transcripts**
+
+Adds orchestrator version to CLAUDE.md template so it's captured in session transcripts, enabling version-aware compliance analysis.
+
+**Problem Solved:**
+
+Session analysis was applying v2.15.0 rules to sessions from older orchestrator versions, producing false positives. Without version info in transcripts, we couldn't determine which rules to apply.
+
+**Key Changes:**
+
+- **CLAUDE.md.template** - Added version header:
+  ```
+  **Orchestrator Framework Version:** {{ORCHESTRATOR_VERSION}} (Template: {{TEMPLATE_VERSION}})
+  ```
+- **TEMPLATE_VERSION file** - New single source of truth at `.claude/templates/orchestrator/TEMPLATE_VERSION`
+- **manifest.json.template** - Now uses `{{TEMPLATE_VERSION}}` placeholder
+- **transcript-parser.mjs** - Extracts version from CLAUDE.md content in transcripts
+- **orchestrator-rules.mjs** - Version-aware rule evaluation:
+  - v2.15.0+: Plan mode is ERROR if missing (mandatory)
+  - Pre-v2.15.0: Plan mode is WARNING if missing (recommended)
+  - Unknown version: Falls back to pre-v2.15.0 behavior (safe default)
+- **analyze-session.mjs** - Shows version in console output and reports
+
+**Template Version:** 1.11.0
+
+**Backward Compatibility:**
+
+Sessions without version info are treated as pre-v2.15.0, ensuring old sessions aren't incorrectly flagged.
+
 ### 2.15.0 (2026-02-02)
 
 **Mandatory Plan Mode - Domain Agent Selection for Every Prompt**

@@ -17,6 +17,8 @@
 
 This file provides guidance to Claude Code when working with code in this repository.
 
+**Orchestrator Framework Version:** {{ORCHESTRATOR_VERSION}} (Template: {{TEMPLATE_VERSION}})
+
 **IMPORTANT:** This project follows strict Test-Driven Development (TDD). YOU MUST write tests BEFORE implementation.
 
 ## Project Overview

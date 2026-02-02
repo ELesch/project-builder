@@ -122,6 +122,9 @@ export async function parseSession(sessionPath) {
     crlfDelay: Infinity
   });
 
+  let orchestratorVersion = null;
+  let templateVersion = null;
+
   for await (const line of rl) {
     if (!line.trim()) continue;
 
@@ -137,6 +140,17 @@ export async function parseSession(sessionPath) {
 
       // Capture session ID from entries if available
       if (entry.sessionId) sessionId = entry.sessionId;
+
+      // Extract orchestrator version from CLAUDE.md content in system prompts
+      // Pattern: **Orchestrator Framework Version:** X.Y.Z (Template: A.B.C)
+      const content = JSON.stringify(entry);
+      if (!orchestratorVersion) {
+        const versionMatch = content.match(/\*\*Orchestrator Framework Version:\*\*\s*(\d+\.\d+\.\d+)\s*\(Template:\s*(\d+\.\d+\.\d+)\)/);
+        if (versionMatch) {
+          orchestratorVersion = versionMatch[1];
+          templateVersion = versionMatch[2];
+        }
+      }
 
       // Process based on entry type
       if (entry.type === 'user') {
@@ -219,6 +233,8 @@ export async function parseSession(sessionPath) {
     sessionStart,
     sessionEnd,
     duration: sessionStart && sessionEnd ? (sessionEnd - sessionStart) / 1000 : 0,
+    orchestratorVersion,
+    templateVersion,
     messages,
     toolCalls,
     subagentCalls
@@ -231,7 +247,7 @@ export async function parseSession(sessionPath) {
  * @returns {SessionMetrics} - Extracted metrics
  */
 export function extractMetrics(parsed) {
-  const { toolCalls, subagentCalls, sessionStart, sessionEnd, duration } = parsed;
+  const { toolCalls, subagentCalls, sessionStart, sessionEnd, duration, orchestratorVersion, templateVersion } = parsed;
 
   // Separate main context vs subagent tool calls
   const mainToolCalls = toolCalls.filter(tc => !tc.isSubagent);
@@ -308,6 +324,10 @@ export function extractMetrics(parsed) {
     duration,
     sessionStart,
     sessionEnd,
+
+    // Orchestrator version (extracted from CLAUDE.md in transcript)
+    orchestratorVersion,
+    templateVersion,
 
     // Plan mode
     planModeEntered,
