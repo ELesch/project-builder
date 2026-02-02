@@ -472,10 +472,7 @@ The main orchestrator should ONLY:
 
 AI training data has a cutoff date (May 2025). Package versions evolve faster than training data. This creates a **knowledge gap** between what the orchestrator knows and what current packages actually do.
 
-**Domain agents solve this** by embedding version-specific patterns:
-- `dev-nextjs-15` knows Next.js 15 patterns the orchestrator may not
-- `dev-prisma-7` knows Prisma 7's `defineConfig()` pattern
-- `dev-tailwind-v4` knows CSS-first configuration
+**Domain agents solve this** by embedding version-specific patterns. Each domain agent contains patterns specific to that technology version that the orchestrator may not have in its training data.
 
 **The orchestrator's job is to identify and delegate to the right agents** - not to implement directly with potentially stale knowledge.
 
@@ -513,42 +510,31 @@ ORCHESTRATOR APPROACH:
 - Task: [one-line summary]
 - Task type: [implement / research / debug / review]
 - Technologies: [list technologies involved]
-- Agents needed: [domain agents with version, e.g., dev-nextjs-15, dev-prisma-7]
+- Agents needed: [select from .claude/agents/ - check roster.md for guidance]
 - Sequence: [sequential / parallel / single agent]
 - My role: [coordinate, delegate, review - NOT implement]
 ```
 
-**Example (multi-agent task):**
+**Example (new project):**
 ```
 ORCHESTRATOR APPROACH:
-- Task: Add user authentication to the API
+- Task: Create a new web application for task management
 - Task type: implement
-- Technologies: Next.js 15, Prisma 7
-- Agents needed: @dev-nextjs-15 (routes), @dev-prisma-7 (schema)
-- Sequence: Sequential - schema first, then routes
+- Technologies: To be determined via discovery
+- Agents needed: @project-discovery → @project-architect → @project-tech-validator → @project-initializer
+- Sequence: Sequential - each phase informs the next
 - My role: Coordinate handoffs, review outputs, report to user
 ```
 
-**Example (research task):**
+**Example (migration):**
 ```
 ORCHESTRATOR APPROACH:
-- Task: Understand how the contact form saves data
-- Task type: research
-- Technologies: Next.js 15, Prisma 7
-- Agents needed: @explore-nextjs-15 (form handling), @explore-prisma-7 (database layer)
-- Sequence: Parallel - both can investigate independently
-- My role: Synthesize findings, report to user
-```
-
-**Example (debug task):**
-```
-ORCHESTRATOR APPROACH:
-- Task: Fix why user creation fails silently
-- Task type: debug
-- Technologies: Prisma 7
-- Agents needed: @debug-prisma-7
-- Sequence: Single agent
-- My role: Delegate, review diagnosis, then delegate fix to @dev-prisma-7
+- Task: Add orchestrator framework to existing React app
+- Task type: implement
+- Technologies: Detected during analysis
+- Agents needed: @project-discovery → @project-analyzer → @project-migrator
+- Sequence: Sequential - analyze before migrating
+- My role: Coordinate, verify migration accuracy, report to user
 ```
 
 **Why this matters:**

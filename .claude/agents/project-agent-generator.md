@@ -267,7 +267,33 @@ Review Next.js 15 code for correctness. Produce audit reports—do NOT modify co
 [Role-specific instructions from audit-tech-TEMPLATE.md.template]
 ```
 
-### Step 6: Create Agent Manifest Section
+### Step 6: Generate Documentation Variables
+
+Generate content for template variables in CLAUDE.md and roster.md:
+
+**`{{QUICK_SELECTION_EXAMPLES}}`** - Examples for CLAUDE.md quick selection:
+```markdown
+| Task | Agent | Why |
+|------|-------|-----|
+| "Add a user profile page" | `dev-{first-tech}` | Building feature (implement) |
+| "How does auth work here?" | `explore-{first-tech}` | Understanding code (research) |
+| "Why won't the form submit?" | `debug-{first-tech}` | Diagnosing issue (debug) |
+| "Check patterns before deploy" | `audit-{first-tech}` | Reviewing code (audit) |
+```
+
+**`{{TASK_TYPE_EXAMPLES}}`** - Examples for roster.md:
+```markdown
+| Task | Agent | Why |
+|------|-------|-----|
+| "Add feature to [framework]" | `dev-{framework-agent}` | Building feature |
+| "Understand [framework] code" | `explore-{framework-agent}` | Understanding code |
+| "Debug [database] query" | `debug-{database-agent}` | Diagnosing issue |
+| "Review [database] patterns" | `audit-{database-agent}` | Reviewing code |
+```
+
+*Use actual generated agent names from Step 4 to populate these tables.*
+
+### Step 7: Create Agent Manifest Section
 
 Generate manifest section for `.claude/manifest.json`:
 
@@ -444,6 +470,8 @@ Before completing generation:
 - [ ] Shared knowledge files created and referenced
 - [ ] Manifest domainAgents section generated
 - [ ] Supersession relationships defined
+- [ ] `{{QUICK_SELECTION_EXAMPLES}}` populated with actual agent names
+- [ ] `{{TASK_TYPE_EXAMPLES}}` populated with actual agent names
 
 ---
 

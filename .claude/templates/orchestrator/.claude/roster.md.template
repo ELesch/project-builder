@@ -54,15 +54,7 @@ Domain agents are organized by **role** (what they do) and **technology** (what 
 
 ### Task-Type Examples
 
-| Task | Agent | Why |
-|------|-------|-----|
-| "Add a user profile page" | `dev-nextjs-15` | Building feature |
-| "How does auth work in this app?" | `explore-nextjs-15` | Understanding code |
-| "Why is the form not submitting?" | `debug-nextjs-15` | Diagnosing issue |
-| "Check Next.js patterns before deploy" | `audit-nextjs-15` | Reviewing code |
-| "Implement database query" | `dev-prisma-7` | Building feature |
-| "Find where user data is stored" | `explore-prisma-7` | Understanding code |
-| "Why is the query slow?" | `debug-prisma-7` | Diagnosing issue |
+{{TASK_TYPE_EXAMPLES}}
 
 ### Shared Knowledge Files
 
@@ -93,17 +85,19 @@ When a domain agent exists, it **supersedes** generic agents for its technology:
 For technologies with Medium or Low confidence, all 4 roles are generated:
 
 ```
-Task: "The contact form isn't saving to database"
+Task: "The feature isn't working as expected"
 
-1. FIRST: Use debug-prisma-7 to diagnose
-   → Returns: "Database constraint violation on email field"
+1. FIRST: Use debug-{technology} to diagnose
+   → Returns diagnosis with root cause
 
-2. THEN: Use dev-prisma-7 to implement fix
-   → Updates schema and migration
+2. THEN: Use dev-{technology} to implement fix
+   → Applies the fix using correct patterns
 
-3. FINALLY: Use audit-prisma-7 to verify
+3. FINALLY: Use audit-{technology} to verify
    → Confirms fix follows patterns
 ```
+
+*Replace `{technology}` with actual domain agents from the table above.*
 
 ### When Only dev- Exists
 

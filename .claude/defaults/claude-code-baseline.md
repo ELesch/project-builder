@@ -435,7 +435,12 @@ AI training data has a knowledge gap with current package versions. Domain agent
 - **Expanded declaration format** to include:
   - Task type (implement / research / debug / review)
   - Technologies involved
-  - Domain agents with versions (e.g., `dev-nextjs-15`, `dev-prisma-7`)
+  - Agent selection (check roster.md for guidance)
+- **Removed hardcoded agent names from templates** - Replaced with:
+  - `{{QUICK_SELECTION_EXAMPLES}}` - Populated at project creation
+  - `{{TASK_TYPE_EXAMPLES}}` - Populated at project creation
+  - Generic `{technology}` placeholders in examples
+- **Updated project-agent-generator** to populate template variables
 
 **New Declaration Format:**
 ```
@@ -443,7 +448,7 @@ ORCHESTRATOR APPROACH:
 - Task: [one-line summary]
 - Task type: [implement / research / debug / review]
 - Technologies: [list technologies involved]
-- Agents needed: [domain agents with version]
+- Agents needed: [select from .claude/agents/ - check roster.md]
 - Sequence: [sequential / parallel / single agent]
 - My role: [coordinate, delegate, review - NOT implement]
 ```
@@ -454,11 +459,14 @@ ORCHESTRATOR APPROACH:
 2. Orchestrator may have stale knowledge for newer packages
 3. Proper agent selection requires conscious identification
 4. "Extremely simple" was subjective and led to bypassing
+5. Hardcoded agent names won't exist in all projects (different tech stacks)
 
 **Files Changed:**
 
-- `CLAUDE.md` - Updated Plan Mode section
-- `CLAUDE.md.template` - Updated Plan Mode section for created projects
+- `CLAUDE.md` - Updated Plan Mode section, removed hardcoded examples
+- `CLAUDE.md.template` - Updated for created projects, uses template variables
+- `roster.md.template` - Uses template variables for examples
+- `project-agent-generator.md` - Generates template variable content
 
 ### 2.14.0 (2026-02-01)
 

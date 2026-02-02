@@ -285,19 +285,14 @@ Reviewing/auditing → audit-{technology}
 
 #### Quick Selection Examples
 
-| Task | Agent | Why |
-|------|-------|-----|
-| "Add a user profile page" | `dev-nextjs-15` | Building feature (implement) |
-| "How does auth work here?" | `explore-nextjs-15` | Understanding code (research) |
-| "Why won't the form submit?" | `debug-nextjs-15` | Diagnosing issue (debug) |
-| "Check patterns before deploy" | `audit-nextjs-15` | Reviewing code (audit) |
+{{QUICK_SELECTION_EXAMPLES}}
 
 #### Delegation Priority
 
-1. **Task-appropriate domain agent exists** → Use it (e.g., `explore-prisma-7` for research)
+1. **Task-appropriate domain agent exists** → Use it (match task type to agent prefix)
 2. **Only `dev-` exists for technology** → Use it for implementation, generic for other tasks
-3. **Shared knowledge exists** → Reference alongside any agent (e.g., logging-pino.md)
-4. **No domain agent** → Fall back to generic agent (e.g., `dev-frontend`)
+3. **Shared knowledge exists** → Reference alongside any agent (check `.claude/agents/knowledge/`)
+4. **No domain agent** → Fall back to generic agent (`dev-frontend`, `dev-backend`, etc.)
 
 #### Why Multiple Roles?
 
@@ -559,10 +554,7 @@ This prevents Coding agents from accumulating exploration context.
 
 AI training data has a cutoff date (May 2025). Package versions evolve faster than training data. This creates a **knowledge gap** between what the orchestrator knows and what current packages actually do.
 
-**Domain agents solve this** by embedding version-specific patterns:
-- `dev-nextjs-15` knows Next.js 15 patterns the orchestrator may not
-- `dev-prisma-7` knows Prisma 7's `defineConfig()` pattern
-- `dev-tailwind-v4` knows CSS-first configuration
+**Domain agents solve this** by embedding version-specific patterns. Check `.claude/agents/` for available domain agents, and `.claude/roster.md` for selection guidance.
 
 **The orchestrator's job is to identify and delegate to the right agents** - not to implement directly with potentially stale knowledge.
 
@@ -590,31 +582,26 @@ ORCHESTRATOR APPROACH:
 - Task: [one-line summary]
 - Task type: [implement / research / debug / review]
 - Technologies: [list technologies involved]
-- Agents needed: [domain agents with version, e.g., dev-nextjs-15, dev-prisma-7]
+- Agents needed: [select from .claude/agents/ - check roster.md for guidance]
 - Sequence: [sequential / parallel / single agent]
 - My role: [coordinate, delegate, review - NOT implement]
 ```
 
-**Example (implement):**
-```
-ORCHESTRATOR APPROACH:
-- Task: Add user profile page
-- Task type: implement
-- Technologies: Next.js 15, Prisma 7, Tailwind v4
-- Agents needed: @dev-prisma-7 (schema), @dev-nextjs-15 (page), @dev-tailwind-v4 (styling)
-- Sequence: Sequential - schema first, then page, then styling
-- My role: Coordinate handoffs, review outputs, report to user
-```
+**Agent Selection Process:**
+1. Check `.claude/roster.md` for the Domain Agents table
+2. Match task type to agent prefix: `dev-` (implement), `explore-` (research), `debug-` (debug), `audit-` (review)
+3. Match technology to available domain agents
+4. If no domain agent exists, fall back to generic agents (`dev-frontend`, `dev-backend`, etc.)
 
-**Example (debug):**
+**Example:**
 ```
 ORCHESTRATOR APPROACH:
-- Task: Fix why form submission fails
-- Task type: debug
-- Technologies: Next.js 15
-- Agents needed: @debug-nextjs-15
-- Sequence: Single agent
-- My role: Delegate, review diagnosis, then delegate fix to @dev-nextjs-15
+- Task: Add user profile feature
+- Task type: implement
+- Technologies: [check stack.md for this project's technologies]
+- Agents needed: [check roster.md for domain agents matching these technologies]
+- Sequence: Sequential - database schema, then API, then UI
+- My role: Coordinate handoffs, review outputs, report to user
 ```
 
 ### Long Task Self-Reminder Protocol
