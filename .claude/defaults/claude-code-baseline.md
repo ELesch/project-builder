@@ -3,9 +3,9 @@
 > This document captures what the Project Builder knows about Claude Code.
 > Used by `/cpm_update` to detect when updates are needed.
 
-**Baseline Date**: 2026-02-01
+**Baseline Date**: 2026-02-02
 **Claude Code Version**: Latest (as of February 2026)
-**Project Builder Version**: 2.12.0
+**Project Builder Version**: 2.18.0
 
 ---
 
@@ -63,6 +63,83 @@
 - Subagents inherit model unless overridden
 - Subagents can have restricted tool access
 - Subagents run in isolated context
+- **Custom agents created during a session aren't available until session restart**
+
+### Effective Subagent Prompting
+
+Subagents start with **minimal context** - they don't receive:
+- Parent conversation history
+- Full Claude Code system prompt
+- CLAUDE.md content (unless explicitly referenced)
+
+**You must provide context explicitly** via `@path` references or inline content.
+
+#### The Effective Delegation Formula
+
+```
+Effective Delegation =
+  Clear Scope
+  + Right Agent Type
+  + Specific File References (@path)
+  + Expected Output Format
+  + Verification Criteria
+```
+
+#### Agent Selection by Task
+
+| Task Type | Agent | Why |
+|-----------|-------|-----|
+| Research/investigate | `Explore` | Fast (Haiku), read-only, won't modify anything |
+| Multi-step implementation | `general-purpose` | Full tool access, can read/write/test |
+| Run commands | `Bash` | Isolated terminal context |
+| Plan mode research | `Plan` | Read-only, prevents recursion |
+
+#### Customizing Built-in Agents via Prompt
+
+When no domain-specific agent exists, customize a built-in agent by providing what a custom agent would embed:
+
+**Ineffective prompt:**
+```
+Review the code for issues
+```
+
+**Effective prompt:**
+```
+Use general-purpose agent to implement the caching layer.
+
+CONTEXT:
+- This project uses Redis with ioredis client
+- Cache patterns are in @src/lib/cache.ts
+- TTL conventions: user data 5min, config 1hour
+- Always use the logger from @src/lib/logger.ts
+
+TASK:
+- Add cache invalidation to user profile updates
+- Follow existing patterns in @src/services/user.ts
+
+CONSTRAINTS:
+- Do not modify the cache client configuration
+- Run tests after changes
+
+OUTPUT:
+- List of modified files
+- Test results summary
+```
+
+The prompt becomes a **temporary agent definition** with:
+- **CONTEXT** - Domain knowledge, conventions, related files
+- **TASK** - Specific work to accomplish
+- **CONSTRAINTS** - Boundaries and patterns to follow
+- **OUTPUT** - What to return to the orchestrator
+
+#### When to Use Each Approach
+
+| Situation | Approach |
+|-----------|----------|
+| Domain agent exists | Use domain agent (e.g., `dev-nextjs-15`) |
+| No domain agent, will reuse | Note for future: create domain agent |
+| No domain agent, one-time task | Customize built-in agent via prompt |
+| Quick exploration | `Explore` with minimal prompt |
 
 ---
 
@@ -418,15 +495,155 @@ Use `/cpm_update` to check for and apply updates.
 
 ## Changelog
 
+### 2.18.0 (2026-02-02)
+
+**Effective Subagent Prompting - Built-in Agent Customization**
+
+Adds comprehensive documentation on how to effectively prompt built-in agents when no domain-specific agent exists.
+
+**Problem Solved:**
+
+When no domain agent exists for a technology, orchestrators would either:
+- Try to create a new agent file (which isn't available until session restart)
+- Use generic agent names without proper context
+- Produce suboptimal results from vague prompts
+
+**Key Additions:**
+
+- **Subagent Context Gap**: Documents that subagents don't receive parent conversation history, CLAUDE.md content, or full system prompt automatically
+
+- **Effective Delegation Formula**: Clear structure for prompts:
+  ```
+  Effective Delegation =
+    Clear Scope + Right Agent Type + File References (@path) +
+    Expected Output Format + Verification Criteria
+  ```
+
+- **Built-in Agent Selection Guide**: When to use Explore vs general-purpose vs Bash
+
+- **Customizing via Prompt**: How to provide CONTEXT, TASK, CONSTRAINTS, and OUTPUT sections to simulate a custom agent
+
+**Files Changed:**
+
+| File | Change |
+|------|--------|
+| `claude-code-baseline.md` | Added "Effective Subagent Prompting" section |
+| `CLAUDE.md.template` | Added "Customizing Built-in Agents" section with examples |
+| `roster.md.template` | Added "Fallback: No Domain Agent Exists" section |
+
+**Key Constraint Documented:**
+
+> Custom agents created during a session aren't available until session restart. Don't create new agent files mid-task—instead, customize a built-in agent via the prompt.
+
+**Example Effective Prompt:**
+
+```
+Use general-purpose agent to add Redis caching.
+
+CONTEXT:
+- Redis client in @src/lib/redis.ts
+- Cache patterns in @src/services/cache-utils.ts
+- TTL: user data 5min, config 1hour
+
+TASK:
+- Add cache to getUserById, getUserByEmail
+- Invalidate on update/delete
+
+CONSTRAINTS:
+- Don't modify redis.ts client
+- Prefix keys with "user:"
+
+OUTPUT:
+- Modified files list
+- Test results
+```
+
+### 2.17.0 (2026-02-02)
+
+**Task-Level Orchestrator Analyzer - Cross-Session Compliance**
+
+Adds task-level analysis that groups related sessions together for more accurate compliance evaluation.
+
+**Problem Solved:**
+
+Session-level analysis produces false positives when:
+- Planning happens in session A, execution in session B
+- User accepts plan (context clears for execution session)
+- Multi-session workflows are used intentionally
+
+**Example:**
+```
+# Session-level (false positive)
+node analyze-session.mjs c497b649
+# "No plan mode" VIOLATION
+
+# Task-level (correct)
+node analyze-task.mjs --session c497b649
+# Task links to planning session, plan mode passes
+```
+
+**New Files:**
+
+| File | Purpose |
+|------|---------|
+| `task-linker.mjs` | Groups sessions into tasks using linking signals |
+| `task-rules.mjs` | Task-level compliance rules (evaluates full lifecycle) |
+| `analyze-task.mjs` | CLI for task-level analysis |
+
+**Task Linkage Signals:**
+
+| Signal | Reliability | Use |
+|--------|-------------|-----|
+| Slug match | High | Same `slug` field across sessions |
+| Plan content | Very High | `planContent` field in execution session |
+| Transcript reference | High | Execution references planning transcript path |
+| Timing proximity | Medium | Sessions within 5 minutes |
+
+**Task Rules (vs Session Rules):**
+
+| Rule | Task-Level Behavior |
+|------|---------------------|
+| Plan Mode Used | Pass if ANY session in task used plan mode |
+| Plan Approved | Pass if ExitPlanMode called OR execution has planContent |
+| Agent Delegation | Aggregated across all sessions |
+| No Direct Code Writes | Aggregated across all sessions |
+| Task Completion | Evaluates full task lifecycle status |
+
+**CLI Usage:**
+
+```bash
+# Analyze by slug
+node analyze-task.mjs --slug goofy-twirling-orbit
+
+# Find task containing session
+node analyze-task.mjs --session c497b649
+
+# List all tasks
+node analyze-task.mjs --list
+
+# Show timeline
+node analyze-task.mjs --timeline
+
+# Batch analysis
+node analyze-task.mjs --batch
+```
+
+**Output:** Reports saved to `.claude/audit/analysis/task-{slug}.md`
+
+**Documentation Updates:**
+
+- CLAUDE.md - Added `/analyze-task` section to Audit Trail System
+- roster.md - Added task-level analysis skill and documentation
+
 ### 2.16.0 (2026-02-02)
 
 **Version-Aware Session Analysis - Orchestrator Version in Transcripts**
 
-Adds orchestrator version to CLAUDE.md template so it's captured in session transcripts, enabling version-aware compliance analysis.
+Adds orchestrator version to CLAUDE.md template and implements version-aware compliance analysis.
 
 **Problem Solved:**
 
-Session analysis was applying v2.15.0 rules to sessions from older orchestrator versions, producing false positives. Without version info in transcripts, we couldn't determine which rules to apply.
+Session analysis was applying v2.15.0 rules to sessions from older orchestrator versions, producing false positives. Without version info, we couldn't determine which rules to apply.
 
 **Key Changes:**
 
@@ -436,12 +653,29 @@ Session analysis was applying v2.15.0 rules to sessions from older orchestrator 
   ```
 - **TEMPLATE_VERSION file** - New single source of truth at `.claude/templates/orchestrator/TEMPLATE_VERSION`
 - **manifest.json.template** - Now uses `{{TEMPLATE_VERSION}}` placeholder
-- **transcript-parser.mjs** - Extracts version from CLAUDE.md content in transcripts
+- **transcript-parser.mjs** - Version extraction from project manifest:
+  - Added `getProjectVersion()` function to read from `.claude/manifest.json`
+  - CLAUDE.md content is NOT stored in transcripts (injected at API level)
+  - Parser now accepts optional `projectPath` parameter for version lookup
+  - Added documentation of transcript JSONL format
+  - Added handling for `system` type entries (compact_boundary, etc.)
 - **orchestrator-rules.mjs** - Version-aware rule evaluation:
   - v2.15.0+: Plan mode is ERROR if missing (mandatory)
   - Pre-v2.15.0: Plan mode is WARNING if missing (recommended)
   - Unknown version: Falls back to pre-v2.15.0 behavior (safe default)
-- **analyze-session.mjs** - Shows version in console output and reports
+- **analyze-session.mjs** - Passes projectPath to parseSession for version lookup
+
+**Transcript Format Investigation:**
+
+| Entry Type | Purpose | Key Fields |
+|------------|---------|------------|
+| `user` | User messages | `message.content` |
+| `assistant` | Claude responses | `message.model`, `message.content` (includes thinking) |
+| `system` | System events | `subtype` (compact_boundary, etc.) |
+| `progress` | Hook/agent progress | `hookEvent`, `data.type` |
+| `file-history-snapshot` | File state tracking | `snapshot`, `trackedFileBackups` |
+
+**Critical Finding:** System prompts (CLAUDE.md content) are injected at API level, NOT stored in transcripts. Version must be obtained from project manifest.
 
 **Template Version:** 1.11.0
 

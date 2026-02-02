@@ -292,9 +292,11 @@ Reviewing/auditing → audit-{technology}
 #### Delegation Priority
 
 1. **Task-appropriate domain agent exists** → Use it (match task type to agent prefix)
-2. **Only `dev-` exists for technology** → Use it for implementation, generic for other tasks
+2. **Only `dev-` exists for technology** → Use it for implementation, built-in agent for other tasks
 3. **Shared knowledge exists** → Reference alongside any agent (check `.claude/agents/knowledge/`)
-4. **No domain agent** → Fall back to generic agent (`dev-frontend`, `dev-backend`, etc.)
+4. **No domain agent** → Customize a built-in agent via prompt (see below)
+
+**Important:** Custom agents created during a session aren't available until session restart. Don't create new agent files mid-task—instead, customize a built-in agent.
 
 #### Why Multiple Roles?
 
@@ -321,6 +323,72 @@ Custom agents have expertise pre-configured. When delegating, include:
 2. **Context**: Files to reference (include @.claude/tech/stack.md for version-specific work)
 3. **Constraints**: Boundaries
 4. **Output**: What to do after
+
+### Customizing Built-in Agents (Fallback Pattern)
+
+When no domain agent exists for a technology, **do not create a new agent file** (it won't be available until session restart). Instead, customize a built-in agent via the prompt.
+
+**Choose the right built-in agent:**
+
+| Task Type | Built-in Agent | Why |
+|-----------|----------------|-----|
+| Research/investigate | `Explore` | Fast (Haiku), read-only, safe |
+| Implementation | `general-purpose` | Full tool access |
+| Run commands | `Bash` | Isolated terminal context |
+
+**Customize via prompt structure:**
+
+```
+Use general-purpose agent to [TASK SUMMARY].
+
+CONTEXT:
+- [Technology/framework being used]
+- [Key files to reference with @path]
+- [Conventions and patterns to follow]
+- [Domain knowledge the agent needs]
+
+TASK:
+- [Specific work to accomplish]
+- [Acceptance criteria]
+
+CONSTRAINTS:
+- [What NOT to modify]
+- [Patterns to follow]
+- [Tests to run]
+
+OUTPUT:
+- [What to return to orchestrator]
+- [Summary format expected]
+```
+
+**Example:**
+
+```
+Use general-purpose agent to add Redis caching to user queries.
+
+CONTEXT:
+- Redis client configured in @src/lib/redis.ts
+- Existing cache patterns in @src/services/cache-utils.ts
+- TTL conventions: user data 5min, config 1hour
+- Use logger from @src/lib/logger.ts
+
+TASK:
+- Add cache layer to getUserById and getUserByEmail
+- Invalidate on user update/delete
+- Follow existing patterns in cache-utils.ts
+
+CONSTRAINTS:
+- Do not modify redis.ts client configuration
+- Keep cache keys prefixed with "user:"
+- Run existing tests after changes
+
+OUTPUT:
+- List of modified files
+- Cache key format used
+- Test results
+```
+
+The prompt becomes a **temporary agent definition**—providing the context and constraints that a custom agent would have embedded.
 
 **Example:**
 ```

@@ -1007,9 +1007,12 @@ The generic orchestrator template is in `.claude/templates/orchestrator/`. This 
 ├── commands/            # Custom slash commands
 │   └── cpm_update.md    # Update Project Builder for new Claude Code versions
 ├── scripts/             # Utility scripts
-│   ├── analyze-session.mjs    # CLI for orchestrator analysis
+│   ├── analyze-session.mjs    # CLI for session-level orchestrator analysis
+│   ├── analyze-task.mjs       # CLI for task-level orchestrator analysis
+│   ├── task-linker.mjs        # Group sessions into tasks
+│   ├── task-rules.mjs         # Task-level compliance rules
 │   ├── transcript-parser.mjs  # Parse Claude Code session transcripts
-│   └── orchestrator-rules.mjs # Orchestrator compliance rules
+│   └── orchestrator-rules.mjs # Session-level compliance rules
 ├── skills/              # Reusable skills
 │   ├── analyze-orchestrator/  # Orchestrator compliance analyzer
 │   │   └── SKILL.md
@@ -1167,6 +1170,64 @@ Options:
 - After project creation/migration (verify compliance)
 - During retrospectives (identify improvement areas)
 - Periodically with `--batch` (track trends)
+
+### /analyze-task - Task-Level Compliance Analysis
+
+Analyze orchestrator compliance at the **task level** rather than session level. A task may span multiple sessions (planning in one, execution in another).
+
+```
+node .claude/scripts/analyze-task.mjs [options]
+```
+
+Options:
+- `--slug <slug>` - Analyze task by slug (e.g., `--slug goofy-twirling-orbit`)
+- `--session <id>` - Find and analyze task containing this session
+- `--list` - List all tasks with summaries
+- `--timeline` - Show task timeline visualization
+- `--batch` - Analyze all tasks
+
+**Why Task-Level Analysis?**
+
+Session-level analysis can produce false violations when:
+- Planning happens in session A, execution in session B
+- User accepts plan (context clears for execution session)
+- Multi-session workflows are used intentionally
+
+Task-level analysis groups related sessions and evaluates compliance across the full task lifecycle.
+
+**Task Linkage Signals:**
+
+| Signal | Reliability | Description |
+|--------|-------------|-------------|
+| Slug match | High | Same slug across sessions |
+| Plan content | Very High | `planContent` field in execution session |
+| Transcript reference | High | Execution session references planning transcript |
+| Timing proximity | Medium | Sessions within 5 minutes |
+
+**Task Rules Evaluated:**
+
+| Rule | Severity | Description |
+|------|----------|-------------|
+| Plan Mode Used | Warning/Error | Plan mode in ANY session of task |
+| Plan Approved | Warning | ExitPlanMode called |
+| Agent Delegation | Error | Delegations across task lifecycle |
+| No Direct Code Writes | Error | Aggregated across all sessions |
+| File Exploration Delegated | Warning | Explore agent usage |
+| Task Completion | Info | Task reached completion status |
+
+**Output:** Task reports saved to `.claude/audit/analysis/task-{slug}.md`
+
+**Example:**
+
+```bash
+# Session-level (may show false positive)
+node .claude/scripts/analyze-session.mjs c497b649
+# "No plan mode" VIOLATION
+
+# Task-level (correct)
+node .claude/scripts/analyze-task.mjs --session c497b649
+# Task links to planning session, plan mode passes
+```
 
 ### Configuration
 

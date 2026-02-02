@@ -644,7 +644,8 @@ Project Builder skills for common workflows:
 | `/capture` | Persist knowledge to project files | When discovering patterns to remember |
 | `/audit-decision` | Record significant decisions | Before/after major architectural choices |
 | `/audit-summary` | Generate session retrospective | After project creation/migration |
-| `/analyze-orchestrator` | Evaluate orchestrator compliance | After work to verify patterns were followed |
+| `/analyze-orchestrator` | Evaluate session-level compliance | After single-session tasks |
+| `/analyze-task` | Evaluate task-level compliance | After multi-session tasks (plan in one, execute in another) |
 | `/cpm_update` | Update Project Builder | When Claude Code capabilities change |
 
 ### /analyze-orchestrator
@@ -669,4 +670,66 @@ Parses Claude Code session transcripts to detect orchestrator anti-patterns:
 **When to use:**
 - After completing project creation/migration
 - During retrospectives
+- Periodically with `--batch` for trends
+
+### /analyze-task (Task-Level)
+
+Analyzes orchestrator compliance at the **task level** rather than session level. Use this when work spans multiple sessions.
+
+**Why Task-Level Analysis?**
+
+Session-level analysis can produce false violations when:
+- Planning happens in session A, execution in session B
+- User accepts plan (context clears for execution session)
+- Multi-session workflows are used intentionally
+
+Task-level analysis groups related sessions and evaluates compliance across the full task lifecycle.
+
+**Usage:**
+```bash
+# Analyze most recent task
+node .claude/scripts/analyze-task.mjs
+
+# Analyze task by slug
+node .claude/scripts/analyze-task.mjs --slug goofy-twirling-orbit
+
+# Find and analyze task containing a specific session
+node .claude/scripts/analyze-task.mjs --session c497b649
+
+# List all tasks with summaries
+node .claude/scripts/analyze-task.mjs --list
+
+# Show task timeline visualization
+node .claude/scripts/analyze-task.mjs --timeline
+
+# Batch analyze all tasks
+node .claude/scripts/analyze-task.mjs --batch
+```
+
+**Task Linkage Signals:**
+
+| Signal | Reliability | Description |
+|--------|-------------|-------------|
+| Slug match | High | Same slug across sessions |
+| Plan content | Very High | `planContent` field in execution session |
+| Transcript reference | High | Execution session references planning transcript |
+| Timing proximity | Medium | Sessions within 5 minutes |
+
+**Task Rules Evaluated:**
+
+| Rule | Description |
+|------|-------------|
+| Plan Mode Used | Plan mode in ANY session of task |
+| Plan Approved | ExitPlanMode called |
+| Agent Delegation | Delegations across task lifecycle |
+| No Direct Code Writes | Aggregated across all sessions |
+| File Exploration Delegated | Explore agent usage |
+| Task Completion | Task reached completion status |
+
+**Output:** Task reports saved to `.claude/audit/analysis/task-{slug}.md`
+
+**When to use:**
+- After completing multi-session tasks
+- When session-level analysis shows unexpected violations
+- To understand cross-session task compliance
 - Periodically with `--batch` for trends

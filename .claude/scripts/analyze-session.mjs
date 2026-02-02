@@ -8,7 +8,7 @@
  *   node analyze-session.mjs [session-id] [--batch] [--list] [--project path] [--output path]
  */
 
-import { parseSession, extractMetrics, findSessions, getMostRecentSession, formatDuration } from './transcript-parser.mjs';
+import { parseSession, extractMetrics, findSessions, getMostRecentSession, formatDuration, getProjectVersion } from './transcript-parser.mjs';
 import { evaluateRules, generateReport, generateBatchReport } from './orchestrator-rules.mjs';
 import { writeFileSync, mkdirSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
@@ -85,7 +85,8 @@ async function main() {
 
       for (const session of sessions) {
         try {
-          const parsed = await parseSession(session.path);
+          // Pass projectPath to get version from manifest since CLAUDE.md isn't in transcripts
+          const parsed = await parseSession(session.path, projectPath);
           const metrics = extractMetrics(parsed);
           const result = evaluateRules(metrics);
           results.push(result);
@@ -145,7 +146,8 @@ async function main() {
       sessionPath = session.path;
     }
 
-    const parsed = await parseSession(sessionPath);
+    // Pass projectPath to get version from manifest since CLAUDE.md isn't in transcripts
+    const parsed = await parseSession(sessionPath, projectPath);
     const metrics = extractMetrics(parsed);
     const result = evaluateRules(metrics);
 

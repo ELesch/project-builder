@@ -101,14 +101,81 @@ Task: "The feature isn't working as expected"
 
 ### When Only dev- Exists
 
-For High confidence technologies, only `dev-` agents are generated. Use generic agents for other tasks:
+For High confidence technologies, only `dev-` agents are generated. Use built-in agents for other tasks:
 
 ```
 Technology has High confidence (e.g., Pino)
 → dev-pino exists (if any agents generated)
-→ Use generic dev-backend/dev-frontend for exploration
+→ Use Explore agent for investigation
 → Use shared knowledge file directly for patterns
 ```
+
+### Fallback: No Domain Agent Exists
+
+When no domain agent exists for a technology, **customize a built-in agent via the prompt**.
+
+**Important:** Do NOT create a new agent file mid-session—it won't be available until session restart.
+
+**Choose the right built-in agent:**
+
+| Task Type | Built-in Agent | Model | Tools |
+|-----------|----------------|-------|-------|
+| Research/investigate | `Explore` | Haiku (fast) | Read-only |
+| Implementation | `general-purpose` | Inherited | All tools |
+| Run commands | `Bash` | Inherited | Bash only |
+
+**Customize via structured prompt:**
+
+```
+Use [agent] to [task summary].
+
+CONTEXT:
+- [Technology/framework being used]
+- [Key files: @path/to/relevant/files]
+- [Conventions and patterns to follow]
+- [Domain knowledge the agent needs]
+
+TASK:
+- [Specific work to accomplish]
+- [Acceptance criteria]
+
+CONSTRAINTS:
+- [What NOT to modify]
+- [Patterns to follow]
+
+OUTPUT:
+- [What to return to orchestrator]
+```
+
+**Example - Adding a new technology:**
+
+```
+Use general-purpose agent to add Stripe payment processing.
+
+CONTEXT:
+- This is a Next.js 15 app with existing patterns in @src/lib/
+- API routes follow pattern in @src/app/api/
+- Environment variables documented in @.env.example
+- Use logger from @src/lib/logger.ts for all operations
+
+TASK:
+- Create Stripe client wrapper at src/lib/stripe.ts
+- Add checkout session API route
+- Add webhook handler for payment events
+- Follow existing error handling patterns
+
+CONSTRAINTS:
+- Use existing env var pattern (STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET)
+- Do not store card details (use Stripe hosted checkout)
+- Add tests following patterns in @src/__tests__/
+
+OUTPUT:
+- List of created/modified files
+- Environment variables needed
+- Test results
+```
+
+The prompt becomes a **temporary agent definition**—providing the context that a custom agent would have embedded. After the task, consider creating a proper domain agent for future reuse.
 
 ---
 
