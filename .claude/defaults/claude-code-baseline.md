@@ -5,7 +5,7 @@
 
 **Baseline Date**: 2026-02-02
 **Claude Code Version**: Latest (as of February 2026)
-**Project Builder Version**: 2.18.0
+**Project Builder Version**: 2.19.0
 
 ---
 
@@ -494,6 +494,86 @@ Use `/cpm_update` to check for and apply updates.
 ---
 
 ## Changelog
+
+### 2.19.0 (2026-02-02)
+
+**Orchestrator Framework Clarifications - Resolving Contradictions**
+
+Fixes 6 issues identified by Snakey project's orchestrator self-analysis that caused confusion and inconsistent behavior.
+
+**Issues Fixed:**
+
+| Issue | Problem | Solution |
+|-------|---------|----------|
+| 1 | Plan Mode vs EnterPlanMode conflation | Distinguish "planning mindset" (always) from "formal plan mode" (non-trivial) |
+| 2 | Agent creation paradox | Current task uses fallback pattern; future sessions get agent files |
+| 3 | Verification workflow unclear | Added ASCII workflow diagram with explicit decision points |
+| 4 | Research vs Explore confusion | Added decision tree and taxonomy note |
+| 5 | Recovery triggers undefined | Added failure type table with severity and actions |
+| 6 | Self-reminder is manual | Added micro-checkpoint, turn counter (5 turns / 3 agents), checkpoint in verify-agent |
+
+**Key Clarifications:**
+
+1. **Planning Mindset vs Formal Plan Mode:**
+   - Planning mindset (classify task, identify agents) - ALWAYS required
+   - Formal plan mode (EnterPlanMode tool) - only for non-trivial tasks
+   - Trivial = single file, exact instructions, <10 lines, no design decisions
+
+2. **Agent Creation Paradox Resolved:**
+   - Custom agents created mid-session aren't available until restart
+   - For current task: MUST use fallback pattern (customize built-in agent)
+   - For future sessions: SHOULD create agent file (optional)
+
+3. **Verification Workflow:**
+   - Run `/verify-agent` after EVERY single agent (not batches)
+   - Clear decision tree: PASS → proceed, FAIL → classify and recover
+
+4. **Research Task Decision Tree:**
+   - Built-in Explore: quick, <5 files, no domain knowledge
+   - Custom explore-*: technology-specific investigation
+   - Custom debug-*: error diagnosis
+
+5. **Failure Triggers Defined:**
+   - CRITICAL: Build broken → /recover immediately
+   - HIGH: Test failure, scope violation → /recover or escalate
+   - MEDIUM: Agent error, timeout, partial completion → appropriate action
+
+6. **Self-Reminder Improvements:**
+   - Micro-checkpoint at start of complex responses (3 seconds)
+   - Turn-based checkpoints: every 5 turns OR 3 agents
+   - Checkpoint reminder added to /verify-agent output
+   - Honest acknowledgment: "This is manual - focus requires discipline"
+
+**Files Changed:**
+
+| File | Change |
+|------|--------|
+| `CLAUDE.md.template` | Rewrote plan mode section, agent creation section, added verification workflow, taxonomy note, failure triggers, self-reminder improvements |
+| `roster.md.template` | Added decision tree for research tasks, clarified agent creation paradox, updated anti-patterns |
+| `verify-agent/SKILL.md.template` | Added post-verification checkpoint reminder |
+| `TEMPLATE_VERSION` | 1.11.1 → 1.12.0 |
+| `VERSION` | 2.18.1 → 2.19.0 |
+
+**Template Version:** 1.12.0
+
+**Issue Identified By:** Snakey project orchestrator self-analysis
+
+### 2.18.1 (2026-02-02)
+
+**Bugfix: Remove Contradictory Direct Work Exception**
+
+Removes stale rule that allowed orchestrators to make "small single-file edits (< 20 lines)" directly, which contradicted the stricter v2.2.0 rule that ALL code file edits must be delegated.
+
+**Files Changed:**
+
+| File | Change |
+|------|--------|
+| `CLAUDE.md.template` | Removed "Small single-file edits (< 20 lines)" from direct work list |
+| `roster.md.template` | Changed "Edit multiple files" to "Edit ANY code files" in anti-patterns |
+
+**Template Version:** 1.11.1
+
+**Issue Identified By:** Snakey project orchestrator self-analysis
 
 ### 2.18.0 (2026-02-02)
 
