@@ -13,6 +13,9 @@ CLAUDE.local.md
 # Generated audit trail (session logs, analysis reports)
 .claude/audit/
 
+# Project artifacts (briefs, architectures for projects created with PB)
+.claude/projects/
+
 # OS files
 .DS_Store
 Thumbs.db
