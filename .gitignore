@@ -10,12 +10,14 @@
 .claude/*.local.json
 CLAUDE.local.md
 
-# Generated analysis reports (session-specific, not shared)
-.claude/audit/analysis/
+# Generated audit trail (session logs, analysis reports)
+.claude/audit/
 
 # OS files
 .DS_Store
 Thumbs.db
+*.stackdump
+nul
 
 # IDE
 .idea/
