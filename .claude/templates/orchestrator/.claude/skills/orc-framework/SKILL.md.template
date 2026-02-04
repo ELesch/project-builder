@@ -1,0 +1,157 @@
+---
+name: orc-framework
+description: Verify orchestrator framework integrity and completeness. Run after updates or anytime to check framework health.
+disable-model-invocation: true
+user-invocable: true
+allowed-tools: Read, Glob, Grep, Bash
+---
+
+# Framework Verification
+
+Comprehensive self-inspection of the orchestrator framework.
+
+## When to Run
+
+- **Automatically:** After orchestrator installation or update
+- **Manually:** Anytime you suspect framework issues or after manual edits
+
+## Verification Tasks
+
+### 1. Core Framework Files
+
+Inspect these files for completeness:
+
+| File | Required Elements |
+|------|-------------------|
+| `CLAUDE.md` | Version header, orchestrator pattern, agent roster |
+| `.claude/manifest.json` | Version, templateVersion, project info |
+| `.claude/roster.md` | Agent classification, selection guide |
+
+**Check:**
+- [ ] Version headers match manifest.json
+- [ ] No contradictory instructions
+- [ ] All referenced files exist
+
+### 2. Manifest Validation
+
+Read `.claude/manifest.json` and verify:
+
+```bash
+node -e "const m = require('./.claude/manifest.json'); console.log(JSON.stringify(m, null, 2));"
+```
+
+- [ ] `orchestrator.version` is set
+- [ ] `orchestrator.templateVersion` is set
+- [ ] `project.name` matches actual project
+
+### 3. Knowledge Files (if domain agents exist)
+
+If `manifest.json` has `domainAgents.knowledgeFiles`:
+
+For each knowledge file, verify:
+- [ ] File exists at specified path
+- [ ] Has technology/version metadata
+- [ ] Has confidence level documented
+- [ ] Contains Do/Don't guidance
+
+### 4. Domain Agent Validation (if present)
+
+If `manifest.json` has `domainAgents.registry`:
+
+For each agent in registry:
+- [ ] Agent file exists in `.claude/agents/`
+- [ ] Frontmatter has: name, role, classification, allowed-tools
+- [ ] Knowledge reference is valid (if applicable)
+- [ ] Role matches prefix (dev=Coding, explore=Research, etc.)
+
+### 5. Skills Verification
+
+Check that core skills exist:
+
+```bash
+ls .claude/skills/
+```
+
+Required skills:
+- [ ] `/commit` - Safe git commits
+- [ ] `/capture` - Knowledge persistence
+- [ ] `/verify-agent` - Agent output verification
+- [ ] `/verify-framework` - This skill
+
+### 6. Cross-Reference Validation
+
+- [ ] All agents in manifest exist as files
+- [ ] All knowledge files in manifest exist
+- [ ] CLAUDE.md agent tables match roster.md
+- [ ] No orphaned agent files (in agents/ but not in manifest)
+
+## Output Format
+
+Produce a diagnostic report:
+
+```markdown
+# Framework Verification Report
+
+**Date:** {{DATE}}
+**Version:** {{VERSION}} (Template: {{TEMPLATE_VERSION}})
+
+## Summary
+
+| Category | Status | Count |
+|----------|--------|-------|
+| Core files | PASS/FAIL | 3/3 |
+| Knowledge files | PASS/FAIL | X/X |
+| Domain agents | PASS/FAIL | X/X |
+| Skills | PASS/FAIL | X/X |
+| Cross-references | PASS/FAIL | - |
+
+**Overall: PASS / WARN / FAIL**
+
+## Issues Found
+
+| Severity | Issue | Location | Fix |
+|----------|-------|----------|-----|
+| ... | ... | ... | ... |
+
+## Recommendations
+
+1. ...
+2. ...
+```
+
+Save report to: `.claude/audit/framework-verification-{{DATE}}.md`
+
+## Quick Verification (Minimal)
+
+For a fast check without full report:
+
+```bash
+# Check manifest exists and is valid JSON
+node -e "require('./.claude/manifest.json')" && echo "✓ manifest.json valid"
+
+# Check core files exist
+ls CLAUDE.md .claude/roster.md .claude/manifest.json 2>/dev/null && echo "✓ Core files present"
+
+# Count agents
+echo "Agents: $(ls .claude/agents/*.md 2>/dev/null | wc -l)"
+
+# Count skills
+echo "Skills: $(ls -d .claude/skills/*/ 2>/dev/null | wc -l)"
+```
+
+## Severity Levels
+
+| Level | Meaning | Action |
+|-------|---------|--------|
+| CRITICAL | Framework broken | Fix immediately |
+| HIGH | Missing required component | Fix before work |
+| MEDIUM | Inconsistency found | Fix when convenient |
+| LOW | Best practice suggestion | Optional |
+
+## If Verification Fails
+
+1. **CRITICAL issues:** Do not proceed with development work
+2. **HIGH issues:** Fix before delegating to agents
+3. **MEDIUM/LOW:** Document in BLOCKERS.md, fix when able
+
+For framework reinstallation, contact the Project Builder.

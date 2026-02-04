@@ -644,17 +644,17 @@ Project Builder skills for common workflows:
 | `/capture` | Persist knowledge to project files | When discovering patterns to remember |
 | `/audit-decision` | Record significant decisions | Before/after major architectural choices |
 | `/audit-summary` | Generate session retrospective | After project creation/migration |
-| `/analyze-orchestrator` | Evaluate session-level compliance | After single-session tasks |
+| `/orc-analyze` | Evaluate session-level compliance | After single-session tasks |
 | `/analyze-task` | Evaluate task-level compliance | After multi-session tasks (plan in one, execute in another) |
 | `/cpm_update` | Update Project Builder | When Claude Code capabilities change |
 
-### /analyze-orchestrator
+### /orc-analyze
 
 Parses Claude Code session transcripts to detect orchestrator anti-patterns:
 
 **Usage:**
 ```
-/analyze-orchestrator [session-id] [--batch] [--list]
+/orc-analyze [session-id] [--batch] [--list]
 ```
 
 **Rules evaluated:**

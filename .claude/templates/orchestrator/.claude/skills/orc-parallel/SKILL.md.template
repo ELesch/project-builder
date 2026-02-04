@@ -1,5 +1,5 @@
 ---
-name: parallel-check
+name: orc-parallel
 description: Pre-flight safety check before running agents in parallel. Invoke before any parallel delegation.
 disable-model-invocation: false
 user-invocable: true

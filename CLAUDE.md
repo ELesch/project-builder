@@ -560,7 +560,7 @@ ORCHESTRATOR APPROACH:
 | Am I about to read >3 files? | STOP → Delegate to Research agent |
 | Am I about to write code? | STOP → Delegate to Coding agent |
 | Did an agent just finish? | Review result, then delegate next step |
-| Have I been working for 10+ turns? | Invoke `/orchestrator-checkpoint` |
+| Have I been working for 10+ turns? | Invoke `/orc-checkpoint` |
 
 **Recovery Pattern (if you've started doing work directly):**
 1. STOP current work immediately
@@ -1081,7 +1081,7 @@ The Project Builder includes an audit trail system for tracking activity during 
 | **Session Log** | Automatic (hooks) | Agent delegations, completions, failures |
 | **Decision Log** | Manual (`/audit-decision`) | Alternatives considered, rationale |
 | **Audit Summary** | Manual (`/audit-summary`) | Retrospective analysis |
-| **Orchestrator Analysis** | Manual (`/analyze-orchestrator`) | Rule compliance, pattern detection |
+| **Orchestrator Analysis** | Manual (`/orc-analyze`) | Rule compliance, pattern detection |
 
 ### Directory Structure
 
@@ -1140,12 +1140,12 @@ Produces:
 - Failure frequency by type
 - Recommendations for improvement
 
-### /analyze-orchestrator - Compliance Analysis
+### /orc-analyze - Compliance Analysis
 
 Analyze Claude Code session transcripts for orchestrator pattern compliance:
 
 ```
-/analyze-orchestrator [session-id] [options]
+/orc-analyze [session-id] [options]
 ```
 
 Options:

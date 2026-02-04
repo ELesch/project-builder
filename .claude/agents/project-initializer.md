@@ -2317,3 +2317,44 @@ When recovering from a failed initialization:
 - [ ] Continue with remaining steps
 - [ ] Run health check
 - [ ] Update manifest.json with final status
+
+## Step 13: Framework Verification (MANDATORY)
+
+After all health checks pass, run a framework self-inspection to verify the orchestrator framework is complete and consistent.
+
+**Run the verification:**
+
+```bash
+cd {project-directory}
+claude -p "Run /orc-framework to inspect the orchestrator framework for completeness and consistency. Save the report to .claude/audit/"
+```
+
+**Or document for manual verification:**
+
+Include in handoff instructions:
+```
+After setup, run: /orc-framework
+```
+
+**What framework verification checks:**
+
+| Check | What It Validates |
+|-------|-------------------|
+| Core files | CLAUDE.md, manifest.json, roster.md exist and are consistent |
+| Knowledge files | All files in manifest.domainAgents.knowledgeFiles exist |
+| Domain agents | All agents in manifest.domainAgents.registry exist |
+| Skills | Core skills exist (commit, capture, verify-agent, verify-framework) |
+| Cross-references | No broken @-references, version headers match |
+
+**Framework verification must pass before handoff:**
+
+- [ ] `/orc-framework` returns PASS status
+- [ ] No CRITICAL or HIGH severity issues
+- [ ] Report saved to `.claude/audit/framework-verification-{date}.md`
+
+**If framework verification fails:**
+
+1. Review the issues in the report
+2. Fix any CRITICAL or HIGH issues immediately
+3. Re-run `/orc-framework`
+4. Only hand off when verification passes

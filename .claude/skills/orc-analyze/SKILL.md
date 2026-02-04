@@ -1,5 +1,5 @@
 ---
-name: analyze-orchestrator
+name: orc-analyze
 description: Analyze Claude Code session transcripts for orchestrator pattern compliance
 disable-model-invocation: true
 allowed-tools: Read, Bash, Write

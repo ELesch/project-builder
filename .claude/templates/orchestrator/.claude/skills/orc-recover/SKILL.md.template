@@ -1,5 +1,5 @@
 ---
-name: recover
+name: orc-recover
 description: Error recovery protocol when agents fail or tests break. Invoke immediately upon detecting failures.
 disable-model-invocation: false
 user-invocable: true

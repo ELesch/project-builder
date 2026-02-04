@@ -3,9 +3,9 @@
 > This document captures what the Project Builder knows about Claude Code.
 > Used by `/cpm_update` to detect when updates are needed.
 
-**Baseline Date**: 2026-02-03
+**Baseline Date**: 2026-02-04
 **Claude Code Version**: Latest (as of February 2026)
-**Project Builder Version**: 2.20.0
+**Project Builder Version**: 2.21.0
 
 ---
 
@@ -494,6 +494,48 @@ Use `/cpm_update` to check for and apply updates.
 ---
 
 ## Changelog
+
+### 2.21.0 (2026-02-04)
+
+**Skill Naming Standardization - `orc-*` Prefix Convention**
+
+Standardizes orchestrator skill names with a consistent `orc-*` prefix for clarity and discoverability.
+
+**Skill Renames:**
+
+| Old Name | New Name |
+|----------|----------|
+| `/orchestrator-checkpoint` | `/orc-checkpoint` |
+| `/verify-agent` | `/orc-verify` |
+| `/recover` | `/orc-recover` |
+| `/parallel-check` | `/orc-parallel` |
+| `/analyze-orchestrator` | `/orc-analyze` |
+
+**New Skill:**
+
+- **`/orc-framework`** - Verify orchestrator framework integrity and completeness
+  - Checks core files (CLAUDE.md, manifest.json, roster.md)
+  - Validates knowledge files and domain agents exist
+  - Verifies cross-references aren't broken
+  - Run after updates or when framework issues suspected
+
+**Benefits:**
+
+- All orchestrator skills easily discoverable with `/orc-` prefix
+- Shorter, easier to type
+- Clear distinction from app-specific skills
+- Consistent naming convention
+
+**Files Changed:**
+
+| Category | Files |
+|----------|-------|
+| Renamed (Project Builder) | `orc-checkpoint/`, `orc-analyze/` |
+| Renamed (Templates) | `orc-checkpoint/`, `orc-verify/`, `orc-recover/`, `orc-parallel/` |
+| New (Templates) | `orc-framework/` |
+| Updated | `roster.md`, `roster.md.template`, `CLAUDE.md`, `project-initializer.md`, `project-migrator.md` |
+
+**Template Version:** 1.14.0
 
 ### 2.20.0 (2026-02-03)
 

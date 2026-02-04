@@ -480,10 +480,47 @@ From analysis, these patterns were incorporated:
 ## Next Steps
 
 1. `cd {destination}` - Navigate to migrated project
-2. Review `_pre_migration/` for any configurations to manually migrate
-3. Read CLAUDE.md for development conventions
-4. Check `.claude/tech/stack.md` for version-specific guidance
-5. Delete `_pre_migration/` when no longer needed for reference
+2. Run `/orc-framework` to confirm framework integrity
+3. Review `_pre_migration/` for any configurations to manually migrate
+4. Read CLAUDE.md for development conventions
+5. Check `.claude/tech/stack.md` for version-specific guidance
+6. Delete `_pre_migration/` when no longer needed for reference
+
+## Step 11: Framework Verification (MANDATORY)
+
+After migration completes, run framework verification:
+
+**Run the verification:**
+
+```bash
+cd {destination}
+claude -p "Run /orc-framework to inspect the orchestrator framework for completeness and consistency. Save the report to .claude/audit/"
+```
+
+**Framework verification checks:**
+
+| Check | What It Validates |
+|-------|-------------------|
+| Core files | CLAUDE.md, manifest.json, roster.md exist and are consistent |
+| Knowledge files | All files in manifest.domainAgents.knowledgeFiles exist |
+| Domain agents | All agents in manifest.domainAgents.registry exist |
+| Skills | Core skills exist (commit, capture, verify-agent, verify-framework) |
+| Cross-references | No broken @-references, version headers match |
+| Migration-specific | Paths in CLAUDE.md match actual project structure |
+
+**Migration-specific verification (CRITICAL):**
+
+- [ ] All paths in CLAUDE.md exist in the migrated project
+- [ ] Domain syntax in CLAUDE.md matches source code
+- [ ] Quarantined file knowledge was extracted and incorporated
+- [ ] No generic/assumed paths remain
+
+**If framework verification fails:**
+
+1. Review the issues in the report
+2. Fix path mismatches immediately
+3. Re-run `/orc-framework`
+4. Only hand off when verification passes
 
 ## Notes
 {any warnings or observations}

@@ -422,10 +422,11 @@ Skills are reusable workflows that can be invoked by users or agents.
 | `/capture` | Save important knowledge (tech gotchas, preferences, patterns) | Users and agents |
 | `/tech-revalidate` | Check for AI knowledge drift and update validation | Users |
 | `/commit` | Safe commit with secret scanning | Before any git commit |
-| `/orchestrator-checkpoint` | Self-reminder for orchestrator role during long sessions | Orchestrator |
-| `/verify-agent` | **Mandatory** verification after every agent delegation | Orchestrator |
-| `/recover` | Error recovery when agents fail or tests break | Orchestrator |
-| `/parallel-check` | Pre-flight safety check before parallel agent execution | Orchestrator |
+| `/orc-checkpoint` | Self-reminder for orchestrator role during long sessions | Orchestrator |
+| `/orc-verify` | **Mandatory** verification after every agent delegation | Orchestrator |
+| `/orc-framework` | Verify orchestrator framework integrity and completeness | Users, after updates |
+| `/orc-recover` | Error recovery when agents fail or tests break | Orchestrator |
+| `/orc-parallel` | Pre-flight safety check before parallel agent execution | Orchestrator |
 | `/audit-decision` | Record significant decisions with alternatives and rationale | Users |
 | `/audit-summary` | Analyze session logs and generate insights | Users |
 
@@ -605,12 +606,12 @@ Analyze session logs for patterns and insights:
 
 **Output:** `.claude/audit/summary-{YYYY-MM-DD}.md`
 
-### Using /verify-agent (MANDATORY)
+### Using /orc-verify (MANDATORY)
 
 **Run after EVERY agent delegation:**
 
 ```
-/verify-agent
+/orc-verify
 ```
 
 **What it verifies:**
@@ -622,13 +623,47 @@ Analyze session logs for patterns and insights:
 
 **Decision tree after verification:**
 - All pass → Proceed to next agent
-- Test failures → Run `/recover`
+- Test failures → Run `/orc-recover`
 - Scope violation → Document and escalate
 - Quality issues → Re-delegate fix
 
 **Never proceed without verification.**
 
-### Using /recover
+### Using /orc-framework
+
+**Run to verify orchestrator framework integrity:**
+
+```
+/orc-framework
+```
+
+**When to run:**
+- After orchestrator framework installation or update
+- After manual edits to CLAUDE.md, roster.md, or manifest.json
+- When suspecting framework issues
+- Periodically as a health check
+
+**What it verifies:**
+1. **Core files** - CLAUDE.md, manifest.json, roster.md exist and are consistent
+2. **Knowledge files** - All files in manifest.domainAgents.knowledgeFiles exist
+3. **Domain agents** - All agents in manifest.domainAgents.registry exist as files
+4. **Skills** - Core skills exist (commit, capture, verify-agent, verify-framework)
+5. **Cross-references** - No broken @-references, version headers match
+
+**Output:** Report saved to `.claude/audit/framework-verification-{date}.md`
+
+**If verification fails:**
+1. Review issues by severity (CRITICAL > HIGH > MEDIUM > LOW)
+2. Fix CRITICAL and HIGH issues immediately
+3. Re-run `/orc-framework`
+4. MEDIUM/LOW can be addressed later
+
+**Can also run from command line:**
+```bash
+claude -p "Run /orc-framework and save the report to .claude/audit/"
+```
+
+### Using /orc-recover
 
 **Invoke immediately when:**
 - Agent returns errors
@@ -637,7 +672,7 @@ Analyze session logs for patterns and insights:
 - Unexpected state detected
 
 ```
-/recover
+/orc-recover
 ```
 
 **What it does:**
@@ -654,12 +689,12 @@ Analyze session logs for patterns and insights:
 
 **Never end a session with unresolved failures.**
 
-### Using /parallel-check
+### Using /orc-parallel
 
 **Run BEFORE launching agents in parallel:**
 
 ```
-/parallel-check
+/orc-parallel
 ```
 
 **What it checks:**

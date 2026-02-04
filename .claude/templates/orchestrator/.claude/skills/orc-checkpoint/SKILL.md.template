@@ -1,5 +1,5 @@
 ---
-name: orchestrator-checkpoint
+name: orc-checkpoint
 description: Self-reminder for orchestrator role. Invoke during long sessions or when focus feels off.
 disable-model-invocation: false
 user-invocable: true
