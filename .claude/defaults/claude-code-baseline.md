@@ -3,9 +3,9 @@
 > This document captures what the Project Builder knows about Claude Code.
 > Used by `/cpm_update` to detect when updates are needed.
 
-**Baseline Date**: 2026-02-02
+**Baseline Date**: 2026-02-03
 **Claude Code Version**: Latest (as of February 2026)
-**Project Builder Version**: 2.19.0
+**Project Builder Version**: 2.20.0
 
 ---
 
@@ -494,6 +494,63 @@ Use `/cpm_update` to check for and apply updates.
 ---
 
 ## Changelog
+
+### 2.20.0 (2026-02-03)
+
+**Communication Discipline - Assumption Surfacing and Failure Mode Prevention**
+
+Adds structured communication patterns inspired by best practices for focused, disciplined agent behavior. Improves assumption handling, confusion management, and completion reporting.
+
+**Key Additions:**
+
+1. **Communication Discipline Section** (CLAUDE.md.template):
+   - **Confusion Management Protocol**: STOP → Name → Ask → Wait
+   - **Assumption Surfacing Format**: Explicit format for stating assumptions before work
+   - **Push Back When Warranted**: Anti-sycophancy guidance
+   - **Scope Discipline**: "Touch only what you're asked to touch"
+   - **Simplicity Enforcement**: Pre-completion simplicity checks
+
+2. **Failure Modes to Avoid Table** (CLAUDE.md.template):
+   - 12 numbered failure modes with prevention strategies
+   - Covers: assumptions, confusion, sycophancy, overcomplication, scope creep, dead code
+
+3. **Agent Communication Standards** (agent templates):
+   - Before Starting Work: Assumption surfacing format
+   - When Confused: CLARIFICATION_NEEDED protocol
+   - Scope Discipline: What NOT to touch
+   - Simplicity Check: Pre-completion verification
+
+4. **On Completion Report Format** (agent templates):
+   - ASSUMPTIONS MADE
+   - CHANGES MADE
+   - INTENTIONALLY UNCHANGED
+   - POTENTIAL CONCERNS
+   - DEAD CODE IDENTIFIED
+   - TESTS
+
+5. **Handoff Template Updates**:
+   - Goal Confirmation block for declarative goal reframing
+   - Enhanced On Completion format with structured sections
+   - Added CLARIFICATION_NEEDED return type
+
+**Files Changed:**
+
+| File | Change |
+|------|--------|
+| `CLAUDE.md.template` | Added Communication Discipline section, Failure Modes table |
+| `handoff-full.md.template` | Added Goal Confirmation, updated On Completion format |
+| `handoff-mini.md.template` | Added structured report format |
+| `dev-backend.md.template` | Added Communication Standards, Scope Discipline, On Completion |
+| `dev-frontend.md.template` | Added Communication Standards, Scope Discipline, On Completion |
+| `dev-test.md.template` | Added Communication Standards, Scope Discipline, On Completion |
+| `dev-refactor.md.template` | Added Communication Standards, Scope Discipline, On Completion |
+| `dev-migration.md.template` | Added Communication Standards, Scope Discipline, On Completion |
+| `TEMPLATE_VERSION` | 1.12.0 → 1.13.0 |
+| `VERSION` | 2.19.0 → 2.20.0 |
+
+**Template Version:** 1.13.0
+
+**Inspiration:** Senior Software Engineer prompt patterns for focused, disciplined coding behavior.
 
 ### 2.19.0 (2026-02-02)
 

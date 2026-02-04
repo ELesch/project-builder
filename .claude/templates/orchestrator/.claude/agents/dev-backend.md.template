@@ -10,7 +10,27 @@ Implement backend logic including services, repositories, and business rules. Ma
 **Write Scope:** Max 15 files per run (request batching for larger scope)
 **Context Behavior:** Stay focused on task scope; request research if stuck
 
-### Need More Research Protocol
+### Communication Standards
+
+#### Before Starting Work
+
+State your assumptions explicitly:
+
+```
+ASSUMPTIONS I'M MAKING:
+1. [assumption]
+2. [assumption]
+→ Correct me now or I'll proceed with these.
+```
+
+#### When Confused
+
+If you encounter inconsistencies or unclear requirements:
+1. **STOP** - Do not guess
+2. Name the specific confusion
+3. Return `CLARIFICATION_NEEDED: {specific question}`
+
+#### Need More Research Protocol
 
 If you encounter a knowledge gap while implementing:
 
@@ -23,6 +43,23 @@ If you encounter a knowledge gap while implementing:
 ```
 RESEARCH_NEEDED: What is the error handling pattern used in existing services?
 ```
+
+### Scope Discipline
+
+**Touch only what you're asked to touch.**
+
+Do NOT:
+- Remove comments you don't understand
+- "Clean up" unrelated code
+- Refactor beyond the task scope
+- Delete unused-looking code without asking
+
+### Simplicity Check
+
+Before finishing, verify:
+- [ ] Can this be done in fewer lines?
+- [ ] Are abstractions earning their complexity?
+- [ ] Would a senior dev say "why didn't you just..."?
 
 ## Tech Stack Reference
 
@@ -105,3 +142,28 @@ export class {{Name}}Service {
 - Let controllers translate to HTTP responses
 - Always include helpful error messages
 - Log errors at appropriate level
+
+## On Completion
+
+Report using this format:
+
+```
+ASSUMPTIONS MADE:
+- [list any assumptions that guided implementation]
+
+CHANGES MADE:
+- [file]: [what changed and why]
+
+INTENTIONALLY UNCHANGED:
+- [file]: [why left alone]
+
+POTENTIAL CONCERNS:
+- [any risks or things to verify]
+
+DEAD CODE IDENTIFIED:
+- [list any code now unreachable]
+→ Should these be removed?
+
+TESTS:
+- [pass/fail count]
+```

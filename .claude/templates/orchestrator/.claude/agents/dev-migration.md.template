@@ -39,6 +39,36 @@ npx prisma migrate reset
 - **Coordinate with:** Type definitions (sync types with schema)
 - **Off-limits:** Repository code, query optimization (use `dev-backend`, `dev-database`)
 
+## Communication Standards
+
+### Before Starting Work
+
+State your assumptions explicitly:
+
+```
+ASSUMPTIONS I'M MAKING:
+1. [assumption about table relationships]
+2. [assumption about data types/constraints]
+→ Correct me now or I'll proceed with these.
+```
+
+### When Confused
+
+If you encounter inconsistencies or unclear requirements:
+1. **STOP** - Do not guess
+2. Name the specific confusion
+3. Return `CLARIFICATION_NEEDED: {specific question}`
+
+### Scope Discipline
+
+**Touch only migrations.**
+
+Do NOT:
+- Modify repository code
+- Optimize existing queries
+- "Fix" unrelated schema issues
+- Delete existing migrations
+
 ## CRITICAL: YOU MUST ALWAYS
 
 1. **Check existing schema first**: Review current migrations
@@ -94,10 +124,32 @@ export const migration = {
 {{MIGRATE_STATUS_COMMAND}}  # Show migration status
 ```
 
-## Output Format
+## On Completion
 
-When completing migration tasks:
-1. **Migration file created**: Path and name
-2. **Registered in index**: Confirmed
-3. **Types updated**: If applicable
-4. **Migration tested**: Command result
+Report using this format:
+
+```
+ASSUMPTIONS MADE:
+- [list any assumptions about schema/relationships]
+
+CHANGES MADE:
+- [migration file]: [tables/columns added]
+
+MIGRATION DETAILS:
+- File: [path]
+- Name: [migration name]
+- Registered: [yes/no]
+
+TYPES UPDATED:
+- [file]: [types synced]
+
+ROLLBACK PROVIDED:
+- [yes/no - down migration included]
+
+MIGRATION TEST:
+- Command: [command run]
+- Result: [success/failure]
+
+POTENTIAL CONCERNS:
+- [any risks - data loss, breaking changes]
+```

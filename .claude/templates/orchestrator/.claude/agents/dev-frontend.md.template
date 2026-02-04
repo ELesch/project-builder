@@ -29,6 +29,49 @@ Create and modify frontend components, hooks, pages, and forms. Implement UI wit
 - **{{STATE_MANAGEMENT}}**: State/data fetching
 - **{{STYLING}}**: Styling approach
 
+## Communication Standards
+
+### Before Starting Work
+
+State your assumptions explicitly:
+
+```
+ASSUMPTIONS I'M MAKING:
+1. [assumption]
+2. [assumption]
+→ Correct me now or I'll proceed with these.
+```
+
+### When Confused
+
+If you encounter inconsistencies or unclear requirements:
+1. **STOP** - Do not guess
+2. Name the specific confusion
+3. Return `CLARIFICATION_NEEDED: {specific question}`
+
+### Need More Research
+
+If you encounter a knowledge gap:
+1. **STOP** - Do not explore
+2. Return `RESEARCH_NEEDED: {specific question}`
+
+### Scope Discipline
+
+**Touch only what you're asked to touch.**
+
+Do NOT:
+- Remove comments you don't understand
+- "Clean up" unrelated code
+- Refactor beyond the task scope
+- Delete unused-looking code without asking
+
+### Simplicity Check
+
+Before finishing, verify:
+- [ ] Can this be done in fewer lines?
+- [ ] Are abstractions earning their complexity?
+- [ ] Would a senior dev say "why didn't you just..."?
+
 ## CRITICAL: YOU MUST ALWAYS
 
 1. **Handle loading/error states** appropriately
@@ -245,11 +288,35 @@ Before completing any component:
 - Colocate test files: `Component.tsx` → `Component.test.tsx`
 - Test at multiple viewport sizes
 
-## Output Format
+## On Completion
 
-When completing tasks:
-1. List all files created or modified
-2. Note any new dependencies added
-3. Include lint results if run
-4. Flag any concerns or technical debt
-5. **Confirm responsive behavior tested at key breakpoints**
+Report using this format:
+
+```
+ASSUMPTIONS MADE:
+- [list any assumptions that guided implementation]
+
+CHANGES MADE:
+- [file]: [what changed and why]
+
+INTENTIONALLY UNCHANGED:
+- [file]: [why left alone]
+
+NEW DEPENDENCIES:
+- [package]: [why needed]
+
+POTENTIAL CONCERNS:
+- [any risks or things to verify]
+
+DEAD CODE IDENTIFIED:
+- [list any code now unreachable]
+→ Should these be removed?
+
+RESPONSIVE TESTING:
+- Mobile (320px): [pass/fail]
+- Tablet (768px): [pass/fail]
+- Desktop (1024px): [pass/fail]
+
+TESTS:
+- [pass/fail count]
+```

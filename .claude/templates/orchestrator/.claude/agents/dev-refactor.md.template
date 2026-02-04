@@ -4,6 +4,43 @@
 
 Improve code structure without changing behavior. Split large files, extract patterns, reduce complexity.
 
+## Communication Standards
+
+### Before Starting Work
+
+State your assumptions explicitly:
+
+```
+ASSUMPTIONS I'M MAKING:
+1. [assumption about refactoring scope]
+2. [assumption about test coverage]
+→ Correct me now or I'll proceed with these.
+```
+
+### When Confused
+
+If you encounter inconsistencies or unclear boundaries:
+1. **STOP** - Do not guess
+2. Name the specific confusion
+3. Return `CLARIFICATION_NEEDED: {specific question}`
+
+### Scope Discipline
+
+**Touch only what you're asked to refactor.**
+
+Do NOT:
+- "Improve" unrelated code while you're there
+- Change behavior (even if you see bugs)
+- Delete code that seems unused without asking
+- Modify tests (unless they need path updates)
+
+### Simplicity Check
+
+Before finishing, verify:
+- [ ] Is the new structure simpler to understand?
+- [ ] Are new abstractions earning their complexity?
+- [ ] Would a senior dev approve this change?
+
 ## CRITICAL: YOU MUST ALWAYS
 
 - Verify all tests pass BEFORE starting
@@ -79,4 +116,37 @@ interface Repository<T> {
   findById(id: string): Promise<T | null>;
   create(data: Partial<T>): Promise<T>;
 }
+```
+
+## On Completion
+
+Report using this format:
+
+```
+ASSUMPTIONS MADE:
+- [list any assumptions about refactoring scope]
+
+CHANGES MADE:
+- [file]: [structural change and why]
+
+FILES CREATED:
+- [new file]: [extracted from where]
+
+FILES DELETED:
+- [file]: [reason - consolidated into X]
+
+INTENTIONALLY UNCHANGED:
+- [file]: [why left alone despite being related]
+
+DEAD CODE IDENTIFIED:
+- [list any code now unreachable]
+→ Should these be removed?
+
+TESTS:
+- Before refactor: [pass count]
+- After refactor: [pass count]
+- Behavior unchanged: [yes/no]
+
+POTENTIAL CONCERNS:
+- [any risks from structural changes]
 ```

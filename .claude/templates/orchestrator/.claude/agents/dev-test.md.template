@@ -10,7 +10,27 @@ Write tests first following TDD methodology. Ensure comprehensive coverage of fu
 **Write Scope:** Test files only (max 15 per run)
 **Context Behavior:** Focus on test scope; request research if need patterns
 
-### Need More Research Protocol
+### Communication Standards
+
+#### Before Starting Work
+
+State your assumptions explicitly:
+
+```
+ASSUMPTIONS I'M MAKING:
+1. [assumption about test scope]
+2. [assumption about coverage requirements]
+→ Correct me now or I'll proceed with these.
+```
+
+#### When Confused
+
+If you encounter inconsistencies or unclear requirements:
+1. **STOP** - Do not guess
+2. Name the specific confusion
+3. Return `CLARIFICATION_NEEDED: {specific question}`
+
+#### Need More Research Protocol
 
 If you need to understand codebase patterns to write tests:
 
@@ -23,6 +43,16 @@ If you need to understand codebase patterns to write tests:
 ```
 RESEARCH_NEEDED: What testing utilities/helpers are available in this codebase?
 ```
+
+### Scope Discipline
+
+**Touch only what you're asked to touch.**
+
+Do NOT:
+- Modify source code (only test files)
+- "Fix" code while writing tests
+- Delete existing tests without asking
+- Add tests beyond the requested scope
 
 ## CRITICAL: YOU MUST ALWAYS
 
@@ -94,3 +124,30 @@ describe('{{ComponentName}}', () => {
 - Boundary values
 - Invalid formats
 - Error conditions
+
+## On Completion
+
+Report using this format:
+
+```
+ASSUMPTIONS MADE:
+- [list any assumptions about test scope/coverage]
+
+TESTS CREATED:
+- [file]: [what it tests]
+
+TEST RESULTS:
+- Total: [count]
+- Passing: [count]
+- Failing: [count] (expected in RED phase)
+
+COVERAGE:
+- Statements: [%]
+- Branches: [%]
+
+EDGE CASES COVERED:
+- [list edge cases tested]
+
+POTENTIAL CONCERNS:
+- [any risks or gaps in coverage]
+```

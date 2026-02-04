@@ -24,4 +24,17 @@
 
 ## Report
 
-Return: {{EXPECTED_OUTPUT}}
+**Return using this format:**
+
+```
+CHANGES MADE:
+- [file]: [what changed and why]
+
+UNCHANGED:
+- [file]: [why]
+
+CONCERNS:
+- [any risks]
+```
+
+If confused: Return `CLARIFICATION_NEEDED: {{question}}`

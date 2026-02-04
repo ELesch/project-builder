@@ -10,6 +10,13 @@
 
 **Why:** {{BRIEF_CONTEXT_WHY_THIS_TASK_MATTERS}}
 
+## Goal Confirmation
+
+> I understand the goal is: **{{SUCCESS_STATE}}**
+>
+> I'll work toward that and show you when I believe it's achieved.
+> Correct me if this interpretation is wrong.
+
 ## Scope
 
 ### Files to Create
@@ -90,15 +97,33 @@
 
 ## On Completion
 
-**Report back with:**
-1. Files created/modified (list)
-2. Test results (pass/fail count)
-3. Any issues encountered
-4. Suggested next steps
+**Report back using this format:**
+
+```
+ASSUMPTIONS MADE:
+- [list any assumptions that guided implementation]
+
+CHANGES MADE:
+- [file]: [what changed and why]
+
+INTENTIONALLY UNCHANGED:
+- [file]: [reason left alone]
+
+POTENTIAL CONCERNS:
+- [any risks or things to verify]
+
+DEAD CODE IDENTIFIED:
+- [list] → Should these be removed?
+
+TESTS:
+- [pass/fail count]
+- [any new tests added]
+```
 
 **If blocked:**
-- Return `RESEARCH_NEEDED: {{question}}` - do NOT explore
-- Return `BLOCKED: {{issue}}` - orchestrator will handle
+- Return `CLARIFICATION_NEEDED: {{question}}` - for unclear requirements
+- Return `RESEARCH_NEEDED: {{question}}` - for technical gaps (do NOT explore yourself)
+- Return `BLOCKED: {{issue}}` - for external dependencies
 
 ---
 
