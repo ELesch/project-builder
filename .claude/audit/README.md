@@ -2,34 +2,38 @@
 
 This directory contains audit logs and decision records for tracking activity during project creation and development.
 
-## Purpose
+## What Gets Tracked
 
-The audit trail captures **process** rather than just **outcomes**:
-
-- **What happened** - Agent delegations, tool usage, failures
-- **Why decisions were made** - Alternatives considered, rationale
-- **When things occurred** - Timestamps and phase transitions
-- **What went wrong** - Failure details for debugging
+| Component | Capture Method | Purpose |
+|-----------|----------------|---------|
+| **Session Log** | Automatic (hooks) | Agent delegations, completions, failures |
+| **Decision Log** | Manual (`/audit-decision`) | Alternatives considered, rationale |
+| **Audit Summary** | Manual (`/audit-summary`) | Retrospective analysis |
+| **Orchestrator Analysis** | Manual (`/orc-analyze`) | Rule compliance, pattern detection |
 
 ## Directory Structure
 
 ```
 .claude/audit/
 ├── README.md           # This file
-├── sessions/           # Auto-generated session logs (by date)
-│   └── YYYY-MM-DD.md   # Daily session log
-└── decisions/          # Manual decision records
-    └── YYYY-MM-DD-{id}.md
+├── sessions/           # Auto-generated session logs
+│   └── YYYY-MM-DD.md   # Daily log file
+├── decisions/          # Manual decision records
+│   └── YYYY-MM-DD-{id}.md
+└── analysis/           # Orchestrator compliance reports
+    └── {session-id}-analysis.md
 ```
 
-## Session Logs (Automatic)
+## Automatic Capture (via hooks)
 
-Session logs are automatically created by hooks when:
+Events automatically logged to session files:
 
-- Agents are delegated to (`SubagentStart`)
-- Agents complete (`SubagentStop`)
-- Tools fail (`PostToolUseFailure`)
-- Sessions start/end
+| Event | What's Captured |
+|-------|-----------------|
+| `SubagentStart` | Agent name, task description |
+| `SubagentStop` | Agent completion status |
+| `PostToolUseFailure` | Tool name, error message |
+| `SessionStart/End` | Session boundaries |
 
 ### Session Log Format
 
@@ -41,7 +45,6 @@ Session logs are automatically created by hooks when:
 | Field | Value |
 |-------|-------|
 | Task | Implement user service endpoints |
-| Scope | src/modules/user/ |
 | Status | In Progress |
 
 ### 10:30:00 - Agent Completed: dev-backend
@@ -50,74 +53,125 @@ Session logs are automatically created by hooks when:
 |-------|-------|
 | Duration | 15m |
 | Status | Success |
-| Files Modified | 8 |
-
-### 10:45:00 - Tool Failed: Bash
-
-| Field | Value |
-|-------|-------|
-| Command | npm run build |
-| Error | TypeScript error TS2345 |
-| Context | dev-frontend agent |
 ```
 
-## Decision Records (Manual via /audit-decision)
+## Skills
 
-Use the `/audit-decision` skill to record significant decisions:
+### /audit-decision - Record Decisions
+
+Use when making significant decisions:
 
 ```
 /audit-decision
 ```
 
-Creates a structured record of:
+Records:
 - What decision was made
 - Alternatives considered (with pros/cons)
-- Why the choice was made
-- Context and constraints
+- Why this choice was made
+- Constraints that influenced the decision
 
-### When to Record Decisions
+**When to use:** Technology choices, architecture decisions, trade-off resolutions, changing previous decisions.
 
-- Technology choices (framework, database, patterns)
-- Architecture decisions (module boundaries, API design)
-- Trade-off decisions (performance vs. simplicity)
-- Reversals (changing previous decisions)
+### /audit-summary - Analyze Patterns
 
-## Audit Summary (via /audit-summary)
-
-Use the `/audit-summary` skill to analyze session logs:
+Generate insights from session logs:
 
 ```
 /audit-summary
 ```
 
-Generates:
-- Agent delegation patterns
-- Failure frequency and types
-- Time spent in different phases
-- Recommendations for improvement
+Produces agent delegation patterns, failure frequency, and recommendations.
 
-## Usage in Project Builder
+### /orc-analyze - Compliance Analysis
 
-The Project Builder uses audit trails to:
+Analyze session transcripts for orchestrator pattern compliance:
 
-1. **Debug failures** - Trace what happened before an error
-2. **Improve agents** - Identify patterns in agent outputs
-3. **Track progress** - See phase transitions during creation
-4. **Learn patterns** - Understand what works and what doesn't
+```
+/orc-analyze [session-id] [options]
+```
+
+Options:
+- `session-id` - Specific session (default: most recent)
+- `--batch` - Analyze all sessions
+- `--list` - List available sessions
+
+**Rules Evaluated:**
+
+| Rule | Severity | Description |
+|------|----------|-------------|
+| Plan Mode Usage | Warning | Non-trivial tasks should enter plan mode |
+| Agent Delegation | Error | Must delegate to agents (not work directly) |
+| File Read Limit | Warning | ≤3 consecutive reads in main context |
+| No Direct Code Write | Error | Never write code files in main context |
+| Explore Agent Usage | Warning | Use Explore agent for >5 reads |
+| Batch File Limit | Warning | ≤20 files per agent delegation |
+
+**When to use:** After project creation/migration, during retrospectives, periodically with `--batch`.
+
+### /analyze-task - Task-Level Analysis
+
+Analyze compliance at task level (spans multiple sessions):
+
+```
+node .claude/scripts/analyze-task.mjs [options]
+```
+
+Options:
+- `--slug <slug>` - Analyze by task slug
+- `--session <id>` - Find task containing session
+- `--list` - List all tasks
+- `--timeline` - Show timeline
+- `--batch` - Analyze all tasks
+
+**Why Task-Level?** Session-level analysis can produce false violations when planning and execution happen in different sessions.
+
+**Task Linkage Signals:**
+
+| Signal | Reliability | Description |
+|--------|-------------|-------------|
+| Slug match | High | Same slug across sessions |
+| Plan content | Very High | `planContent` field in execution session |
+| Transcript reference | High | Execution session references planning transcript |
+| Timing proximity | Medium | Sessions within 5 minutes |
+
+## Configuration
+
+Audit hooks in `.claude/settings.json`:
+
+```json
+{
+  "hooks": {
+    "SubagentStart": [{"hooks": [{"type": "command", "command": ".claude/hooks/audit-hooks.sh"}]}],
+    "SubagentStop": [{"hooks": [{"type": "command", "command": ".claude/hooks/audit-hooks.sh"}]}],
+    "PostToolUseFailure": [{"hooks": [{"type": "command", "command": ".claude/hooks/audit-hooks.sh"}]}]
+  }
+}
+```
+
+## Created Projects
+
+All created projects include the audit trail system. The manifest.json tracks:
+
+```json
+{
+  "audit": {
+    "enabled": true,
+    "sessionsDir": ".claude/audit/sessions",
+    "decisionsDir": ".claude/audit/decisions"
+  }
+}
+```
 
 ## Privacy Considerations
 
 - Session logs may contain file paths and error messages
 - Decision records may contain business context
-- Both are gitignored by default (see `.gitignore`)
+- Both are gitignored by default
 - Share only sanitized summaries externally
-
-## Files Are Append-Only
-
-Session log files are append-only. Never edit past entries. This ensures an accurate historical record.
 
 ## Retention
 
 - Session logs: Keep for project lifetime
 - Decision records: Keep permanently (they document architecture)
-- Old logs can be archived but not deleted during active development
+- Files are append-only - never edit past entries

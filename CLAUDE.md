@@ -110,16 +110,16 @@ Stack defaults are organized by project type:
 
 | Project Type | Stack Reference |
 |--------------|-----------------|
-| Web Application | @.claude/defaults/stacks/web-app.md |
-| Backend API | @.claude/defaults/stacks/backend-api.md |
-| CLI Tool | @.claude/defaults/stacks/cli-tool.md |
-| Library/Package | @.claude/defaults/stacks/library.md |
-| Desktop Application | @.claude/defaults/stacks/desktop-app.md |
-| Data Pipeline | @.claude/defaults/stacks/data-pipeline.md |
-| Mobile Application | @.claude/defaults/stacks/mobile-app.md |
-| .NET Aspire (Azure) | @.claude/defaults/stacks/dotnet-aspire.md |
+| Web Application | `.claude/defaults/stacks/web-app.md` |
+| Backend API | `.claude/defaults/stacks/backend-api.md` |
+| CLI Tool | `.claude/defaults/stacks/cli-tool.md` |
+| Library/Package | `.claude/defaults/stacks/library.md` |
+| Desktop Application | `.claude/defaults/stacks/desktop-app.md` |
+| Data Pipeline | `.claude/defaults/stacks/data-pipeline.md` |
+| Mobile Application | `.claude/defaults/stacks/mobile-app.md` |
+| .NET Aspire (Azure) | `.claude/defaults/stacks/dotnet-aspire.md` |
 
-Use the appropriate stack default based on detected or specified project type.
+Load the appropriate stack file with `@` when the project type is determined.
 
 ## User Preferences (Local)
 
@@ -367,459 +367,82 @@ If asked to update a created project and no `@project-updater` exists:
 
 **Critical constraint:** Agents cannot spawn other agents. Only the orchestrator delegates.
 
-### Scope Limits
+**Key limits:**
+- Research agents: 1 document output
+- Coding agents: 15-20 files max per run (batch if more)
+- Never run file-writing agents in parallel
 
-Limit work delegated to each agent to prevent context overflow and ensure quality:
-
-| Agent | Max Output | Rationale |
-|-------|------------|-----------|
-| `@project-discovery` | 1 document | Single brief |
-| `@project-architect` | 1 document | Single architecture doc |
-| `@project-tech-validator` | 1 document | Single validation report |
-| `@project-initializer` | ~15-20 files per run | Beyond this, batch into multiple runs |
-| `@project-analyzer` | 1 document | Single analysis |
-| `@project-migrator` | ~15-20 files per run | Beyond this, batch into multiple runs |
-
-**When an agent would create >20 files:**
-1. Have the agent create files in batches by directory/concern
-2. Run the agent multiple times with different scopes
-3. Example: "Create `.claude/` structure first, then `src/` structure, then config files"
-
-### Parallel vs Sequential Execution
-
-**Run SEQUENTIALLY when:**
-- One agent's output is another's input (discovery → architect → initializer)
-- Agents modify the same files or directories
-- User approval is needed between steps
-
-**Can run in PARALLEL when:**
-- Agents operate on completely separate directories
-- No file overlap exists
-- Both agents are read-only (exploration)
-
-| Combination | Safe in Parallel? | Notes |
-|-------------|-------------------|-------|
-| discovery + analyzer | **Yes** | Different outputs, no file writes |
-| architect + analyzer | **Yes** | Both produce separate documents |
-| architect + tech-validator | **No** | Validator needs architect output |
-| tech-validator + initializer | **No** | Initializer needs validation report |
-| initializer + migrator | **No** | Both create `.claude/` files |
-| Two initializer runs | **No** | Same project directory |
-
-### Batching Large Operations
-
-When `@project-initializer` or `@project-migrator` needs to create many files:
-
-```
-Batch 1: Core structure
-  - CLAUDE.md, README.md, .env.example
-  - .claude/manifest.json, .claude/roster.md
-
-Batch 2: Agent files
-  - .claude/agents/*.md
-
-Batch 3: Status and tracking
-  - .claude/PROJECT_STATUS.md, BLOCKERS.md, etc.
-
-Batch 4: Source code scaffolding
-  - src/lib/logger.ts, src/app/...
-
-Batch 5: Configuration
-  - package.json, tsconfig.json, etc.
-```
-
-**Orchestrator responsibility:** Break large operations into batches and run the same agent multiple times with specific scope instructions.
-
-### Directory Ownership
-
-Prevent conflicts by assigning directory ownership:
-
-| Directory | Primary Owner | Conflict Zone |
-|-----------|---------------|---------------|
-| `.claude/` | initializer, migrator | High - never parallel |
-| `src/` | initializer | Medium - batch by subdirectory |
-| `_pre_migration/` | migrator only | None - exclusive |
-| Project root configs | initializer | Low - few files |
+See `.claude/roster.md` for detailed coordination rules (scope limits, parallel execution matrix, batching strategy, directory ownership).
 
 ## Context Management
 
-**Problem:** Long contexts cause AI focus degradation. Accumulated information makes the AI lose track of what matters most.
+**Problem:** Long contexts degrade AI focus.
 
-**Solution:** Structured handoffs between phases, role-based agent constraints, and aggressive context clearing.
+**Solution:** Structured handoffs, role-based constraints, aggressive context clearing.
 
-### Orchestrator Responsibilities (Minimal Context)
+### Orchestrator Constraints
 
-The main orchestrator should ONLY:
-1. **Greet and clarify** - Understand user request
-2. **Enter plan mode** - For ALL tasks (except extremely simple)
-3. **Declare management approach** - State HOW agents will be used
-4. **Delegate to agents** - With structured handoffs
-5. **Self-check periodically** - Confirm still in coordination role
-6. **Review handoffs** - Ensure schema compliance
-7. **Summarize results** - Concise updates to user
+**DO:**
+- Enter plan mode for all non-trivial tasks
+- Delegate to agents with structured handoffs
+- Review handoffs, summarize results to user
 
-**The orchestrator should NEVER:**
-- Read more than 3 files directly (use Research agents)
-- Write code directly (use Coding agents)
-- Accumulate exploration context in main session
+**DON'T:**
+- Read >3 files directly (delegate to Research agent)
+- Write code directly (delegate to Coding agent)
 - Skip handoffs between phases
 
-### Plan Mode: MANDATORY for Every Prompt
+### Plan Mode (Mandatory)
 
-**ALWAYS enter plan mode for every user prompt. No exceptions.**
-
-**Why this is mandatory:**
-
-AI training data has a cutoff date (May 2025). Package versions evolve faster than training data. This creates a **knowledge gap** between what the orchestrator knows and what current packages actually do.
-
-**Domain agents solve this** by embedding version-specific patterns. Each domain agent contains patterns specific to that technology version that the orchestrator may not have in its training data.
-
-**The orchestrator's job is to identify and delegate to the right agents** - not to implement directly with potentially stale knowledge.
-
-**Plan mode ensures:**
-1. Correct agent identification based on task and technology
-2. Version-specific expertise applied to every code change
-3. Knowledge gaps addressed by agents with embedded patterns
-4. Proper handoffs between research, implementation, and review
+Enter plan mode for every prompt. Domain agents have version-specific patterns the orchestrator may lack.
 
 **For every prompt:**
-1. Enter plan mode
-2. Identify the task type (implement, research, debug, review)
-3. Identify the technologies involved
-4. Select the appropriate domain agent(s)
-5. Declare the orchestrator approach
-6. Execute via agent delegation
+1. Identify task type and technologies
+2. Select appropriate agent(s) from `.claude/roster.md`
+3. Declare orchestrator approach
+4. Execute via delegation
 
-### Context Shift Detection
+### Self-Monitoring
 
-A context shift occurs when:
-- Switching from one module to another (e.g., frontend → backend)
-- Switching technology domains (e.g., API → database)
-- Switching concern types (e.g., feature → security)
-- More than 3 files in new context without recent work there
+Use `/orc-checkpoint` during long sessions to verify you're coordinating, not implementing.
 
-**When context shift detected:** Auto-enter plan mode, clear accumulated context, start fresh research.
+**Key Principle:** The orchestrator's job is to COORDINATE, not to DO the work.
 
-### Orchestrator Management Declaration
+See `.claude/roster.md` for agent role classification, handoff requirements, and TDD workflow.
 
-**MANDATORY**: When entering plan mode, explicitly state HOW you will manage agents.
+## Workflow Phase Details
 
-**Declaration Format:**
-```
-ORCHESTRATOR APPROACH:
-- Task: [one-line summary]
-- Task type: [implement / research / debug / review]
-- Technologies: [list technologies involved]
-- Agents needed: [select from .claude/agents/ - check roster.md for guidance]
-- Sequence: [sequential / parallel / single agent]
-- My role: [coordinate, delegate, review - NOT implement]
-```
+The Session Start Protocol above defines WHICH agents to call. This section adds phase-specific guidance.
 
-**Example (new project):**
-```
-ORCHESTRATOR APPROACH:
-- Task: Create a new web application for task management
-- Task type: implement
-- Technologies: To be determined via discovery
-- Agents needed: @project-discovery → @project-architect → @project-tech-validator → @project-initializer
-- Sequence: Sequential - each phase informs the next
-- My role: Coordinate handoffs, review outputs, report to user
-```
+### Discovery Phase
 
-**Example (migration):**
-```
-ORCHESTRATOR APPROACH:
-- Task: Add orchestrator framework to existing React app
-- Task type: implement
-- Technologies: Detected during analysis
-- Agents needed: @project-discovery → @project-analyzer → @project-migrator
-- Sequence: Sequential - analyze before migrating
-- My role: Coordinate, verify migration accuracy, report to user
-```
+**For non-technical users:** Make recommendations with yes/no confirmations instead of open-ended questions.
 
-**Why this matters:**
-- Forces conscious decision about delegation vs direct work
-- Makes orchestrator role explicit in every plan
-- Creates accountability for proper agent usage
-- Prevents drift into implementation work
+**For technical users:** Offer defaults with option to customize.
 
-### Long Task Self-Reminder Protocol
+### Technology Validation Phase
 
-**Problem**: During long tasks, orchestrators can "forget" their role and start doing work directly.
+**Why this phase exists:** AI training data has uneven coverage. A technology existing before training cutoff doesn't guarantee sufficient training data.
 
-**Self-Reminder Triggers:**
-- After delegating to 3+ agents in a session
-- After any agent returns results requiring further work
-- When about to read >3 files directly
-- When about to write any file directly
+**Confidence levels:**
+- **High**: Widely used, patterns stable
+- **Medium**: Recent version or niche usage
+- **Low**: Post-cutoff or major changes
+- **Unknown**: Cannot determine
 
-**Self-Reminder Checklist:**
+### Updating Created Projects
 
-| Question | If YES |
-|----------|--------|
-| Am I about to read >3 files? | STOP → Delegate to Research agent |
-| Am I about to write code? | STOP → Delegate to Coding agent |
-| Did an agent just finish? | Review result, then delegate next step |
-| Have I been working for 10+ turns? | Invoke `/orc-checkpoint` |
-
-**Recovery Pattern (if you've started doing work directly):**
-1. STOP current work immediately
-2. State: "I should delegate this rather than do it directly."
-3. Create/identify appropriate agent
-4. Delegate remaining work with clear scope
-5. Return to coordination role
-
-**Key Principle (repeat often):**
-> "The orchestrator's job is to COORDINATE, not to DO the work."
-
-### Agent Role Classification
-
-| Role | Purpose | Read Scope | Write Scope |
-|------|---------|------------|-------------|
-| **Research** | Explore, analyze, identify files | Broad (10+ files OK) | Handoff docs only |
-| **Coding** | Implement changes | Handoff + patterns (max 15 files) | Code files (max 15) |
-| **Testing** | Write tests, verify | Implementation + test patterns | Test files only |
-
-**Project Builder Agent Roles:**
-- **Research:** discovery, architect, tech-validator, analyzer
-- **Coding:** initializer, migrator
-
-**TDD Support:** Testing agents can run BEFORE Coding agents:
-1. Research identifies affected files and test patterns
-2. Testing writes failing tests (RED phase)
-3. Coding implements to pass tests (GREEN phase)
-4. Coding/Testing refactor (REFACTOR phase)
-
-### Structured Handoff Requirements
-
-**All phase transitions MUST use structured handoffs** from `.claude/templates/handoffs/`:
-
-| Handoff Type | Max Lines | When Used |
-|--------------|-----------|-----------|
-| Full handoff | 100 lines | Phase transitions (Research → Coding) |
-| Mini handoff | 20 lines | Targeted research requests |
-
-**Research agents MUST identify in handoff:**
-1. **Files to Modify** - Exact paths, action (create/modify/delete), reason
-2. **Reference Files** - Files containing patterns the next agent needs
-3. **Test Patterns** - Where similar tests exist (if TDD workflow)
-
-**Handoff schema:** See `.claude/templates/handoffs/handoff-full.md`
-
-### Context Clearing Protocol
-
-**Clear context at:**
-- Phase transitions (Research → Coding → Testing)
-- Context shift detected (score ≥ 3)
-- 10+ files accumulated in current context
-- Task completion
-
-**Preserve:**
-- Latest handoff (100 lines max)
-- Current task goal
-- File paths in scope
-
-**Drop:**
-- Previous handoffs (archived, not loaded)
-- Exploration tangents
-- Resolved errors
-- Files explored but not in scope
-
-### "Need More Research" Pattern
-
-When a Coding or Testing agent encounters a knowledge gap:
-
-1. **STOP immediately** - Do not explore
-2. **Return:** `RESEARCH_NEEDED: {specific question}`
-3. **Orchestrator spawns:** Research agent with targeted question
-4. **Research returns:** Mini-handoff (20 lines max)
-5. **Coding/Testing resumes:** With targeted answer only
-
-This prevents Coding agents from accumulating exploration context.
-
-## Workflow Phases
-
-### Phase 0: Project Source Detection
-
-**Goal:** Determine the project source.
-
-**Ask:** "Are you starting a new project from scratch, or do you have an existing project you'd like to add the orchestrator framework to?"
-
-- New project → Continue to Phase 1
-- Existing project → Ask: "Is it on GitHub, or is it a local project on your computer?"
-  - GitHub → Get URL, use initializer with clone mode
-  - Local → Use migration flow
-
-### Phase 1: Discovery (New Projects)
-
-**Goal:** Understand what the user wants to build.
-
-**Essential questions (ALWAYS ask first):**
-- What would you like to call this project?
-- How would you describe your technical background?
-- Should this be accessible on the internet? (deployment)
-
-**Then explore (adapt to technical level):**
-- What problem does this project solve?
-- Who are the target users?
-- What are the core features?
-- What integrations are needed?
-- What are the quality/compliance requirements?
-
-**For non-technical users (yes/no recommendations):**
-- Make recommendations instead of asking for choices
-- "I recommend GitHub for code storage. Use it?" ✓
-- "Include automated testing? (catches bugs early)" ✓
-- "Include error tracking? (alerts you to issues)" ✓
-- "Will users need to log in?" ✓/✗
-- "Handle sensitive data?" ✓/✗
-- "Set up services now or later?" → Provisioning timing
-
-**For technical users:**
-- Offer defaults with option to customize
-- Can discuss implementation details
-- Ask about version control, logging, provisioning preferences
-
-**Output:** A project brief document in `.claude/projects/`
-
-### Phase 2: Architecture (New Projects)
-
-**Goal:** Design the project structure and customizations.
-
-Decisions to make:
-- Directory structure
-- Module organization
-- Which agents to include
-- Custom conventions for CLAUDE.md
-- Tech-stack-specific patterns
-- Security and operational design
-
-**Output:** An architecture document with customization specifications
-
-### Phase 2b: Technology Validation (New Projects)
-
-**Goal:** Validate AI knowledge accuracy for each technology in the stack BEFORE creating files.
-
-**Why this phase exists:**
-- AI training data has uneven coverage - some technologies have more examples than others
-- A technology existing before training cutoff doesn't guarantee sufficient training data
-- New patterns may not have been widely documented at training time
-- Breaking changes may not have been well-covered in training data
-
-**Actions:**
-1. **Extract all technologies** from the architecture document
-2. **Research each technology** regardless of version:
-   - Current state and patterns
-   - Community discussions about pitfalls
-   - Integration patterns with other stack technologies
-3. **Assess AI confidence level** for each:
-   - **High**: Version in training, widely used, patterns stable
-   - **Medium**: Recent version, pattern changes, or niche usage
-   - **Low**: Post-cutoff, limited training data, major changes
-   - **Unknown**: Cannot determine AI knowledge state
-4. **Generate validation artifacts**:
-   - Test patterns developers can use to verify code
-   - Verification tasks checklist
-   - Do/Don't tables for Medium/Low confidence technologies
-5. **Identify integration concerns** where technologies interact
-
-**Output:** Technology Validation Report at `.claude/projects/{project-name}-tech-validation.md`
-
-**This differs from simple version checking:**
-- Validates AI understanding of patterns, not just version numbers
-- Identifies sparse training data scenarios (technology existed but wasn't well-documented)
-- Creates actionable verification tasks for developers
-- Feeds directly into the initializer for confidence-aware file generation
-
-### Phase 3: Initialization (New Projects)
-
-**Goal:** Create the actual project files with current technology versions.
-
-Actions:
-1. **Handle service provisioning** if "during-init" selected
-2. **Research current tech versions** (CRITICAL - don't use stale data)
-3. **Compare to AI-known versions** (determine gaps)
-4. **Generate gotchas** for Moderate/Major gaps
-5. Create the project directory
-6. Create `.claude/manifest.json` with version tracking
-7. Create `.claude/tech/stack.md` with versions + gotchas
-8. **Create `src/lib/logger.ts`** with logging infrastructure
-9. Generate customized CLAUDE.md (references tech/stack.md)
-10. Create agent files for the tech stack (reference tech/stack.md)
-11. Set up templates and documentation
-12. Initialize status files
-13. **Initialize git and connect to GitHub** if selected
-
-**Output:** A fully initialized project with version tracking, gotchas, and logging
-
-### Migration Phase (Existing Local Projects)
-
-**Goal:** Add orchestrator framework to existing codebase.
-
-Actions:
-1. Get path to existing project
-2. **Analyze** the project (tech stack, structure, patterns)
-3. **Copy** project to projects directory (original unchanged)
-4. **Quarantine** conflicting files to `_pre_migration/`
-5. **Run tech validation** (same as new projects - validates AI knowledge for detected stack)
-6. **Create fresh orchestrator framework** informed by analysis and validation
-7. **Create manifest** with migration metadata and `techValidation` section
-
-**Output:** Migrated project with orchestrator framework, tech validation, original preserved
-
-### Updating Existing Created Projects
-
-Created projects include the `/tech-revalidate` skill for ongoing validation:
-
-**When to revalidate:**
+Created projects include `/tech-revalidate` for ongoing validation. Use when:
 - Starting work after >7 days break
 - After upgrading dependencies
-- Claude's training cutoff may have changed
 - AI suggests outdated patterns
-
-**Detection logic:**
-- `.claude/tech/stack.md` missing → Full validation
-- AI training cutoff changed → Full validation
-- Tech versions in package manifest changed → Targeted validation
-- Last validation >90 days ago → Full validation
-
-**What gets updated:**
-- `.claude/manifest.json` → `techValidation` section
-- `.claude/tech/stack.md` → Versions, gaps, confidence, gotchas
-
-## Project Customization Points
-
-The generic orchestrator can be customized for:
-
-### Tech Stack Agents
-- Web: frontend, backend, api, database
-- Mobile: ios, android, cross-platform
-- Data: etl, analytics, ml
-- Infrastructure: devops, cloud, security
-
-### Language-Specific Patterns
-- TypeScript/JavaScript conventions
-- Python patterns
-- Go idioms
-- Rust practices
-
-### Framework Integration
-- React, Vue, Angular patterns
-- Express, FastAPI, Django patterns
-- Database ORM patterns
-
-### Quality Requirements
-- Testing strategy (TDD, BDD, etc.)
-- Security compliance (OWASP, SOC2)
-- Documentation standards
-- Code review processes
 
 ## File Naming Conventions
 
 - Project briefs: `.claude/projects/{project-name}-brief.md`
 - Architecture docs: `.claude/projects/{project-name}-architecture.md`
-- Created projects go in a sibling directory to `project/`
-- Migrated project backups: `{project}/_pre_migration/`
+- Created projects: sibling directory to `project/`
+- Migration backups: `{project}/_pre_migration/`
 
 ## Communication Style
 
@@ -929,66 +552,6 @@ Orchestrator: Ready to create your project. I'll set up the database now
               development agents will build your app from that design.
 ```
 
-## Example Session (GitHub Clone)
-
-```
-User: I have a project on GitHub I'd like to add your framework to.
-
-Orchestrator: I can help with that! I'll clone your repository and add
-              the orchestrator framework to it.
-
-              What's the GitHub repository URL?
-
-User: https://github.com/myuser/my-react-app
-
-Orchestrator: [Delegates to @project-initializer with clone mode]
-              I've cloned and analyzed your project:
-              - React 18.2, TypeScript, Tailwind CSS
-              - Standard src/ structure
-
-              Adding the orchestrator framework now...
-
-              Done! Your project is at ../my-react-app/
-
-              I found no conflicting files, so nothing was quarantined.
-              The tech stack details are in .claude/tech/stack.md
-```
-
-## Example Session (Local Migration)
-
-```
-User: I have an existing React app on my computer I'd like to add your framework to.
-
-Orchestrator: I can help with that! I'll add the orchestrator framework
-              to your project. Your original code won't be modified - I'll
-              make a copy and work with that.
-
-              What's the path to your existing project?
-
-User: C:\projects\my-react-app
-
-Orchestrator: [Delegates to @project-analyzer]
-              I've analyzed your project:
-              - React 18.2, TypeScript, Tailwind CSS
-              - Standard src/ structure
-              - No existing orchestrator framework
-
-              I'll copy it to ../my-react-app/ and add the orchestrator
-              framework. Any existing .claude files will be preserved in
-              _pre_migration/ for reference.
-
-              Ready to proceed?
-
-User: Yes!
-
-Orchestrator: [Delegates to @project-migrator]
-              Migration complete! Your project is at ../my-react-app/
-              Original project unchanged at C:\projects\my-react-app
-
-              Check _pre_migration/ for any old files you want to reference.
-              The tech stack details are in .claude/tech/stack.md
-```
-
 ## Templates Location
 
 The generic orchestrator template is in `.claude/templates/orchestrator/`. This contains all the files that get copied and customized for each new project.
@@ -1072,234 +635,17 @@ This skill is included in all created projects, enabling the orchestrator framew
 
 ## Audit Trail System
 
-The Project Builder includes an audit trail system for tracking activity during project creation and development. This helps with debugging, retrospectives, and framework improvement.
+Tracks activity during project creation for debugging, retrospectives, and improvement.
 
-### What Gets Tracked
+**Skills:** `/audit-decision`, `/audit-summary`, `/orc-analyze`
 
-| Component | Capture Method | Purpose |
-|-----------|----------------|---------|
-| **Session Log** | Automatic (hooks) | Agent delegations, completions, failures |
-| **Decision Log** | Manual (`/audit-decision`) | Alternatives considered, rationale |
-| **Audit Summary** | Manual (`/audit-summary`) | Retrospective analysis |
-| **Orchestrator Analysis** | Manual (`/orc-analyze`) | Rule compliance, pattern detection |
+See `.claude/audit/README.md` for full documentation.
 
-### Directory Structure
+## Risk Mitigation
 
-```
-.claude/audit/
-├── README.md           # Documentation
-├── sessions/           # Auto-generated session logs
-│   └── YYYY-MM-DD.md   # Daily log file
-├── decisions/          # Manual decision records
-│   └── YYYY-MM-DD-{id}.md
-└── analysis/           # Orchestrator compliance reports
-    └── {session-id}-analysis.md
-```
-
-### Automatic Capture (via hooks)
-
-The following events are automatically logged to session files:
-
-| Event | What's Captured |
-|-------|-----------------|
-| `SubagentStart` | Agent name, task description |
-| `SubagentStop` | Agent completion status |
-| `PostToolUseFailure` | Tool name, error message |
-| `SessionStart/End` | Session boundaries |
-
-### /audit-decision - Record Decisions
-
-Use when making significant decisions:
-
-```
-/audit-decision
-```
-
-Records:
-- What decision was made
-- Alternatives considered (with pros/cons)
-- Why this choice was made
-- Constraints that influenced the decision
-
-**When to use:**
-- Technology choices
-- Architecture decisions
-- Trade-off resolutions
-- Changing previous decisions
-
-### /audit-summary - Analyze Patterns
-
-Generate insights from session logs:
-
-```
-/audit-summary
-```
-
-Produces:
-- Agent delegation patterns
-- Failure frequency by type
-- Recommendations for improvement
-
-### /orc-analyze - Compliance Analysis
-
-Analyze Claude Code session transcripts for orchestrator pattern compliance:
-
-```
-/orc-analyze [session-id] [options]
-```
-
-Options:
-- `session-id` - Specific session to analyze (default: most recent)
-- `--batch` - Analyze all sessions for this project
-- `--list` - List available sessions
-
-**Rules Evaluated:**
-
-| Rule | Severity | Description |
-|------|----------|-------------|
-| Plan Mode Usage | Warning | Non-trivial tasks should enter plan mode |
-| Agent Delegation | Error | Must delegate to agents (not work directly) |
-| File Read Limit | Warning | ≤3 consecutive reads in main context |
-| No Direct Code Write | Error | Never write code files in main context |
-| Explore Agent Usage | Warning | Use Explore agent for >5 reads |
-| Batch File Limit | Warning | ≤20 files per agent delegation |
-
-**Output:** Analysis report saved to `.claude/audit/analysis/`
-
-**When to use:**
-- After project creation/migration (verify compliance)
-- During retrospectives (identify improvement areas)
-- Periodically with `--batch` (track trends)
-
-### /analyze-task - Task-Level Compliance Analysis
-
-Analyze orchestrator compliance at the **task level** rather than session level. A task may span multiple sessions (planning in one, execution in another).
-
-```
-node .claude/scripts/analyze-task.mjs [options]
-```
-
-Options:
-- `--slug <slug>` - Analyze task by slug (e.g., `--slug goofy-twirling-orbit`)
-- `--session <id>` - Find and analyze task containing this session
-- `--list` - List all tasks with summaries
-- `--timeline` - Show task timeline visualization
-- `--batch` - Analyze all tasks
-
-**Why Task-Level Analysis?**
-
-Session-level analysis can produce false violations when:
-- Planning happens in session A, execution in session B
-- User accepts plan (context clears for execution session)
-- Multi-session workflows are used intentionally
-
-Task-level analysis groups related sessions and evaluates compliance across the full task lifecycle.
-
-**Task Linkage Signals:**
-
-| Signal | Reliability | Description |
-|--------|-------------|-------------|
-| Slug match | High | Same slug across sessions |
-| Plan content | Very High | `planContent` field in execution session |
-| Transcript reference | High | Execution session references planning transcript |
-| Timing proximity | Medium | Sessions within 5 minutes |
-
-**Task Rules Evaluated:**
-
-| Rule | Severity | Description |
-|------|----------|-------------|
-| Plan Mode Used | Warning/Error | Plan mode in ANY session of task |
-| Plan Approved | Warning | ExitPlanMode called |
-| Agent Delegation | Error | Delegations across task lifecycle |
-| No Direct Code Writes | Error | Aggregated across all sessions |
-| File Exploration Delegated | Warning | Explore agent usage |
-| Task Completion | Info | Task reached completion status |
-
-**Output:** Task reports saved to `.claude/audit/analysis/task-{slug}.md`
-
-**Example:**
-
-```bash
-# Session-level (may show false positive)
-node .claude/scripts/analyze-session.mjs c497b649
-# "No plan mode" VIOLATION
-
-# Task-level (correct)
-node .claude/scripts/analyze-task.mjs --session c497b649
-# Task links to planning session, plan mode passes
-```
-
-### Configuration
-
-Audit hooks are configured in `.claude/settings.json`:
-
-```json
-{
-  "hooks": {
-    "SubagentStart": [{"hooks": [{"type": "command", "command": ".claude/hooks/audit-hooks.sh"}]}],
-    "SubagentStop": [{"hooks": [{"type": "command", "command": ".claude/hooks/audit-hooks.sh"}]}],
-    "PostToolUseFailure": [{"hooks": [{"type": "command", "command": ".claude/hooks/audit-hooks.sh"}]}]
-  }
-}
-```
-
-### Created Projects
-
-All created projects include the audit trail system. The manifest.json tracks:
-
-```json
-{
-  "audit": {
-    "enabled": true,
-    "sessionsDir": ".claude/audit/sessions",
-    "decisionsDir": ".claude/audit/decisions"
-  }
-}
-```
-
-## Risk Mitigation Features
-
-The project builder addresses risks across the project lifecycle:
-
-### Security
-- Security requirements gathered in discovery (Phase 5b)
-- OWASP Top 10 checklist in created projects
-- Compliance-specific checks (GDPR, HIPAA, SOC2, PCI-DSS)
-- Reference: @.claude/defaults/security-baseline.md
-
-### Dependencies
-- Dependency preferences in discovery (Phase 4 for technical users)
-- License compatibility and health tracking
-- Audit results captured at initialization
-- Reference: @.claude/defaults/dependency-policy.md
-
-### Operations
-- Operational model gathered in discovery (Phase 5c)
-- Runbooks selected based on ops model
-- Incident response, rollback, deployment procedures
-- Reference: @.claude/defaults/operational-baseline.md
-
-### Logging & Debugging
-- **Structured logging in all projects** (language-appropriate library)
-- **AI-readable log format for efficient debugging** (JSON structured)
-- Error tracking (Sentry or equivalent) if enabled
-- Supports: Pino (Node), structlog (Python), zerolog (Go), tracing (Rust), Serilog (.NET), Timber (Android), os.log (iOS)
-- Reference: @.claude/defaults/logging-baseline.md
-
-### Onboarding
-- Team info gathered in discovery (Phase 6b)
-- ONBOARDING.md generated with setup instructions
-- Service provisioning guidance (if deferred)
-- Tech debt tracking in created projects
-
-### Files Created
-
-| Risk Area | File(s) |
-|-----------|---------|
-| Security | SECURITY.md, checklists/security-review.md |
-| Deployment | checklists/deployment.md, runbooks/deployment.md |
-| Dependencies | tech/dependencies.md, checklists/dependency-review.md |
-| Operations | runbooks/* (based on ops model) |
-| Logging | Logger at language-appropriate path (e.g., `src/lib/logger.ts`, `app/core/logging.py`, `internal/logger/logger.go`) |
-| Onboarding | ONBOARDING.md |
-| Tech Debt | TECH_DEBT.md |
+Created projects include risk mitigation features based on the baselines referenced above:
+- **Security**: OWASP checklist, compliance checks
+- **Dependencies**: License compatibility, health tracking
+- **Operations**: Runbooks based on ops model
+- **Logging**: Structured logging (Pino, structlog, zerolog, etc.)
+- **Onboarding**: ONBOARDING.md with setup instructions
