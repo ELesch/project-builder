@@ -1,6 +1,6 @@
 # AI-Confident Versions
 
-> **AI Training Cutoff**: May 2025
+> **AI Training Cutoff**: May 2025 (assessed for Claude Opus 4.6)
 >
 > These are versions Claude can write correct code for based on training data.
 > For newer versions, consult the gotchas in `tech/stack.md`.
@@ -9,14 +9,14 @@
 
 | Technology | Confident Version | Risk Level |
 |------------|-------------------|------------|
-| Next.js | 14.x | Major gap if using 15+ |
-| React | 18.x | Moderate gap if using 19+ |
-| TypeScript | 5.3 | Minor - mostly compatible |
+| Next.js | 15.x | Minor - released Oct 2024, App Router patterns well-covered |
+| React | 19.x | Minor - released Dec 2024, good training coverage |
+| TypeScript | 5.7 | Minor - mostly compatible |
 | Prisma | 7.x | Moderate - new config patterns (defineConfig, adapters) |
-| Tailwind CSS | 3.x | Major gap if using 4+ (CSS-first) |
+| Tailwind CSS | v4 | Moderate - CSS-first config released Jan 2025, limited early training |
 | shadcn/ui | 0.8.x | Moderate - components evolve |
 | Zod | 3.22 | Minor - stable API |
-| NextAuth.js | 4.x | Major gap if using 5+ (Auth.js) |
+| NextAuth.js / Auth.js | v5 | Moderate - rebranded, new patterns |
 
 ## .NET / Azure Stack
 
@@ -54,7 +54,7 @@
 
 | Technology | Confident Version | Risk Level |
 |------------|-------------------|------------|
-| Node.js | 20.x LTS | Minor |
+| Node.js | 22.x LTS | Minor |
 | Go | 1.21 | Minor - stable |
 | Python | 3.11 | Minor |
 | FastAPI | 0.109 | Minor |
