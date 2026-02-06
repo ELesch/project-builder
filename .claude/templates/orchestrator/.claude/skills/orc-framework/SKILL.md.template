@@ -75,8 +75,8 @@ ls .claude/skills/
 Required skills:
 - [ ] `/commit` - Safe git commits
 - [ ] `/capture` - Knowledge persistence
-- [ ] `/verify-agent` - Agent output verification
-- [ ] `/verify-framework` - This skill
+- [ ] `/orc-verify` - Agent output verification
+- [ ] `/orc-framework` - This skill
 
 ### 6. Cross-Reference Validation
 

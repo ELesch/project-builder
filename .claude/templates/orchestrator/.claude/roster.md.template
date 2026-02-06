@@ -196,7 +196,7 @@ What kind of task?
 
 | Task Type | Built-in Agent | Model | Tools |
 |-----------|----------------|-------|-------|
-| Research/investigate | `Explore` | Haiku (fast) | Read-only |
+| Research/investigate | `Explore` | Haiku (fast) | No file writes |
 | Implementation | `general-purpose` | Inherited | All tools |
 | Run commands | `Bash` | Inherited | Bash only |
 
@@ -430,62 +430,13 @@ Skills are reusable workflows that can be invoked by users or agents.
 | `/audit-decision` | Record significant decisions with alternatives and rationale | Users |
 | `/audit-summary` | Analyze session logs and generate insights | Users |
 
-### Using /app-design
+### Using /app-design and dev-ui-designer
 
-Run this skill at the start of a new project or major feature:
+See the App Design Phase and UI Design Phase sections in CLAUDE.md for detailed usage.
 
-```
-/app-design
-```
-
-**What it does:**
-1. Guides you through feature discovery questions
-2. Creates a complete page inventory
-3. Maps user flows for key workflows
-4. Defines component hierarchies
-5. Specifies data requirements per component
-6. Establishes implementation priority
-
-**Output:** `.claude/design/app-design.md` - the blueprint for implementation agents.
-
-**When to use:**
-- Starting a new project after tech stack is ready
-- Adding a major new feature (multiple pages/screens)
-- Implementation keeps going off-track (design wasn't clear)
-- You realize you don't have a clear picture of all pages
-
-**Implementation flow after design:**
-```
-/app-design → dev-ui-designer → [design approved] → dev-migration → dev-backend → dev-frontend → dev-test
-```
-
-### Using dev-ui-designer
-
-Run this agent after App Design to create visual specifications:
-
-```
-Delegate to @dev-ui-designer with the app-design.md document.
-```
-
-**What it does:**
-1. Defines design tokens (colors, typography, spacing)
-2. Creates responsive breakpoint strategy
-3. Specifies component variants and sizes
-4. Documents page layouts at each breakpoint
-5. Establishes touch target requirements
-
-**Output:** `.claude/design/ui-design.md` - visual design specifications for implementation.
-
-**When to use:**
-- After App Design, before implementation
-- When UI looks inconsistent across the app
-- When mobile experience needs improvement
-- When creating a design system
-
-**Implementation flow:**
-```
-dev-designer (features, pages) → dev-ui-designer (visual design) → dev-frontend (implementation)
-```
+**Quick reference:**
+- `/app-design` → Design features, pages, user flows → `.claude/design/app-design.md`
+- `@dev-ui-designer` → Visual design, responsive specs → `.claude/design/ui-design.md`
 
 ---
 
@@ -517,207 +468,31 @@ use context7 for Next.js routing
 
 **Note:** Requires Node.js >= 18.0.0 and MCP client support.
 
-### Using /tech-revalidate
+### Using /tech-revalidate and /capture
 
-Run this skill when:
-- Starting work after a long break (>7 days)
-- After upgrading dependencies
-- Claude's training cutoff may have changed
-- AI suggests outdated patterns
+See the Documentation Structure section in CLAUDE.md for detailed usage.
 
-```
-/tech-revalidate
-```
+**Quick reference:**
+- `/tech-revalidate` → Check for AI knowledge drift, update stack.md
+- `/capture` → Save knowledge to appropriate file (tech/preference/practice/spec)
 
-**What it checks:**
-- Is `.claude/tech/stack.md` missing? → Full validation
-- Did AI training cutoff change? → Full validation
-- Did any tech versions change? → Targeted validation
-- Is last validation >90 days old? → Full validation
+### Using /audit-decision and /audit-summary
 
-**What it updates:**
-- `.claude/manifest.json` → `techValidation` section
-- `.claude/tech/stack.md` → Versions, gaps, confidence, gotchas
+- `/audit-decision` → Record decisions with alternatives and rationale → `.claude/audit/decisions/`
+- `/audit-summary` → Analyze session logs → `.claude/audit/summary-{date}.md`
 
-### Using /capture
+### Using Orchestrator Skills (/orc-*)
 
-When you or an agent discovers something important to remember:
+See the Agent Verification Workflow and Failure Triggers sections in CLAUDE.md for when to use these.
 
-```
-/capture
-Knowledge: {What was learned}
-Category: tech | preference | practice | spec
-Target: @{optional file path}
-```
+| Skill | Trigger | Output |
+|-------|---------|--------|
+| `/orc-verify` | After EVERY agent delegation | PASS/FAIL + next action |
+| `/orc-framework` | After framework changes or suspected issues | Verification report |
+| `/orc-recover` | Agent errors, test failures, build breaks | Recovery strategy |
+| `/orc-parallel` | BEFORE parallel agent execution | SAFE/CONDITIONAL/UNSAFE |
 
-The skill intelligently updates the appropriate file:
-- **tech** → `.claude/tech/stack.md`
-- **preference** → `CLAUDE.md` conventions
-- **practice** → `.claude/LEARNINGS.md`
-- **spec** → `.claude/REQUIREMENTS.md`
-
-Agents should proactively use `/capture` when they discover:
-- Version-specific gotchas
-- Codebase patterns
-- Solutions to problems
-- User preferences stated during work
-
-### Using /audit-decision
-
-Record significant decisions for future reference:
-
-```
-/audit-decision
-```
-
-**What it records:**
-- The decision made
-- Alternatives considered (with pros/cons)
-- Why this choice was made
-- Constraints that influenced the decision
-
-**When to use:**
-- Choosing between technologies
-- Making architecture decisions
-- Resolving trade-offs
-- Changing a previous decision
-
-**Output:** `.claude/audit/decisions/{YYYY-MM-DD}-{id}.md`
-
-### Using /audit-summary
-
-Analyze session logs for patterns and insights:
-
-```
-/audit-summary
-```
-
-**What it analyzes:**
-- Agent delegation patterns
-- Failure frequency and types
-- Activity timeline
-- Decision trends
-
-**When to use:**
-- Sprint retrospectives
-- Debugging persistent issues
-- Identifying improvement opportunities
-- Generating progress reports
-
-**Output:** `.claude/audit/summary-{YYYY-MM-DD}.md`
-
-### Using /orc-verify (MANDATORY)
-
-**Run after EVERY agent delegation:**
-
-```
-/orc-verify
-```
-
-**What it verifies:**
-1. **File inventory** - Expected files created/modified
-2. **Test status** - All tests pass
-3. **Code quality** - No debug code, proper error handling
-4. **Scope compliance** - Agent stayed within boundaries
-5. **Integration** - Build succeeds, types check
-
-**Decision tree after verification:**
-- All pass → Proceed to next agent
-- Test failures → Run `/orc-recover`
-- Scope violation → Document and escalate
-- Quality issues → Re-delegate fix
-
-**Never proceed without verification.**
-
-### Using /orc-framework
-
-**Run to verify orchestrator framework integrity:**
-
-```
-/orc-framework
-```
-
-**When to run:**
-- After orchestrator framework installation or update
-- After manual edits to CLAUDE.md, roster.md, or manifest.json
-- When suspecting framework issues
-- Periodically as a health check
-
-**What it verifies:**
-1. **Core files** - CLAUDE.md, manifest.json, roster.md exist and are consistent
-2. **Knowledge files** - All files in manifest.domainAgents.knowledgeFiles exist
-3. **Domain agents** - All agents in manifest.domainAgents.registry exist as files
-4. **Skills** - Core skills exist (commit, capture, verify-agent, verify-framework)
-5. **Cross-references** - No broken @-references, version headers match
-
-**Output:** Report saved to `.claude/audit/framework-verification-{date}.md`
-
-**If verification fails:**
-1. Review issues by severity (CRITICAL > HIGH > MEDIUM > LOW)
-2. Fix CRITICAL and HIGH issues immediately
-3. Re-run `/orc-framework`
-4. MEDIUM/LOW can be addressed later
-
-**Can also run from command line:**
-```bash
-claude -p "Run /orc-framework and save the report to .claude/audit/"
-```
-
-### Using /orc-recover
-
-**Invoke immediately when:**
-- Agent returns errors
-- Tests fail after agent completion
-- Build breaks
-- Unexpected state detected
-
-```
-/orc-recover
-```
-
-**What it does:**
-1. Classifies the failure (test, build, agent, scope, conflict)
-2. Assesses impact (small <5 files, large 5+ files)
-3. Recommends strategy (targeted fix vs rollback)
-4. Provides recovery commands
-5. Ensures documentation in BLOCKERS.md or LEARNINGS.md
-
-**Recovery strategies:**
-- **Small scope:** Targeted fix with same agent
-- **Large scope:** Rollback and retry with smaller batches
-- **Unknown cause:** Research agent to diagnose first
-
-**Never end a session with unresolved failures.**
-
-### Using /orc-parallel
-
-**Run BEFORE launching agents in parallel:**
-
-```
-/orc-parallel
-```
-
-**What it checks:**
-1. Agent compatibility matrix lookup
-2. Directory conflict detection
-3. File conflict detection
-4. Dependency analysis (does B need A's output?)
-5. Resource contention (same tests, config, tables?)
-
-**Outputs:**
-- **SAFE** - Proceed with parallel
-- **CONDITIONAL** - Proceed with explicit boundaries
-- **UNSAFE** - Run sequentially instead
-
-**Common safe patterns:**
-- `dev-reviewer` + `dev-security` (both read-only)
-- `dev-auditor-*` + `dev-auditor-*` (all read-only)
-- Different modules with no overlap
-
-**Always unsafe:**
-- Same agent twice
-- `dev-test` + anything (tests need stable code)
-- Any two agents modifying same directory
+**Key rule:** Never proceed to next agent without running `/orc-verify`.
 
 ---
 

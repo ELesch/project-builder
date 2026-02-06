@@ -82,10 +82,10 @@ All checks pass?
     │
     └─→ NO: Classify failure
             │
-            ├─→ Test failures → Invoke /recover
+            ├─→ Test failures → Invoke /orc-recover
             ├─→ Scope violation → Document in BLOCKERS.md, escalate to user
             ├─→ Quality issues → Delegate fix to same agent
-            └─→ Build broken → Invoke /recover
+            └─→ Build broken → Invoke /orc-recover
 ```
 
 ## Quick Verification Commands
@@ -149,7 +149,7 @@ After verification, document:
 1. **Document the failure** clearly
 2. **Classify the severity:**
    - Minor: Fix in next agent run
-   - Major: Invoke `/recover`
+   - Major: Invoke `/orc-recover`
    - Blocking: Update BLOCKERS.md, notify user
 3. **Never proceed** with unverified work
 4. **Never accumulate** failures across agents
@@ -165,11 +165,11 @@ After completing verification, check if you need a checkpoint:
 │  CHECKPOINT CHECK                                        │
 │                                                          │
 │  Have you completed 3+ agents since last checkpoint?    │
-│  ├─ YES → Run /orchestrator-checkpoint                  │
+│  ├─ YES → Run /orc-checkpoint                           │
 │  └─ NO  → Proceed to next agent                         │
 │                                                          │
 │  Has it been 5+ turns since last checkpoint?            │
-│  ├─ YES → Run /orchestrator-checkpoint                  │
+│  ├─ YES → Run /orc-checkpoint                           │
 │  └─ NO  → Proceed to next agent                         │
 └─────────────────────────────────────────────────────────┘
 ```
