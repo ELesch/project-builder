@@ -70,6 +70,7 @@ RESEARCH_NEEDED: What is the current pattern for configuring Serilog in .NET 10?
 
 - Source project path (from user)
 - Analysis from project-analyzer
+- Deployment manifest: @.claude/defaults/deployment-manifest.md
 - Default stack reference: @.claude/defaults/web-stack.md
 - AI known versions: @.claude/defaults/ai-known-versions.md
 
@@ -230,25 +231,39 @@ For EACH detected technology, perform full validation (same as `@project-tech-va
 
 This extraction feeds directly into CLAUDE.md creation.
 
-### Step 6: Create Orchestrator Framework
+### Step 6: Create Orchestrator Framework (Manifest-Driven)
 
-Create the `.claude/` directory structure:
+Deploy ALL applicable files from @.claude/defaults/deployment-manifest.md.
 
-```
-{destination}/.claude/
-├── agents/           → Based on recommended agents from analysis
-├── tech/
-│   └── stack.md      → Current versions + gotchas + detected versions
-├── templates/
-├── plans/
-├── results/
-├── manifest.json     → With migration metadata
-├── PROJECT_STATUS.md
-├── BLOCKERS.md
-├── LEARNINGS.md
-├── PROCESS_LOG.md
-└── roster.md
-```
+**Process:**
+1. Read the deployment manifest
+2. For each batch (1-8), evaluate conditions against analysis document
+3. Deploy all files where condition is met
+4. Customize all template variables using ACTUAL project paths and syntax
+5. Skip `new-project-only` files (source scaffolding — project already has source)
+6. Track deployed files for verification
+
+**Migration-specific condition evaluation:**
+- `always` → Deploy
+- `new-project-only` → **SKIP** (migration has existing source)
+- `migration-only` → Deploy
+- `has-database` → Evaluate from analysis (detected tech stack)
+- `has-web-ui` → Evaluate from analysis (detected project type)
+- `has-api` → Evaluate from analysis (detected endpoints)
+- `ops-model:X` → Evaluate from discovery
+- Other conditions → Evaluate from analysis document
+
+**CRITICAL:** All skills, hooks, handoffs, checklists, runbooks, and templates are framework infrastructure. Deploy them even for migrations — they are NOT project-type-dependent.
+
+**Batch ordering (same as initializer):**
+1. Core Structure (CLAUDE.md, manifest, settings, roster, practices, etc.)
+2. Skills (all 11 skill directories)
+3. Agents — core + conditional
+4. Auditor agents
+5. Checklists + Runbooks
+6. Handoffs, Templates, Hooks, Audit
+7. Status files, Tech reference, Documentation dirs
+8. Source scaffolding — **SKIP for migrations**
 
 ### Step 7: Create CLAUDE.md
 
@@ -407,6 +422,16 @@ grep -r "{{" src/ --include="*.ts" | head -3
 - [ ] Domain-specific syntax matches source code
 - [ ] Commands from CLAUDE.md actually work
 - [ ] Terminology matches project's actual usage
+
+**Deployment Completeness (from manifest):**
+- [ ] All `always` files from @.claude/defaults/deployment-manifest.md exist
+- [ ] All condition-matched files exist
+- [ ] All 11 skills directories have SKILL.md
+- [ ] `.claude/hooks/` has 2 files
+- [ ] `.claude/handoffs/` has 3 files
+- [ ] `.claude/templates/` has 6 files
+- [ ] `.claude/audit/README.md` exists
+- [ ] `docs/DECISIONS/`, `docs/DESIGNS/`, `docs/RFCS/` directories exist
 
 **Framework Files:**
 - [ ] `.claude/tech/stack.md` has current versions

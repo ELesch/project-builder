@@ -72,11 +72,58 @@ Check that core skills exist:
 ls .claude/skills/
 ```
 
-Required skills:
+Required skills (all 11):
 - [ ] `/commit` - Safe git commits
 - [ ] `/capture` - Knowledge persistence
+- [ ] `/tech-revalidate` - Technology validation
+- [ ] `/app-design` - Design phase workflow
+- [ ] `/orc-checkpoint` - Orchestrator self-check
 - [ ] `/orc-verify` - Agent output verification
 - [ ] `/orc-framework` - This skill
+- [ ] `/orc-recover` - Error recovery
+- [ ] `/orc-parallel` - Parallel execution safety
+- [ ] `/audit-decision` - Decision recording
+- [ ] `/audit-summary` - Audit analysis
+
+### 5b. Deployment Completeness
+
+Verify all expected framework infrastructure exists:
+
+**Required directories:**
+- [ ] `.claude/skills/` with 11 subdirectories (capture, tech-revalidate, commit, app-design, audit-decision, audit-summary, orc-checkpoint, orc-framework, orc-verify, orc-parallel, orc-recover)
+- [ ] `.claude/handoffs/` with README and templates (3 files)
+- [ ] `.claude/templates/` with plan, results, design-system, handoff templates (6 files)
+- [ ] `.claude/hooks/` with audit-hooks.sh and check-secrets.sh (2 files)
+- [ ] `.claude/audit/` with README
+- [ ] `.claude/checklists/` with at least 5 files
+- [ ] `.claude/runbooks/` with at least 4 files (README, rollback, deployment, agent-failure)
+- [ ] `.claude/plans/` directory exists
+- [ ] `.claude/results/` directory exists
+- [ ] `docs/DECISIONS/`, `docs/DESIGNS/`, `docs/RFCS/` directories with READMEs
+
+**Required status/tracking files:**
+- [ ] `.claude/PROJECT_STATUS.md`
+- [ ] `.claude/BLOCKERS.md`
+- [ ] `.claude/LEARNINGS.md`
+- [ ] `.claude/PROCESS_LOG.md`
+- [ ] `.claude/REQUIREMENTS.md`
+- [ ] `.claude/TECH_DEBT.md`
+- [ ] `.claude/SECURITY.md`
+
+**Required based on settings.json:**
+- [ ] If hooks configured → `.claude/hooks/` directory exists with referenced scripts
+
+**Expected file counts:**
+| Category | Minimum Expected |
+|----------|-----------------|
+| Skills | 11 directories with SKILL.md |
+| Agents | 13+ core agents (project-specific agents additional) |
+| Checklists | 5+ (security, deployment, dependency, architecture, performance) |
+| Runbooks | 4+ (README, rollback, deployment, agent-failure) |
+| Handoffs | 3 (README, research-to-coding, mini-research) |
+| Templates | 6 (README, plan, results, design-system, handoff-mini, handoff-full) |
+| Hooks | 2 (audit-hooks.sh, check-secrets.sh) |
+| Status files | 7 |
 
 ### 6. Cross-Reference Validation
 

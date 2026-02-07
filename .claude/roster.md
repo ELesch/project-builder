@@ -460,6 +460,9 @@ The orchestrator should NEVER:
 
 ### Batching Strategy for Large Projects
 
+Batches are defined in @.claude/defaults/deployment-manifest.md.
+The orchestrator assigns manifest batches to agent runs:
+
 When initializer or migrator would create >20 files, the **orchestrator** batches:
 
 ```
@@ -574,6 +577,10 @@ initializer(batch1) → initializer(batch2) → initializer(batch3) → ...
 Each batch is sequential. Never run initializer batches in parallel (same directories).
 
 ## Files in Created Projects
+
+> **Authoritative source:** @.claude/defaults/deployment-manifest.md
+> The tables below are a summary. The deployment manifest is the
+> complete, condition-aware list used by initializer and migrator.
 
 ### Core Files
 
