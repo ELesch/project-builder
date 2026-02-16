@@ -496,7 +496,9 @@ See the Agent Verification Workflow and Failure Triggers sections in CLAUDE.md f
 
 ---
 
-## "Need More Research" Protocol
+## Agent Escalation Protocols
+
+### RESEARCH_NEEDED
 
 When a Coding or Testing agent encounters a knowledge gap:
 
@@ -533,6 +535,50 @@ RESEARCH_NEEDED: What is the authentication pattern used in this codebase?
 # Orchestrator spawns dev-architect with targeted question
 # dev-architect returns: "JWT tokens in Authorization header, validated by authMiddleware in src/middleware/auth.ts"
 # dev-backend continues with this context only
+```
+
+### CLARIFICATION_NEEDED
+
+When any agent encounters ambiguity, conflicting requirements, or uncertainty about intent:
+
+```
+Any Agent encounters ambiguity
+    │
+    ├─→ STOP immediately (do not guess or assume)
+    ├─→ Return: CLARIFICATION_NEEDED: {specific question}
+    │
+    ▼
+Orchestrator receives request
+    │
+    ├─→ STOP the delegation chain
+    ├─→ Present the question to the user
+    │
+    ▼
+User responds
+    │
+    ├─→ Orchestrator gets the answer
+    │
+    ▼
+Agent resumes (or is re-delegated)
+    │
+    └─→ Continue with clarified requirement
+```
+
+**When to escalate:**
+- Requirements can be interpreted multiple ways
+- Two specifications conflict
+- The "right" approach depends on user preference
+- The agent would need to make a judgment call about behavior
+
+**Example:**
+```
+# From dev-frontend:
+CLARIFICATION_NEEDED: The design doc says "show user avatar" but there's no avatar field
+in the user schema. Should I add an avatar field, use initials, or use a default image?
+
+# Orchestrator stops delegation, asks user
+# User responds: "Use initials for now, we'll add avatars later"
+# Orchestrator re-delegates to dev-frontend with clarified requirement
 ```
 
 ## Agent Coordination Rules

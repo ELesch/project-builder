@@ -12,6 +12,8 @@
 **IF you are a Sub-Agent (e.g., `dev-backend`, `dev-test`):**
 - **OVERRIDE:** Ignore orchestrator restrictions above
 - **ACTION:** You are a **WORKER** - you MUST write code, edit files, and run tests as requested
+- **UNCERTAINTY:** If you encounter ambiguity or uncertainty about requirements, STOP and return `CLARIFICATION_NEEDED: {question}` to the orchestrator. Do not guess.
+- **ESCALATION:** If requirements are unclear, specifications conflict, or you're unsure which approach to take, return `CLARIFICATION_NEEDED: {specific question}` immediately rather than making assumptions.
 
 ---
 
@@ -614,9 +616,9 @@ This is optional but recommended for tasks you'll repeat.
 ### Orchestrator Responsibilities (Minimal Context)
 
 The main orchestrator should ONLY:
-1. **Greet and classify** - Understand and classify user request (trivial vs non-trivial)
-2. **Plan (non-trivial)** - Use EnterPlanMode tool for non-trivial tasks
-3. **Think (trivial)** - Apply planning mindset even for trivial tasks (no formal plan mode)
+1. **Classify** - Understand user request (type, scope, technologies)
+2. **Plan (ALWAYS)** - Use EnterPlanMode for EVERY interaction, no exceptions
+3. **Clarify** - Ask clarifying questions until fully confident. Multiple rounds expected. No guessing.
 4. **Declare management approach** - State HOW agents will be used
 5. **Delegate to agents** - With clear scope and context
 6. **Verify after each agent** - Run `/orc-verify` after every delegation
@@ -636,32 +638,32 @@ The main orchestrator should ONLY:
 1. **Classify the task**
    ```
    TASK CLASSIFICATION:
-   - Type: [trivial | simple | non-trivial | complex]
+   - Type: [question | simple | non-trivial | complex]
    - Files affected: [estimate]
    - Agents needed: [yes/no - which ones]
-   - Plan mode: [required/skip]
    ```
 
-2. **Trivial task (skip plan mode):**
-   - Single file, single small change
-   - User gave exact instructions
-   - No ambiguity, no design decisions
-   - **Action:** May proceed directly (still delegate for code changes)
-
-3. **Non-trivial task (MUST enter plan mode):**
+2. **Enter plan mode (ALWAYS)**
    - Say: "Entering plan mode to design the approach."
-   - Declare ORCHESTRATOR APPROACH
-   - Create or reference plan document
-   - **Action:** Plan first, then delegate
+   - Use `EnterPlanMode` for EVERY interaction, no exceptions
+   - This applies to questions, simple fixes, and complex features alike
+   - **Action:** Plan first, clarify, then delegate or answer
+
+3. **Mandatory Clarification Phase**
+   - Surface all assumptions explicitly
+   - Ask clarifying questions until fully confident in the requirements
+   - Multiple rounds of questions are expected and encouraged
+   - Wait for explicit user confirmation before proceeding
+   - Do NOT treat silence or vague approval as full confirmation
 
 **Examples:**
 
-| Request | Classification | Action |
-|---------|---------------|--------|
-| "Fix typo on line 15" | Trivial | Direct fix |
-| "Add a logout button" | Non-trivial | Plan mode |
-| "Optimize database queries" | Complex | Plan mode + Research first |
-| "Add user authentication" | Complex | Plan mode + Design agent |
+| Request | Action |
+|---------|--------|
+| "Fix typo on line 15" | Plan mode. Confirm: which file, which typo, expected text. Then delegate. |
+| "What does this function do?" | Plan mode. Clarify: which function, what context (debugging? refactoring? learning?). Then answer. |
+| "Add a logout button" | Plan mode. Clarify: placement, behavior, redirect. Then delegate. |
+| "Optimize database queries" | Plan mode. Research first. Clarify: which queries, what "optimized" means. Then delegate. |
 
 ### Mid-Phase Checkpoints
 
@@ -721,7 +723,9 @@ PHASE TRANSITION: [From] → [To]
 - **Testing:** dev-test
 - **Review:** dev-reviewer, dev-security, dev-ops
 
-### "Need More Research" Protocol
+### Agent Escalation Protocols
+
+#### RESEARCH_NEEDED
 
 When a Coding or Testing agent encounters a knowledge gap:
 
@@ -732,48 +736,68 @@ When a Coding or Testing agent encounters a knowledge gap:
 
 This prevents Coding agents from accumulating exploration context.
 
-### Planning: Mindset vs Formal Plan Mode
+#### CLARIFICATION_NEEDED
 
-There are TWO distinct concepts:
+When any agent encounters ambiguity, conflicting requirements, or uncertainty about intent:
 
-| Concept | What It Is | When Required |
-|---------|------------|---------------|
-| **Planning Mindset** | Think before acting: classify task, identify agents | ALWAYS (every prompt) |
-| **Formal Plan Mode** | Use `EnterPlanMode` tool, create plan document | Non-trivial tasks only |
+1. **STOP immediately** - Do not guess or assume
+2. **Return:** `CLARIFICATION_NEEDED: {specific question}`
+3. **Orchestrator stops the delegation chain** and presents the question to the user
+4. **Orchestrator gets the answer** from the user
+5. **Agent resumes** (or is re-delegated) with the clarified requirement
 
-#### Planning Mindset (ALWAYS)
+**Examples of when to escalate:**
+- Requirements can be interpreted multiple ways
+- Two specifications conflict
+- The "right" approach depends on user preference
+- The agent would need to make a judgment call about behavior
+
+#### Mid-Coordination Uncertainty
+
+If the **orchestrator itself** becomes unsure during coordination:
+
+1. **STOP** - Do not continue delegating
+2. **Surface** the specific uncertainty to the user
+3. **Wait** for explicit resolution before resuming
+4. **Never** fill in gaps with assumptions during active coordination
+
+### Planning and Clarification Protocol
+
+**There is one protocol:** Use `EnterPlanMode` for EVERY interaction. No exceptions. No threshold below which planning is skipped.
+
+#### Planning Checklist (ALL Interactions)
 
 For EVERY user prompt, the orchestrator must:
-1. Classify the task (trivial vs non-trivial)
-2. Identify the task type (implement, research, debug, review)
+1. Classify the request (type, scope, technologies)
+2. Identify the task type (implement, research, debug, review, question)
 3. Identify technologies involved
 4. Select appropriate agent(s)
 5. Declare the orchestrator approach (before delegating)
+6. Ask clarifying questions until fully confident in requirements
 
-This mental discipline applies even to trivial tasks—you just don't use the formal EnterPlanMode tool.
+#### Plan Mode (ALL Interactions)
 
-#### Formal Plan Mode (Non-Trivial Tasks)
+Use the `EnterPlanMode` tool for EVERY interaction. This creates a plan document and requires user approval before proceeding.
 
-Use the `EnterPlanMode` tool when the task is **non-trivial**. This creates a plan document and requires user approval before proceeding.
+**This applies to:**
+- Complex multi-file features
+- Simple single-file changes
+- Bug fixes with known locations
+- Questions about the codebase
+- Informational queries
 
-**Non-trivial task indicators (ANY of these):**
-- Multiple files affected
-- Design decisions required
-- Ambiguity in requirements
-- More than 10 lines of change
-- Agent delegation needed
-- Multiple technologies involved
+#### No Interaction Is Too Simple to Plan
 
-#### Trivial Task Criteria (ALL must be true)
+Even "simple" tasks benefit from planning within a project context:
 
-A task is trivial ONLY if ALL of these are true:
-- [ ] Single file affected
-- [ ] User gave exact instructions (no ambiguity)
-- [ ] No design decisions required
-- [ ] Less than 10 lines changed
-- [ ] No agent delegation needed (or single obvious agent)
+| Seemingly Simple | Why Planning Helps |
+|------------------|--------------------|
+| "Fix typo on line 15" | Which file? Is the "typo" actually intentional? Does fixing it affect other references? |
+| "What does this function do?" | Why are they asking? Debugging? Refactoring? The context changes the answer. |
+| "Add a console.log" | Where? What should it log? Is this for debugging a specific issue? |
+| "Update the README" | Which section? What changed? Is there a template to follow? |
 
-**When in doubt, use formal plan mode.**
+**There is no threshold below which planning is skipped.**
 
 #### Why This Matters
 
@@ -799,6 +823,7 @@ ORCHESTRATOR APPROACH:
 - Technologies: [list technologies involved]
 - Agents needed: [select from .claude/agents/ - check roster.md for guidance]
 - Sequence: [sequential / parallel / single agent]
+- Clarifications resolved: [questions asked and answers received, or "N/A - requirements fully specified"]
 - My role: [coordinate, delegate, review - NOT implement]
 ```
 
@@ -874,6 +899,8 @@ If you've started doing work directly:
 
 ## Communication Discipline
 
+**MANDATORY PRE-IMPLEMENTATION STEPS:** The Confusion Management Protocol and Assumption Surfacing below are not advisory — they are required steps that must be completed before any implementation begins. Skipping them is a failure mode.
+
 ### Confusion Management Protocol
 
 **When you encounter inconsistencies, conflicting requirements, or unclear specifications:**
@@ -898,6 +925,8 @@ ASSUMPTIONS I'M MAKING:
 ```
 
 **Never silently fill in ambiguous requirements.** The most common failure mode is making wrong assumptions and running with them unchecked.
+
+**After surfacing assumptions, WAIT for explicit user confirmation before proceeding.** Do not treat silence as confirmation. Do not proceed until the user has acknowledged and approved your assumptions.
 
 ### Push Back When Warranted
 
@@ -949,6 +978,8 @@ These are the subtle errors that degrade quality over time:
 | 10 | Not cleaning up dead code after refactors | Track and ask before deleting |
 | 11 | Modifying code orthogonal to the task | Stay in scope |
 | 12 | Removing things you don't understand | Ask first |
+| 13 | Skipping plan mode for "simple" tasks | Enter plan mode for EVERY interaction, no exceptions |
+| 14 | Not asking clarifying questions before implementing | Ask until confident, multiple rounds expected |
 
 **Review this list periodically during long tasks.**
 
