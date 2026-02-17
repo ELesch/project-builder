@@ -20,20 +20,22 @@
 
 ```mermaid
 graph LR
-    A[Design] --> B[Tests RED]
-    B --> C[Implement GREEN]
-    C --> D[Refactor]
-    D --> E[Review]
-    E --> F[Complete]
+    A[Design + Contract] --> B[Compile Check]
+    B --> C[Implement + Unit Tests]
+    C --> D[Integration/E2E]
+    D --> E[Refactor]
+    E --> F[Review]
+    F --> G[Complete]
 
     A1[dev-architect] -.-> A
     A2[dev-api] -.-> A
-    B1[dev-test] -.-> B
+    B1[orchestrator] -.-> B
     C1[dev-backend] -.-> C
     C2[dev-frontend] -.-> C
-    D1[dev-refactor] -.-> D
-    E1[dev-reviewer] -.-> E
-    E2[dev-security] -.-> E
+    D1[dev-test] -.-> D
+    E1[dev-refactor] -.-> E
+    F1[dev-reviewer] -.-> F
+    F2[dev-security] -.-> F
 ```
 
 ## Completion Tracking
@@ -41,10 +43,11 @@ graph LR
 | Phase | Agent | Status | Verified | Notes |
 |-------|-------|--------|----------|-------|
 | Design | dev-architect | [ ] Pending | [ ] | |
-| Design | dev-api | [ ] Pending | [ ] | |
-| Tests (RED) | dev-test | [ ] Pending | [ ] | |
-| Implement | dev-backend | [ ] Pending | [ ] | |
-| Implement | dev-frontend | [ ] Pending | [ ] | |
+| Contracts | dev-api | [ ] Pending | [ ] | |
+| Compile Check | orchestrator | [ ] Pending | [ ] | tsc --noEmit |
+| Implement + Unit Tests | dev-backend | [ ] Pending | [ ] | |
+| Implement + Unit Tests | dev-frontend | [ ] Pending | [ ] | |
+| Integration/E2E | dev-test | [ ] Pending | [ ] | |
 | Refactor | dev-refactor | [ ] Pending | [ ] | |
 | Review | dev-reviewer | [ ] Pending | [ ] | |
 | Review | dev-security | [ ] Pending | [ ] | |
@@ -64,15 +67,19 @@ graph LR
 
 ## Implementation Phases
 
-### Phase 1: Tests (RED)
-- [ ] {{Test 1}}
-- [ ] {{Test 2}}
+### Phase 1: Contracts
+- [ ] Define TypeScript interfaces and Zod schemas
+- [ ] Verify contracts compile: `tsc --noEmit`
 
-### Phase 2: Implementation (GREEN)
-- [ ] {{Implementation task 1}}
-- [ ] {{Implementation task 2}}
+### Phase 2: Implementation + Unit Tests
+- [ ] {{Implementation task 1}} (+ co-generate unit tests)
+- [ ] {{Implementation task 2}} (+ co-generate unit tests)
 
-### Phase 3: Review
+### Phase 3: Integration/E2E Tests
+- [ ] Integration tests for API endpoints
+- [ ] E2E tests for critical user flows
+
+### Phase 4: Review
 - [ ] Code review
 - [ ] Test coverage check
 

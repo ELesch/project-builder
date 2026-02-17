@@ -33,9 +33,18 @@ Before running manual checks, read the automated results:
 - [ ] No unexpected files were created
 - [ ] Files are in the correct locations
 
-### 2. Test Verification
+### 2. Contract & Test Verification
 
-Run tests for the affected modules:
+**Type checking is the primary gate — run FIRST, before tests:**
+
+```bash
+# MANDATORY: Type check (must pass before running tests)
+npm run typecheck 2>&1 || echo "TYPE CHECK FAILED - stop here"
+```
+
+- [ ] Type checking passes: `npm run typecheck`
+
+**Then run tests for the affected modules:**
 
 ```bash
 # Run relevant tests
@@ -44,13 +53,15 @@ npm test -- --testPathPattern="<module-pattern>"
 
 | Metric | Value |
 |--------|-------|
+| Typecheck | PASS / FAIL |
 | Tests passed | ___ / ___ |
 | Tests failed | ___ |
 | Coverage | ___% |
 
 **Check:**
+- [ ] Type checking passes (MANDATORY — fail verification if typecheck fails)
 - [ ] All existing tests still pass
-- [ ] New tests were added (if implementation agent)
+- [ ] New unit tests were co-generated (if implementation agent)
 - [ ] No test files left in failing state
 
 ### 3. Code Quality
@@ -80,7 +91,7 @@ npm test -- --testPathPattern="<module-pattern>"
 
 - [ ] No broken imports
 - [ ] Application builds successfully: `npm run build`
-- [ ] Type checking passes: `npm run typecheck` (if available)
+- [ ] Type checking passes: `npm run typecheck` (MANDATORY — already verified in step 2)
 
 ## Decision Tree
 

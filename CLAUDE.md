@@ -408,7 +408,7 @@ Use `/orc-checkpoint` during long sessions to verify you're coordinating, not im
 
 **Key Principle:** The orchestrator's job is to COORDINATE, not to DO the work.
 
-See `.claude/roster.md` for agent role classification, handoff requirements, and TDD workflow.
+See `.claude/roster.md` for agent role classification, handoff requirements, and CDD workflow.
 
 ## Workflow Phase Details
 

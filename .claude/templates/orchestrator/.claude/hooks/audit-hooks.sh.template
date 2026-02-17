@@ -124,7 +124,7 @@ EOF
               echo "**Build: FAIL** (exit code $BUILD_EXIT)"
             fi
           fi
-        } > "$VERIFY_FILE" 2>&1 &
+        } > "$VERIFY_FILE" 2>&1
         ;;
 
     "PostToolUseFailure")

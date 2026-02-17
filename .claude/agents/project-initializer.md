@@ -263,25 +263,27 @@ Use validation report from `@project-tech-validator` to populate confidence leve
 Instead, use a Node.js script via the Bash tool to guarantee valid JSON:
 
 ```bash
-node -e "
+# Pass variables via environment to prevent string termination/syntax errors
+# from special characters (like quotes) in the project name or JSON payload.
+P_VER="${VERSION}" P_TMPL="${TMPL_VER}" P_NAME="${NAME}" P_SLUG="${SLUG}" P_TYPE="${TYPE}" P_LANG="${LANG}" P_MOBILE="${MOBILE}" P_CUTOFF="${CUTOFF}" P_VAL_JSON="${VALIDATED_VERSIONS_JSON}" node -e "
 const data = {
   orchestrator: {
-    version: '${VERSION}',
-    templateVersion: '${TMPL_VER}',
+    version: process.env.P_VER,
+    templateVersion: process.env.P_TMPL,
     createdAt: new Date().toISOString(),
     createdBy: 'project-builder'
   },
   project: {
-    name: '${NAME}',
-    slug: '${SLUG}',
-    type: '${TYPE}',
-    primaryLanguage: '${LANG}',
-    mobileApps: '${MOBILE}'
+    name: process.env.P_NAME,
+    slug: process.env.P_SLUG,
+    type: process.env.P_TYPE,
+    primaryLanguage: process.env.P_LANG,
+    mobileApps: process.env.P_MOBILE
   },
   validation: {
     lastValidated: new Date().toISOString(),
-    aiTrainingCutoff: '${CUTOFF}',
-    technologies: ${VALIDATED_VERSIONS_JSON}
+    aiTrainingCutoff: process.env.P_CUTOFF,
+    technologies: process.env.P_VAL_JSON ? JSON.parse(process.env.P_VAL_JSON) : {}
   }
 };
 require('fs').writeFileSync('.claude/manifest.json', JSON.stringify(data, null, 2));

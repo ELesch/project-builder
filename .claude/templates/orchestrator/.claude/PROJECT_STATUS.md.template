@@ -25,7 +25,7 @@ Set up the foundational project structure and development workflow.
 
 - Define first feature requirements
 - Create architecture design if needed
-- Begin TDD implementation
+- Begin CDD implementation (define contracts, then implement)
 
 ## Blockers
 

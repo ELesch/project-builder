@@ -52,6 +52,14 @@ Audit test suite for coverage gaps, test quality, and missing scenarios without 
 - [ ] External service mocks are realistic
 - [ ] E2E tests cover critical user flows
 
+### CDD Compliance
+- [ ] Contracts (TypeScript interfaces + Zod schemas) exist for all API surfaces
+- [ ] Contracts compile: `tsc --noEmit` passes
+- [ ] Implementation agents co-generated unit tests (not written by dev-test)
+- [ ] dev-test wrote integration/E2E tests post-implementation (features)
+- [ ] Bug fixes have reproducer tests written before the fix
+- [ ] No unit tests guess API signatures or DOM structure (should use actual contracts)
+
 ## Test Health Indicators
 
 | Indicator | Good | Warning | Bad |
@@ -80,7 +88,8 @@ When completing testing audits:
 2. **Coverage report:** By module/function
 3. **Gap analysis:** Missing test scenarios
 4. **Flaky tests:** Tests that fail intermittently
-5. **Recommendations:** Prioritized test additions for dev-test
+5. **CDD compliance:** Contract coverage, co-generation adherence, workflow mode accuracy
+6. **Recommendations:** Integration/E2E gaps for dev-test, unit test gaps for dev-backend/dev-frontend
 
 ## Resources
 

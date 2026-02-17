@@ -192,6 +192,20 @@ For EACH technology, check if live documentation is available via Context7:
 
 **Why this matters:** Context7 provides real-time documentation lookup, which is especially valuable for technologies where AI confidence is low.
 
+### Step 4b: Discover llms.txt Documentation URLs
+
+For each technology's documentation domain, you must verify if AI-friendly documentation exists.
+**CRITICAL:** Do NOT use WebFetch to check existence, as downloading massive files will destroy your context window. Use lightweight terminal commands and protect against HTML "soft 404" pages.
+
+1. Prioritize `llms-full.txt` first, then `llms.txt`.
+2. Use bash to check the headers: `curl -sI -L https://[docs-domain]/llms-full.txt`
+3. Record results in the validation report:
+   - Status 200 OK AND `content-type` is `text/plain` or `text/markdown` → Record exact URL as verified fallback
+   - 404, error, or `content-type: text/html` → Mark as unavailable, leave null
+
+**Known domains to check:** nextjs.org/docs, prisma.io/docs, supabase.com, ui.shadcn.com, react.dev.
+Include verified URLs in the validation report JSON output and executive summary table.
+
 ### Step 5: Integration Analysis
 
 Research how technologies work TOGETHER:
@@ -219,13 +233,13 @@ Project Type: {type}
 
 ## Executive Summary
 
-| Technology | Version | Confidence | Context7 | Key Concerns |
-|------------|---------|------------|----------|--------------|
-| Next.js | 15.x | Medium | ✓ | Server Actions patterns evolved |
-| React | 19.x | Low | ✓ | Significant new APIs |
-| Prisma | 7.x | Medium | ✓ | New config pattern |
-| Tailwind | 4.x | Low | ✓ | CSS-first approach is new |
-| ... | ... | ... | ... | ... |
+| Technology | Version | Confidence | Context7 | llms.txt | Key Concerns |
+|------------|---------|------------|----------|----------|--------------|
+| Next.js | 15.x | Medium | ✓ | ✓ | Server Actions patterns evolved |
+| React | 19.x | Low | ✓ | ✓ | Significant new APIs |
+| Prisma | 7.x | Medium | ✓ | ✓ | New config pattern |
+| Tailwind | 4.x | Low | ✓ | - | CSS-first approach is new |
+| ... | ... | ... | ... | ... | ... |
 
 ## Detailed Findings
 
@@ -290,6 +304,36 @@ Before proceeding, clarify:
 ---
 Status: Pending Orchestrator Review
 ```
+
+### JSON Output (for programmatic consumption)
+
+In addition to the markdown report, you MUST use your filesystem tools to write a `validation-report.json` file directly to the workspace root:
+
+```json
+{
+  "projectName": "...",
+  "validatedAt": "ISO-8601",
+  "aiTrainingCutoff": "YYYY-MM",
+  "technologies": [
+    {
+      "name": "Next.js",
+      "version": "15.x",
+      "aiTrainedOn": "14.x",
+      "gap": "Minor",
+      "confidence": "High",
+      "context7": true,
+      "llmsTxtUrl": "https://nextjs.org/docs/llms.txt",
+      "llmsFullTxtUrl": "https://nextjs.org/docs/llms-full.txt",
+      "gotchas": [
+        { "do": "Use Server Actions", "dont": "Use API routes for forms" }
+      ]
+    }
+  ],
+  "integrationConcerns": ["..."]
+}
+```
+
+*Note: Ensure this is saved to the filesystem so the Initializer agent can read it in the next step.*
 
 ## Research Query Templates
 
@@ -418,6 +462,8 @@ Before completing the validation report, verify:
 - [ ] Every technology in the stack has been researched
 - [ ] Confidence levels are justified with evidence
 - [ ] Context7 availability checked for each technology
+- [ ] **llms.txt/llms-full.txt URLs probed via curl headers (not WebFetch)**
+- [ ] **validation-report.json written to workspace root**
 - [ ] Gotchas are specific and actionable
 - [ ] Verification tasks are testable
 - [ ] Integration concerns are documented

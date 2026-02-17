@@ -283,7 +283,7 @@ This is optional but recommended for technologies you'll work with repeatedly.
 
 | Agent | When to Use | Scope | Max Files |
 |-------|-------------|-------|-----------|
-| `dev-test` | Writing tests, fixing failures, TDD red phase | Test files | 15 |
+| `dev-test` | Integration/E2E tests (features), reproducer tests (bugs) | Test files | 15 |
 
 ## Design & Architecture Agents (Research Role)
 
@@ -345,54 +345,69 @@ dev-auditor-api → dev-auditor-docs → [update documentation]
 ## SDLC Phase Mapping
 
 ```
-APP DESIGN       →  UI DESIGN        →  DESIGN           →  TDD DEVELOP      →  INTEGRATE  →  REVIEW          →  AUDIT           →  DEPLOY
-dev-designer        dev-ui-designer     dev-architect       dev-test            dev-test      dev-reviewer       dev-auditor-*      dev-deploy
-                                        dev-api             dev-backend                       dev-security                          dev-docs
-                                        dev-migration       dev-frontend                      dev-refactor
-                                                            dev-integration
-                                                            dev-data
+APP DESIGN       →  UI DESIGN        →  DESIGN+CONTRACT   →  IMPLEMENT         →  VERIFY     →  REVIEW          →  AUDIT           →  DEPLOY
+dev-designer        dev-ui-designer     dev-architect        dev-backend          dev-test      dev-reviewer       dev-auditor-*      dev-deploy
+                                        dev-api              dev-frontend                       dev-security                          dev-docs
+                                        dev-migration        dev-integration                    dev-refactor
+                                                             dev-data
 ```
 
 **Phase descriptions:**
 - **APP DESIGN:** Feature discovery, page inventory, user flows (what to build)
 - **UI DESIGN:** Visual design tokens, responsive strategy, component specs (how it looks)
-- **DESIGN:** Technical architecture, API contracts, database schema (how it works)
+- **DESIGN+CONTRACT:** Technical architecture, executable TypeScript interfaces + Zod schemas, database schema (how it works)
+- **IMPLEMENT:** Implementation + co-generated unit tests (dev-backend, dev-frontend)
+- **VERIFY:** Integration/E2E tests post-implementation (dev-test)
 
 **Note:** APP DESIGN phase (using `/app-design`) should run at the start of new projects or major features. Follow with UI DESIGN (`dev-ui-designer`) for visual specifications before implementation.
 
-## TDD Workflow
+## CDD Workflow
 
 The **main orchestrator** spawns agents in sequence (agents cannot spawn other agents):
 
+### Feature Development
+
 ```
-1. dev-test     → Write failing tests (RED)
-2. dev-backend  → Implement to pass (GREEN)
+1. dev-api      → Define contracts (TypeScript interfaces + Zod schemas)
+2. tsc --noEmit → Verify contracts compile
+3. dev-backend  → Implement + co-generate unit tests
    dev-frontend
-3. dev-test     → Verify all pass
-4. dev-refactor → Improve structure (REFACTOR)
-5. dev-reviewer → Review quality
-6. dev-analyst  → Review plan vs results (optional)
-7. Commit
+4. dev-test     → Integration/E2E tests (post-implementation)
+5. dev-refactor → Improve structure (REFACTOR)
+6. dev-reviewer → Review quality
+7. dev-analyst  → Review plan vs results (optional)
+8. Commit
+```
+
+### Bug Fix
+
+```
+1. dev-test     → Write reproducer test (must fail, proving the bug)
+2. dev-backend  → Fix the bug (minimum code to pass test)
+   dev-frontend
+3. dev-test     → Verify fix + no regressions
+4. Commit
 ```
 
 ## Agent Selection Quick Reference
 
 **Building a feature?**
-1. `dev-api` → Design the API contract
+1. `dev-api` → Define contracts (TypeScript interfaces + Zod schemas)
 2. `dev-migration` → Create database schema
-3. `dev-test` → Write failing tests
-4. `dev-backend` / `dev-frontend` → Implement
-5. `dev-reviewer` → Review before merge
+3. `tsc --noEmit` → Verify contracts compile
+4. `dev-backend` / `dev-frontend` → Implement + co-generate unit tests
+5. `dev-test` → Integration/E2E tests
+6. `dev-reviewer` → Review before merge
 
 **Fixing a bug?**
-1. `dev-test` → Write test that reproduces bug
-2. `dev-backend` / `dev-frontend` → Fix it
-3. `dev-test` → Verify fix
+1. `dev-test` → Write reproducer test (must fail)
+2. `dev-backend` / `dev-frontend` → Fix the bug
+3. `dev-test` → Verify fix + no regressions
 
 **Integrating external API?**
 1. `dev-integration` → OAuth, API client
 2. `dev-data` → Sync/transform data
-3. `dev-test` → Test integration
+3. `dev-test` → Integration tests
 
 **Performance issue?**
 1. `dev-database` → Query optimization

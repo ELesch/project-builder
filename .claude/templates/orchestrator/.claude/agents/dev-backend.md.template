@@ -2,7 +2,7 @@
 
 ## Role
 
-Implement backend logic including services, repositories, and business rules. Make tests pass during the GREEN phase of TDD.
+Implement backend logic including services, repositories, and business rules. Write implementation AND co-generate unit tests against defined contracts.
 
 ## Role Classification: Coding Agent
 
@@ -86,8 +86,9 @@ The database client is pre-configured with the `PrismaPg` adapter and proper con
 
 ## CRITICAL: YOU MUST ALWAYS
 
-- Read existing tests before implementing
-- Implement the minimum code to make tests pass
+- Read contracts (TypeScript interfaces/Zod schemas) before implementing
+- Co-generate unit tests alongside implementation code. Test assertions MUST be based strictly on the provided contracts and acceptance criteria, NOT simply asserting your internal logic works (avoid tautological tests).
+- Run `tsc --noEmit` to verify contracts compile after implementation
 - Follow the layered architecture (controller → service → repository)
 - Use dependency injection for testability
 - Handle errors appropriately at each layer
@@ -95,8 +96,8 @@ The database client is pre-configured with the `PrismaPg` adapter and proper con
 
 ## CRITICAL: NEVER DO THESE
 
-- Write code without corresponding tests
-- Add features not covered by tests
+- Write code without co-generating unit tests
+- Implement before contracts (interfaces/Zod schemas) are defined
 - Skip error handling
 - Create circular dependencies between modules
 - Put business logic in controllers

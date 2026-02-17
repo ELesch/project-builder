@@ -53,29 +53,48 @@ Agents are classified by their role to enforce context discipline:
 3. If knowledge gap: STOP and return `RESEARCH_NEEDED: {question}`
 4. Do NOT explore - request mini-research instead
 
-### TDD Workflow Support
+### CDD Workflow Support
 
-Testing agents can run BEFORE coding agents for TDD:
+Contract-Driven Development uses dual-mode testing:
 
+**Feature Development:**
 ```
-Research Agent (identifies files + test patterns)
+Research Agent (identifies files + contract locations)
     │
-    ├─→ Handoff includes: files to modify, test pattern locations
-    │
-    ▼
-Testing Agent (RED phase) - Optional, runs first if TDD
-    │
-    ├─→ Reads: handoff + test pattern files
-    ├─→ Writes: failing tests based on requirements
+    ├─→ Handoff includes: files to modify, contract file paths
     │
     ▼
-Coding Agent (GREEN phase)
+Coding Agent (IMPLEMENT phase)
     │
-    ├─→ Reads: handoff + tests + reference files
-    ├─→ Writes: minimum code to pass tests
+    ├─→ Reads: handoff + contracts (interfaces/Zod schemas)
+    ├─→ Writes: implementation code + co-generated unit tests
     │
     ▼
-Testing/Coding Agent (REFACTOR phase)
+Testing Agent (VERIFY phase)
+    │
+    ├─→ Reads: implementation + contracts
+    ├─→ Writes: integration/E2E tests (post-implementation)
+    │
+    ▼
+Coding/Refactor Agent (REFACTOR phase)
+```
+
+**Bug Fix (strict test-first):**
+```
+Testing Agent (REPRODUCE phase)
+    │
+    ├─→ Writes: failing reproducer test that proves the bug
+    │
+    ▼
+Coding Agent (FIX phase)
+    │
+    ├─→ Reads: reproducer test + related code
+    ├─→ Writes: minimum fix to pass the test
+    │
+    ▼
+Testing Agent (VERIFY phase)
+    │
+    ├─→ Confirms fix + no regressions
 ```
 
 ## Stack Defaults by Project Type

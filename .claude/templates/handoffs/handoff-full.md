@@ -40,9 +40,18 @@
 - {{Pattern from reference file 1}}
 - {{Pattern from reference file 2}}
 
-**Test patterns:** (if TDD)
+**Contract files:**
+- Contracts location: {{path to TypeScript interfaces/Zod schemas}}
+- Key interfaces: {{list exported types}}
+
+**Test patterns:** (if bug fix)
 - Tests location: {{path to similar tests}}
 - Test framework: {{jest/pytest/go test/etc}}
+
+> **Note to Orchestrator:** For new features, unit tests should be co-generated
+> by the Implementation agent (dev-backend/dev-frontend). Assign dev-test ONLY
+> for Integration/E2E tests or bug-fix reproducers. Do NOT assign unit test
+> writing to dev-test for new features.
 
 ## Inputs
 

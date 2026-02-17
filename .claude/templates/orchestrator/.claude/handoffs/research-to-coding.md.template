@@ -34,11 +34,17 @@
 **Gotchas:**
 - {{Tech-specific gotcha from .claude/tech/stack.md}}
 
-## Test Files (if TDD)
+## Contract Files
+
+| Contract File | What It Defines |
+|---------------|-----------------|
+| {{path/to/contracts.ts}} | {{Interfaces and Zod schemas}} |
+
+## Test Files (if bug fix)
 
 | Test File | What to Test |
 |-----------|--------------|
-| {{path/to/test.ts}} | {{Behavior to test}} |
+| {{path/to/test.ts}} | {{Bug reproducer test}} |
 
 ## Anti-Context (DROP - not relevant)
 

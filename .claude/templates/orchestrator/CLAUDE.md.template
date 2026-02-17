@@ -21,7 +21,7 @@ This file provides guidance to Claude Code when working with code in this reposi
 
 **Orchestrator Framework Version:** {{ORCHESTRATOR_VERSION}} (Template: {{TEMPLATE_VERSION}})
 
-**IMPORTANT:** This project follows strict Test-Driven Development (TDD). YOU MUST write tests BEFORE implementation.
+**IMPORTANT:** This project follows **Contract-Driven Development (CDD)**. Define TypeScript interfaces and Zod schemas BEFORE implementation. Implementation agents co-generate unit tests alongside code. Bug fixes use strict test-first (reproducer test before fix).
 
 ## Project Overview
 
@@ -455,7 +455,7 @@ OUTPUT: Write repo + tests, run tests, fix failures
 | **Design exists** | New features | Design doc or ADR approved |
 | **Research complete** | Exploration tasks | Research agent ran first |
 | **Files identified** | All delegations | Handoff lists specific paths |
-| **Tests exist/planned** | Implementation | TDD approach confirmed |
+| **Contracts defined** | Implementation | TypeScript interfaces/Zod schemas exist and compile |
 
 #### When Design is Required
 
@@ -1071,29 +1071,42 @@ Batch 5: Quality
 
 ## Development Practices
 
-**CRITICAL:** This project follows **Test-Driven Development (TDD)**, **SDLC best practices**, and strict **modularity guidelines**.
+**CRITICAL:** This project follows **Contract-Driven Development (CDD)**, **SDLC best practices**, and strict **modularity guidelines**.
 
-### Test-Driven Development (TDD)
+### Contract-Driven Development (CDD)
 
-**YOU MUST** follow TDD for all new features and bug fixes. NEVER write implementation code without tests first.
+**YOU MUST** define contracts (TypeScript interfaces + Zod schemas) before implementation. CDD has two modes:
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│  1. RED     │  Write a failing test that defines behavior  │
-│  2. GREEN   │  Write minimum code to make the test pass    │
-│  3. REFACTOR│  Improve code while keeping tests green      │
-│  4. REPEAT  │  Continue until feature is complete          │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│  FEATURE DEVELOPMENT                                                │
+│  1. CONTRACT  │  Define TypeScript interfaces + Zod schemas         │
+│  2. COMPILE   │  Verify contracts compile: tsc --noEmit             │
+│  3. IMPLEMENT │  Write code AND co-generate unit tests              │
+│  4. VERIFY    │  Integration/E2E tests (post-implementation)        │
+│  5. REFACTOR  │  Improve code while keeping tests green             │
+├─────────────────────────────────────────────────────────────────────┤
+│  BUG FIX (strict test-first)                                        │
+│  1. REPRODUCE │  Write a failing test that reproduces the bug       │
+│  2. IMPLEMENT │  Fix the bug (minimum code to pass the test)        │
+│  3. VERIFY    │  Confirm fix + no regressions                       │
+│  4. REFACTOR  │  Clean up while tests stay green                    │
+└─────────────────────────────────────────────────────────────────────┘
 ```
 
-**TDD Workflow:**
-1. **Understand the requirement** - What should the code do?
-2. **Write a test** - Define the expected behavior in a test
-3. **Run the test** - Confirm it fails (red)
-4. **Implement** - Write the simplest code that passes
-5. **Run tests** - Confirm it passes (green)
-6. **Refactor** - Clean up while tests stay green
-7. **Commit** - Only commit when tests pass
+**Feature CDD Workflow:**
+1. **Define contracts** - TypeScript interfaces and Zod schemas for the API surface
+2. **Compile check** - Run `tsc --noEmit` to verify contracts compile
+3. **Implement + unit tests** - Implementation agents write code AND co-generate unit tests
+4. **Integration/E2E tests** - dev-test writes integration and E2E tests post-implementation
+5. **Refactor** - Clean up while tests stay green
+6. **Commit** - Only commit when contracts compile and tests pass
+
+**Bug Fix Workflow (test-first):**
+1. **Write reproducer test** - A failing test that proves the bug exists
+2. **Fix the bug** - Minimum code to make the test pass
+3. **Verify** - All tests pass, no regressions
+4. **Commit** - Only commit when tests pass
 
 ### Test Integrity (Critical)
 
@@ -1104,6 +1117,11 @@ When a test fails:
 1. Assume your implementation code is wrong
 2. Fix the implementation, not the test
 3. If you genuinely believe the test is wrong, explain why and ask first
+
+**Contract evolution exception:** When contracts change during implementation
+(e.g., a new field is added to an interface), unit tests co-generated against
+the old contract version may need updating. This is expected — update the tests
+to match the new contract, then verify implementation still compiles.
 
 **Test File Location:**
 Tests are colocated with source files:
@@ -1117,7 +1135,7 @@ src/services/ContactService.test.{{EXT}}    # Colocated test
 Features follow a structured lifecycle with quality gates:
 
 ```
-REQUIREMENTS → DESIGN → TDD DEVELOP → INTEGRATE → REVIEW → DEPLOY
+REQUIREMENTS → DESIGN + CONTRACTS → IMPLEMENT → VERIFY → REVIEW → DEPLOY
 ```
 
 **Phase Responsibilities:**
@@ -1125,9 +1143,9 @@ REQUIREMENTS → DESIGN → TDD DEVELOP → INTEGRATE → REVIEW → DEPLOY
 | Phase | Agent | Deliverable |
 |-------|-------|-------------|
 | Requirements | Orchestrator | Clear acceptance criteria |
-| Design | `dev-api`, `dev-migration` | API contracts, database schema |
-| TDD Develop | `dev-backend`, `dev-frontend`, `dev-test` | Tested implementation |
-| Integrate | `dev-test` | Passing test suite |
+| Design + Contracts | `dev-api`, `dev-migration` | Executable TypeScript interfaces, Zod schemas, database schema |
+| Implement | `dev-backend`, `dev-frontend` | Implementation + co-generated unit tests |
+| Verify | `dev-test` | Integration/E2E tests, full suite passing |
 | Review | `dev-reviewer`, `dev-security`, `dev-refactor` | Approved, clean code |
 | Deploy | `dev-deploy` | CI/CD, environments, release |
 
@@ -1272,8 +1290,10 @@ Use the `/tech-revalidate` skill when:
 **CRITICAL:** Before marking any task complete, verify ALL of the following:
 
 ```markdown
-## TDD
-- [ ] Tests written BEFORE implementation
+## CDD
+- [ ] Contracts defined BEFORE implementation (TypeScript interfaces + Zod schemas)
+- [ ] Contracts compile: `tsc --noEmit` passes
+- [ ] Implementation includes co-generated unit tests
 - [ ] All tests pass
 - [ ] Edge cases covered
 - [ ] Test file colocated with source
