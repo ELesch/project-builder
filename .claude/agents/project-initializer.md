@@ -170,7 +170,37 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 python -c "import secrets; print(secrets.token_urlsafe(32))"
 ```
 
-### Step 1b: Service Provisioning
+### Step 1b: CLI Interactivity Guard
+
+**CRITICAL:** Claude Code's Bash tool cannot handle interactive prompts (browser OAuth, menus, wizards). Commands that wait for user input will hang indefinitely.
+
+**Rules:**
+
+| Rule | Why |
+|------|-----|
+| Always check auth status before running any CLI command | Avoid surprise login prompts |
+| Never run login commands directly (`gh auth login`, `railway login`, `firebase login`) | These open a browser for OAuth -- hang in Bash tool |
+| Use `--yes` / `--no-input` / `--name` flags where available | Prevents confirmation prompts |
+| Avoid wizard commands (e.g., `npx @sentry/wizard`) | Interactive multi-step prompts |
+| Pipe values via stdin instead of interactive prompts | e.g., `echo "$VALUE" \| vercel env add NAME production` |
+
+**Auth Check Pattern (all CLIs):**
+
+```bash
+# 1. Check if already authenticated
+gh auth status        # GitHub
+npx vercel whoami     # Vercel
+railway whoami        # Railway
+firebase projects:list # Firebase (fails if not logged in)
+
+# 2. If NOT authenticated, ask user to log in separately:
+#    "Please run `gh auth login` in a separate terminal, then tell me when done."
+#    Do NOT run login commands from Claude Code.
+```
+
+**Fallback:** If any command might prompt for input, ask the user to run it in a separate terminal and report back.
+
+### Step 1c: Service Provisioning
 
 If discovery indicated provisioning during initialization, set up services.
 
@@ -335,6 +365,26 @@ If all services provisioned, complete deployment. See appropriate provider guide
 
 **If ANY check fails:** Fix before proceeding. Only hand off working projects.
 
+#### Bash Timeout Guidance
+
+Several health check commands exceed the Bash tool's default 2-minute (120000ms) timeout. Always specify explicit timeouts:
+
+| Command | Recommended Timeout | Why |
+|---------|---------------------|-----|
+| `npm install` | `600000` (10 min) | Large dependency trees, slow networks |
+| `npm run build` / `next build` | `300000` (5 min) | TypeScript compilation, bundling |
+| `npx prisma generate` | `120000` (2 min) | Default is usually fine |
+| `npx prisma db push` | `180000` (3 min) | Network latency to database |
+| `dotnet restore` | `600000` (10 min) | NuGet package downloads |
+| `dotnet build` | `300000` (5 min) | Compilation |
+
+**If a command times out:**
+1. Do NOT assume it failed -- it may still be running or may have partially succeeded
+2. Check for partial results (e.g., `node_modules/` exists, `package-lock.json` updated)
+3. If partial results exist, retry only the remaining work
+4. If no results, retry with a longer timeout
+5. After 2 retries, ask the user to run the command in a separate terminal
+
 ### Step 13: Framework Verification
 
 Run `/orc-framework` to verify orchestrator framework completeness.
@@ -415,6 +465,21 @@ cd {project-path}
 claude
 /app-design
 ```
+
+---
+
+## SESSION COMPLETE
+
+This Project Builder session is now finished. To design and build your app:
+
+1. Open a **new terminal**
+2. `cd {project-path}`
+3. Start a **new Claude Code session**: `claude`
+4. Run `/app-design`
+
+**Do NOT attempt app design or development work in this session.**
+The Project Builder does not have development agents or design skills --
+those exist only inside the created project.
 ```
 
 ## Error Handling

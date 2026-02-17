@@ -485,6 +485,8 @@ Created projects include `/tech-revalidate` for ongoing validation. Use when:
 
 **Note:** Not all projects need databases. Stateless microservices, CLI tools, libraries, and static sites don't require database verification.
 
+**Timeout:** Ensure the initializer uses extended Bash timeouts for long-running commands (`npm install` = 600000ms, `npm run build` = 300000ms). The default 2-minute timeout causes false failures. See the initializer's "Bash Timeout Guidance" section for the full table.
+
 ### Before migrating an existing project:
 - [ ] Source project path confirmed (local or GitHub URL)
 - [ ] Destination path confirmed
@@ -551,6 +553,45 @@ Orchestrator: Ready to create your project. I'll set up the database now
               features, pages, and user interface. Once complete, the
               development agents will build your app from that design.
 ```
+
+## Post-Creation Terminal State
+
+After a project is created and handed off, this Project Builder session is **complete**. The created project has its own orchestrator, agents, and skills that only work inside a new Claude Code session started from that project directory.
+
+### Redirect Table
+
+| User Request | Response |
+|-------------|----------|
+| "Let's start building features" | Redirect to new session in created project |
+| "Run /app-design" | Redirect -- skill exists only in created project |
+| "Add a login page" | Redirect -- dev agents exist only in created project |
+| "Fix this bug" | Redirect -- no dev agents here |
+| "Deploy the app" | Redirect -- deployment agents are in created project |
+
+### Template Response
+
+When the user attempts design or development work after project creation:
+
+> **This Project Builder session is complete.** The project has been created and verified at `{project-path}`.
+>
+> To start designing and building your app:
+> 1. Open a new terminal
+> 2. `cd {project-path}`
+> 3. Start Claude Code: `claude`
+> 4. Run `/app-design`
+>
+> The design and development agents live inside your new project -- they aren't available here in the Project Builder.
+
+### What IS Still Allowed
+
+| Action | Allowed? |
+|--------|----------|
+| Questions about the created project structure | Yes |
+| Questions about the orchestrator framework | Yes |
+| Creating a different/additional project | Yes |
+| Running `/orc-analyze` on this session | Yes |
+| Updating user preferences | Yes |
+| Modifying the Project Builder itself | Yes |
 
 ## Templates Location
 

@@ -12,18 +12,24 @@ Zero-config hosting platform optimized for Next.js and frontend frameworks.
 
 ### Option 1: CLI (Preferred)
 
-```bash
-# 1. Link project to Vercel (creates project if needed)
-npx vercel link
+**IMPORTANT:** Check auth before any Vercel CLI command. `vercel login` is interactive -- never run it from Claude Code.
 
-# 2. Add environment variables
-vercel env add DATABASE_URL production
-vercel env add DIRECT_URL production
-vercel env add NEXTAUTH_SECRET production
+```bash
+# 0. Check authentication first
+npx vercel whoami
+# If NOT authenticated, ask user: "Please run `npx vercel login` in a separate terminal."
+
+# 1. Link project to Vercel (--yes skips interactive prompts)
+npx vercel link --yes
+
+# 2. Add environment variables (pipe via stdin, not interactive prompt)
+echo "$DATABASE_URL_VALUE" | npx vercel env add DATABASE_URL production
+echo "$DIRECT_URL_VALUE" | npx vercel env add DIRECT_URL production
+echo "$NEXTAUTH_SECRET_VALUE" | npx vercel env add NEXTAUTH_SECRET production
 # Repeat for each variable
 
-# 3. Deploy
-npx vercel --prod
+# 3. Deploy (--yes skips confirmation)
+npx vercel --prod --yes
 ```
 
 ### Option 2: Dashboard
@@ -35,10 +41,9 @@ npx vercel --prod
 
 ## Environment Variables
 
-Add via CLI:
+Add via CLI (pipe value to avoid interactive prompt):
 ```bash
-vercel env add VARIABLE_NAME production
-# Then paste the value when prompted
+echo "$VALUE" | npx vercel env add VARIABLE_NAME production
 ```
 
 Or via dashboard:
@@ -103,9 +108,10 @@ Usually auto-detected, but can configure:
 
 ## Deployment Checklist
 
-- [ ] `npx vercel link` completed
-- [ ] All environment variables added
-- [ ] `npx vercel --prod` succeeds
+- [ ] `npx vercel whoami` confirms authentication
+- [ ] `npx vercel link --yes` completed
+- [ ] All environment variables added (via stdin pipe)
+- [ ] `npx vercel --prod --yes` succeeds
 - [ ] Production URL loads without errors
 - [ ] Database queries work
 - [ ] Auto-deploy from GitHub enabled

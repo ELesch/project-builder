@@ -12,15 +12,18 @@ Simple deployment platform for backend APIs with built-in databases.
 
 ### Option 1: CLI (Preferred)
 
+**IMPORTANT:** `railway login` and `railway init` are interactive. Never run them without flags from Claude Code.
+
 ```bash
 # Install CLI if needed
 npm install -g @railway/cli
 
-# Login
-railway login
+# Check authentication first
+railway whoami
+# If NOT authenticated, ask user: "Please run `railway login` in a separate terminal."
 
-# Create new project
-railway init
+# Create new project (--name avoids interactive prompt)
+railway init --name {project-name}
 
 # Or link existing project
 railway link
@@ -42,19 +45,18 @@ railway up
 
 ## Adding Database
 
-Railway can provision databases directly:
+**IMPORTANT:** `railway add` opens an interactive menu. Use the dashboard instead.
+
+**Dashboard method (recommended):**
+1. Go to your project at railway.app
+2. Click "Add Service" > "Database" > "PostgreSQL"
+3. Connection string auto-populates in variables
 
 ```bash
-# Add PostgreSQL
-railway add
-# Select PostgreSQL from menu
-
-# Get connection string
+# After adding via dashboard, get connection string
 railway variables
 # DATABASE_URL will be auto-set
 ```
-
-Or in dashboard: Add Service > Database > PostgreSQL
 
 ## Environment Variables
 
@@ -112,8 +114,8 @@ app.get('/health', (req, res) => {
 
 ## Deployment Checklist
 
-- [ ] `railway login` completed
-- [ ] `railway init` or `railway link` done
+- [ ] `railway whoami` confirms authentication
+- [ ] `railway init --name {project-name}` or `railway link` done
 - [ ] Environment variables set
 - [ ] `railway up` succeeds
 - [ ] Project URL accessible (https://{name}.up.railway.app)

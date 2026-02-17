@@ -100,14 +100,17 @@ export const adminDb = getFirestore(app);
 
 ## Verification
 
+**IMPORTANT:** `firebase login` is interactive (opens browser for OAuth). Never run it from Claude Code.
+
 ```bash
 # Install Firebase CLI
 npm install -g firebase-tools
 
-# Login
-firebase login
+# Check authentication (will fail if not logged in)
+firebase projects:list
+# If NOT authenticated, ask user: "Please run `firebase login` in a separate terminal."
 
-# List projects
+# After user confirms login, verify:
 firebase projects:list
 
 # Test locally

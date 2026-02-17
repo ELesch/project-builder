@@ -59,17 +59,21 @@ gh repo list --limit 5
 
 ## Authentication
 
-```bash
-# Login if needed
-gh auth login
+**IMPORTANT:** `gh auth login` is interactive (opens browser for OAuth). Never run it from Claude Code.
 
-# Check status
+```bash
+# 1. Check if already authenticated
 gh auth status
 
-# Switch accounts
-gh auth logout
-gh auth login
+# 2. If NOT authenticated, ask the user:
+#    "Please run `gh auth login` in a separate terminal, then tell me when you're done."
+
+# 3. After user confirms, verify:
+gh auth status
 ```
+
+**Switching accounts:**
+Ask the user to run `gh auth logout && gh auth login` in a separate terminal.
 
 ## Common Operations
 

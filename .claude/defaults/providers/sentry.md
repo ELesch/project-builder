@@ -39,12 +39,20 @@ SENTRY_PROJECT=your-project
 
 ## Next.js Setup (Recommended)
 
+**Manual setup (preferred from Claude Code):**
+
+The Sentry wizard (`npx @sentry/wizard@latest -i nextjs`) is interactive and cannot be run from Claude Code. Use manual setup instead:
+
 ```bash
-# Automatic setup
-npx @sentry/wizard@latest -i nextjs
+# Install packages
+npm install @sentry/nextjs
 ```
 
-Or manual:
+Then create the config files below.
+
+**Wizard alternative (user-run):** If the user prefers the wizard, ask them to run `npx @sentry/wizard@latest -i nextjs` in a separate terminal.
+
+**Manual config files:**
 
 ```typescript
 // sentry.client.config.ts
