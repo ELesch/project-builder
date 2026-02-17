@@ -10,6 +10,15 @@ allowed-tools: Read, Glob, Grep, Bash
 
 **MANDATORY** after every agent delegation. Do NOT proceed without verification.
 
+## Auto-Verification Results
+
+Before running manual checks, read the automated results:
+
+1. **Read** `.claude/results/last-agent-verify.md`
+2. If the file exists and shows PASS for tests and build, skip sections 2 and 5 below
+3. If FAIL, investigate the failures before proceeding
+4. If the file doesn't exist, run all checks manually
+
 ## Verification Checklist
 
 ### 1. File Inventory

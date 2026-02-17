@@ -103,6 +103,18 @@ use context7 for Prisma client generation
 
 MCP configuration is in `.mcp.json`. See roster.md for full documentation.
 
+### Doc-First Mandate (Medium/Low Confidence Technologies)
+
+**STRICT RULE**: Before writing implementation code for any technology marked
+Medium, Low, or Unknown confidence in `.claude/tech/stack.md`:
+
+1. **Query Context7** first: "use context7 for [library]"
+2. **If Context7 unavailable**, fetch the `llms.txt` or `llms-full.txt` fallback URL from `stack.md`
+3. **Only then** write implementation code using the retrieved patterns
+
+Skipping this step for Medium/Low confidence technologies will produce
+outdated patterns. This is an immutable directive.
+
 ---
 
 ## App Design Phase (New Projects)
@@ -477,11 +489,17 @@ Every delegation MUST include:
 
 #### Post-Delegation Requirements
 
+After every `Task` tool completion, auto-verification results are written to
+`.claude/results/last-agent-verify.md` by the SubagentStop hook. **You MUST
+read this file** before proceeding to the next agent. Run `/orc-verify` for
+the full checklist.
+
 After EVERY agent completion:
-1. **Run `/orc-verify`** - Mandatory verification checklist
-2. **Check test status** - All tests must pass
-3. **Review scope** - Agent stayed within boundaries
-4. **Document** - Update PROJECT_STATUS.md if needed
+1. **Read `.claude/results/last-agent-verify.md`** - Check auto-verification results
+2. **Run `/orc-verify`** - Full verification checklist (auto-results pre-populate test/build checks)
+3. **Check test status** - All tests must pass
+4. **Review scope** - Agent stayed within boundaries
+5. **Document** - Update PROJECT_STATUS.md if needed
 
 **If verification fails:** Run `/orc-recover` immediately.
 
@@ -1076,6 +1094,16 @@ Batch 5: Quality
 5. **Run tests** - Confirm it passes (green)
 6. **Refactor** - Clean up while tests stay green
 7. **Commit** - Only commit when tests pass
+
+### Test Integrity (Critical)
+
+**NEVER modify a test file (.test.ts, .spec.ts, .test.tsx, etc.) to make
+a failing test pass** unless explicitly told the test itself is outdated.
+
+When a test fails:
+1. Assume your implementation code is wrong
+2. Fix the implementation, not the test
+3. If you genuinely believe the test is wrong, explain why and ask first
 
 **Test File Location:**
 Tests are colocated with source files:

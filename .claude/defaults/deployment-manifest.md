@@ -4,7 +4,7 @@
 > Referenced by `@project-initializer` and `@project-migrator` as the single source of truth
 > for what must be deployed to every created/migrated project.
 >
-> **Last updated:** 2026-02-07 | **Template count:** 99 files
+> **Last updated:** 2026-02-16 | **Template count:** 100 files
 
 ## How to Use This Manifest
 
@@ -45,8 +45,9 @@
 | 7 | `README.md.template` | `README.md` | new-project-only |
 | 8 | `ONBOARDING.md.template` | `ONBOARDING.md` | always |
 | 9 | `.mcp.json.template` | `.mcp.json` | always |
+| 10 | `.claudeignore.template` | `.claudeignore` | always |
 
-**Files in batch:** 9 (8 always + 1 conditional)
+**Files in batch:** 10 (9 always + 1 conditional)
 
 ---
 
@@ -285,7 +286,7 @@
 
 | Category | Always | Conditional | Total |
 |----------|--------|-------------|-------|
-| Core Structure | 8 | 1 | 9 |
+| Core Structure | 9 | 1 | 10 |
 | Skills | 11 | 0 | 11 |
 | Agents (core) | 13 | 0 | 13 |
 | Agents (conditional) | 0 | 9 | 9 |
@@ -301,9 +302,9 @@
 | Tech reference | 2 | 0 | 2 |
 | Documentation dirs | 3 | 0 | 3 |
 | Source scaffolding | 0 | 5 | 5 |
-| **Totals** | **73** | **24** | **97** |
+| **Totals** | **74** | **24** | **98** |
 
-> **Note:** 97 deployed files + 2 non-deployed (README.md, TEMPLATE_VERSION) = 99 template files total.
+> **Note:** 98 deployed files + 2 non-deployed (README.md, TEMPLATE_VERSION) = 100 template files total.
 > Domain-specific agents created by `@project-agent-generator` are additional and not tracked here.
 
 ## Post-Deployment Verification
@@ -313,6 +314,7 @@ After deploying all batches, verify:
 ### Minimum Required (always files)
 
 - [ ] `CLAUDE.md` exists and has project-specific content
+- [ ] `.claudeignore` exists and excludes audit sessions
 - [ ] `.claude/manifest.json` exists and is valid JSON
 - [ ] `.claude/settings.json` exists
 - [ ] `.claude/roster.md` exists
