@@ -10,7 +10,7 @@ Specialized agents for the orchestrator/agent pattern.
 |-------|------|-----------|
 | Backend | `dev-backend.md` | Controllers, services, repositories |
 | Frontend | `dev-frontend.md` | Components, hooks, pages, forms |
-| Test | `dev-test.md` | TDD, test writing, coverage |
+| Test | `dev-test.md` | Integration/E2E tests, reproducer tests, coverage |
 | Migration | `dev-migration.md` | Database schema, DDL |
 | Integration | `dev-integration.md` | OAuth, third-party APIs, webhooks |
 | Data | `dev-data.md` | ETL, sync, transformations |

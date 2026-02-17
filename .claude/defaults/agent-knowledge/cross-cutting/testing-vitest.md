@@ -330,19 +330,40 @@ npm install -D @vitest/coverage-v8
 
 ---
 
-## TDD Workflow
+## CDD Workflow
+
+### Feature Development
 
 ```
-1. RED: Write failing test for new behavior
+1. CONTRACT: Define TypeScript interfaces + Zod schemas
+   tsc --noEmit             # Verify contracts compile
+
+2. IMPLEMENT: Write code + co-generate unit tests
    vitest --watch           # Run in watch mode
+   - Implementation agent writes code AND tests together
 
-2. GREEN: Write minimum code to pass
-   - Implement feature
-   - Verify test passes
+3. VERIFY: Integration/E2E tests (dev-test, post-implementation)
+   vitest run               # Run full suite
 
-3. REFACTOR: Improve while green
+4. REFACTOR: Improve while green
    - Clean up code
    - All tests still pass
+
+5. COMMIT: When contracts compile and tests pass
+   git add . && git commit
+```
+
+### Bug Fix (Strict Test-First)
+
+```
+1. REPRODUCE: Write failing test that proves the bug
+   vitest --watch           # Run in watch mode
+
+2. FIX: Write minimum code to pass the test
+   - Verify test passes
+
+3. VERIFY: Confirm no regressions
+   vitest run               # Full suite
 
 4. COMMIT: When tests pass
    git add . && git commit

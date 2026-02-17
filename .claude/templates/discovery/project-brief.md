@@ -59,7 +59,7 @@
 ## Requirements
 
 ### Testing
-- Approach: {{TDD/BDD/etc.}}
+- Approach: {{CDD/BDD/etc.}}
 - Coverage target: {{percentage or "not specified"}}
 
 ### Security

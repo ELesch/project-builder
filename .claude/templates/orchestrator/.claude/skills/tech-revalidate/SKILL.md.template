@@ -98,11 +98,20 @@ For EACH technology that changed or all if full revalidation:
    - Research do/don't patterns for Medium/Low confidence
    - Update `.claude/tech/stack.md` VERSION GOTCHAS section
 
-4. **Create verification tasks**
+4. **Run deprecation checks (Compiler-Driven Loop)**
+   - Run the project's linter (e.g., `eslint` with `eslint-plugin-deprecation` or `golangci-lint`) to check for deprecated API usage.
+   - *Note: Standard `tsc --noEmit` does not natively flag `@deprecated` JSDoc tags without ESLint configuration. Do not rely solely on it.*
+   - If deprecation warnings are found:
+     a. Use Context7 or the `llms.txt` fallback to find the modern replacement API
+     b. Refactor the implementation code to use the modern API
+     c. Update `.claude/tech/stack.md` gotchas with new do/don't entries
+     d. Log findings for developer review
+
+5. **Create verification tasks**
    - Generate test patterns for Medium/Low confidence technologies
    - Add to stack.md or separate verification file
 
-### Step 5: Update Manifest
+### Step 6: Update Manifest
 
 After revalidation, update `.claude/manifest.json`:
 
@@ -123,7 +132,7 @@ After revalidation, update `.claude/manifest.json`:
 }
 ```
 
-### Step 6: Update stack.md
+### Step 7: Update stack.md
 
 Update `.claude/tech/stack.md` with:
 - New version numbers in AI Version Awareness table

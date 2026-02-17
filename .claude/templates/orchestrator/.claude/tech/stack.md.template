@@ -12,15 +12,7 @@
 > Code patterns from AI assistance may reflect older versions. Consult the
 > "Version Gotchas" section when working with technologies marked Medium/Low confidence.
 
-| Technology | Current | AI Trained On | Gap | Confidence | Context7 |
-|------------|---------|---------------|-----|------------|----------|
-| Next.js | {{NEXTJS_VERSION}} | 14.x | {{NEXTJS_GAP}} | {{NEXTJS_CONFIDENCE}} | {{NEXTJS_CONTEXT7}} |
-| React | {{REACT_VERSION}} | 18.x | {{REACT_GAP}} | {{REACT_CONFIDENCE}} | {{REACT_CONTEXT7}} |
-| TypeScript | {{TYPESCRIPT_VERSION}} | 5.3 | {{TYPESCRIPT_GAP}} | {{TYPESCRIPT_CONFIDENCE}} | {{TYPESCRIPT_CONTEXT7}} |
-| Prisma | {{PRISMA_VERSION}} | 7.x | {{PRISMA_GAP}} | {{PRISMA_CONFIDENCE}} | {{PRISMA_CONTEXT7}} |
-| Tailwind CSS | {{TAILWIND_VERSION}} | 3.x | {{TAILWIND_GAP}} | {{TAILWIND_CONFIDENCE}} | {{TAILWIND_CONTEXT7}} |
-| shadcn/ui | {{SHADCN_VERSION}} | 0.8.x | {{SHADCN_GAP}} | {{SHADCN_CONFIDENCE}} | {{SHADCN_CONTEXT7}} |
-{{ADDITIONAL_VERSION_GAPS}}
+{{TECH_AWARENESS_TABLE}}
 
 **Gap Levels**: Minor | Moderate | **Major**
 **Confidence**: High (code works) | Medium (review gotchas) | **Low (verify all code)** | Unknown
@@ -51,6 +43,14 @@ Libraries marked with ✓ in the Context7 column have live documentation availab
 3. AI responses use up-to-date APIs instead of training data
 
 **Check library availability:** https://context7.com
+
+### llms.txt Fallback Documentation
+
+When Context7 is unavailable or rate-limited, technologies marked with a verified URL have official AI-friendly documentation available:
+
+{{LLMSTXT_FALLBACK_TABLE}}
+
+**Usage:** Ask Claude to fetch the URL using its built-in tools when you need current documentation and Context7 is not responding.
 
 ## Developer Prerequisites
 

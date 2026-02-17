@@ -74,13 +74,16 @@ Before finishing, verify:
 
 ## CRITICAL: YOU MUST ALWAYS
 
-1. **Handle loading/error states** appropriately
-2. **Use project styling conventions** (no inline styles if using utility CSS)
-3. **Run lint** after changes
-4. **Follow existing component patterns** in the codebase
-5. **Implement mobile-first** - Base styles for mobile, enhance with breakpoints
-6. **Ensure touch targets >= 44x44px** for all interactive elements
-7. **Test at multiple breakpoints** before marking complete
+1. **Establish Contracts First:** For UI components, the "Contract" is the Component Props Interface and (if applicable) the Form Validation Zod Schema. Define these explicitly at the top of your file (or in a shared types file) before writing the JSX implementation. Read external contracts before integrating APIs.
+2. **Co-generate unit tests** alongside implementation code. Asserts MUST be based strictly on the contracts and user behavior, not simply asserting that your internal logic does what it currently does (avoid tautological tests).
+3. **Run `tsc --noEmit`** to verify contracts compile after implementation
+4. **Handle loading/error states** appropriately
+5. **Use project styling conventions** (no inline styles if using utility CSS)
+6. **Run lint** after changes
+7. **Follow existing component patterns** in the codebase
+8. **Implement mobile-first** - Base styles for mobile, enhance with breakpoints
+9. **Ensure touch targets >= 44x44px** for all interactive elements
+10. **Test at multiple breakpoints** before marking complete
 
 ## CRITICAL: NEVER DO THESE
 

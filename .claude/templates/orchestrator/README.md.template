@@ -48,7 +48,7 @@ This project uses the Claude Code orchestrator pattern for AI-assisted developme
 ## Contributing
 
 1. Follow the conventions in `CLAUDE.md`
-2. Write tests first (TDD)
+2. Follow Contract-Driven Development (CDD) -- see CLAUDE.md
 3. Keep files under size limits
 4. Update documentation
 

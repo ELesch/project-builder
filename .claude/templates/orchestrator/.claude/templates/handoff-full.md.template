@@ -91,7 +91,7 @@
 ## Verification
 
 **How orchestrator will verify:**
-1. Run `/verify-agent`
+1. Run `/orc-verify`
 2. Check: {{SPECIFIC_VERIFICATION}}
 3. Test: `npm test -- --testPathPattern="{{PATTERN}}"`
 

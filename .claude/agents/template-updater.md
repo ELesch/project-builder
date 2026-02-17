@@ -13,7 +13,8 @@ Updates the orchestrator template files that get deployed to new projects. This 
 ## Constraints
 
 ### MUST ALWAYS
-- Work only in `.claude/templates/orchestrator/` directory
+- Work primarily in `.claude/templates/orchestrator/` directory
+- Also modify `.claude/agents/` files when explicitly specified in the change plan
 - Preserve existing template placeholders (`{{PLACEHOLDER}}`)
 - Maintain consistent formatting with existing templates
 - Update related files together (e.g., if adding a skill, update roster.md.template)

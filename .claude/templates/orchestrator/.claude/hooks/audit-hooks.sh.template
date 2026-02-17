@@ -83,6 +83,48 @@ EOF
 | Status | Completed |
 
 EOF
+
+        # Auto-run tests and write results for orchestrator verification
+        VERIFY_FILE=".claude/results/last-agent-verify.md"
+        mkdir -p .claude/results
+
+        {
+          echo "## Auto-Verification: $AGENT_TYPE ($AGENT_ID)"
+          echo ""
+          echo "**Completed:** $FULL_TIMESTAMP"
+          echo ""
+
+          # Detect test runner and run
+          if [ -f "package.json" ]; then
+            echo "### Test Results"
+            echo '```'
+            npm test --if-present 2>&1 | tail -20
+            TEST_EXIT=${PIPESTATUS[0]}
+            echo '```'
+            echo ""
+            if [ $TEST_EXIT -eq 0 ]; then
+              echo "**Status: PASS**"
+            else
+              echo "**Status: FAIL** (exit code $TEST_EXIT)"
+            fi
+          else
+            echo "**Status: SKIPPED** (no package.json found)"
+          fi
+
+          echo ""
+          echo "### Build Check"
+          if [ -f "package.json" ]; then
+            echo '```'
+            npm run build --if-present 2>&1 | tail -10
+            BUILD_EXIT=${PIPESTATUS[0]}
+            echo '```'
+            if [ $BUILD_EXIT -eq 0 ]; then
+              echo "**Build: PASS**"
+            else
+              echo "**Build: FAIL** (exit code $BUILD_EXIT)"
+            fi
+          fi
+        } > "$VERIFY_FILE" 2>&1
         ;;
 
     "PostToolUseFailure")

@@ -10,6 +10,15 @@ allowed-tools: Read, Glob, Grep, Bash
 
 **MANDATORY** after every agent delegation. Do NOT proceed without verification.
 
+## Auto-Verification Results
+
+Before running manual checks, read the automated results:
+
+1. **Read** `.claude/results/last-agent-verify.md`
+2. If the file exists and shows PASS for tests and build, skip sections 2 and 5 below
+3. If FAIL, investigate the failures before proceeding
+4. If the file doesn't exist, run all checks manually
+
 ## Verification Checklist
 
 ### 1. File Inventory
@@ -24,9 +33,18 @@ allowed-tools: Read, Glob, Grep, Bash
 - [ ] No unexpected files were created
 - [ ] Files are in the correct locations
 
-### 2. Test Verification
+### 2. Contract & Test Verification
 
-Run tests for the affected modules:
+**Type checking is the primary gate — run FIRST, before tests:**
+
+```bash
+# MANDATORY: Type check (must pass before running tests)
+npm run typecheck 2>&1 || echo "TYPE CHECK FAILED - stop here"
+```
+
+- [ ] Type checking passes: `npm run typecheck`
+
+**Then run tests for the affected modules:**
 
 ```bash
 # Run relevant tests
@@ -35,13 +53,15 @@ npm test -- --testPathPattern="<module-pattern>"
 
 | Metric | Value |
 |--------|-------|
+| Typecheck | PASS / FAIL |
 | Tests passed | ___ / ___ |
 | Tests failed | ___ |
 | Coverage | ___% |
 
 **Check:**
+- [ ] Type checking passes (MANDATORY — fail verification if typecheck fails)
 - [ ] All existing tests still pass
-- [ ] New tests were added (if implementation agent)
+- [ ] New unit tests were co-generated (if implementation agent)
 - [ ] No test files left in failing state
 
 ### 3. Code Quality
@@ -71,7 +91,7 @@ npm test -- --testPathPattern="<module-pattern>"
 
 - [ ] No broken imports
 - [ ] Application builds successfully: `npm run build`
-- [ ] Type checking passes: `npm run typecheck` (if available)
+- [ ] Type checking passes: `npm run typecheck` (MANDATORY — already verified in step 2)
 
 ## Decision Tree
 
@@ -82,10 +102,10 @@ All checks pass?
     │
     └─→ NO: Classify failure
             │
-            ├─→ Test failures → Invoke /recover
+            ├─→ Test failures → Invoke /orc-recover
             ├─→ Scope violation → Document in BLOCKERS.md, escalate to user
             ├─→ Quality issues → Delegate fix to same agent
-            └─→ Build broken → Invoke /recover
+            └─→ Build broken → Invoke /orc-recover
 ```
 
 ## Quick Verification Commands
@@ -149,7 +169,7 @@ After verification, document:
 1. **Document the failure** clearly
 2. **Classify the severity:**
    - Minor: Fix in next agent run
-   - Major: Invoke `/recover`
+   - Major: Invoke `/orc-recover`
    - Blocking: Update BLOCKERS.md, notify user
 3. **Never proceed** with unverified work
 4. **Never accumulate** failures across agents
@@ -165,11 +185,11 @@ After completing verification, check if you need a checkpoint:
 │  CHECKPOINT CHECK                                        │
 │                                                          │
 │  Have you completed 3+ agents since last checkpoint?    │
-│  ├─ YES → Run /orchestrator-checkpoint                  │
+│  ├─ YES → Run /orc-checkpoint                           │
 │  └─ NO  → Proceed to next agent                         │
 │                                                          │
 │  Has it been 5+ turns since last checkpoint?            │
-│  ├─ YES → Run /orchestrator-checkpoint                  │
+│  ├─ YES → Run /orc-checkpoint                           │
 │  └─ NO  → Proceed to next agent                         │
 └─────────────────────────────────────────────────────────┘
 ```

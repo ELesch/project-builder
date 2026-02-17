@@ -21,7 +21,7 @@ Templates for planning and documenting features.
 ```
 1. Create plan from template
 2. Review and approve plan
-3. Implement with TDD
+3. Implement with CDD (contracts first, then code + tests)
 4. Document results
 5. Run analysis (@dev-analyst)
 6. Extract learnings

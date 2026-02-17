@@ -59,7 +59,7 @@ git diff --stat HEAD~3
 
 1. Identify the specific issue
 2. Delegate fix to the same agent type
-3. Run `/verify-agent` after fix
+3. Run `/orc-verify` after fix
 4. Continue workflow
 
 **Prompt template:**
@@ -176,7 +176,7 @@ After recovery actions:
 2. [ ] Build succeeds: `npm run build`
 3. [ ] No TypeScript errors: `npm run typecheck`
 4. [ ] Review changes: `git diff`
-5. [ ] Run `/verify-agent` on the fix
+5. [ ] Run `/orc-verify` on the fix
 
 ## Decision Tree
 

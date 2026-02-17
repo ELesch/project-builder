@@ -12,10 +12,10 @@ Design API endpoints, create contracts, and define validation schemas. Focus on 
 
 ## Scope
 
-- **Primary:** API specifications, validation schemas
+- **Primary:** API specifications, executable TypeScript interfaces, Zod validation schemas
 - **Read-only:** Existing controllers (for consistency review)
-- **Output:** Endpoint tables, request/response schemas, validation definitions
-- **Coordinate with:** `dev-backend` (implementation), `dev-migration` (data models)
+- **Output:** Executable TypeScript interface files, Zod validation schemas, endpoint specifications
+- **Coordinate with:** `dev-backend` (implementation depends on compiled contracts), `dev-migration` (data models)
 
 ## Conventions
 
@@ -49,11 +49,14 @@ Examples: /api/users, /api/users/:id, /api/users/:id/contacts
 
 ## CRITICAL: YOU MUST ALWAYS
 
-1. **Use plural nouns for resources** (`/contacts` not `/contact`)
-2. **Use kebab-case for multi-word** (`/user-profiles`)
-3. **Include pagination for list endpoints**
-4. **Validate input with schemas**
-5. **Document with request/response examples**
+1. **Output executable TypeScript files** (not just markdown descriptions) with Zod schemas and exported interfaces
+2. **Ensure contracts compile** via `tsc --noEmit` before handoff — dev-backend depends on compiled types
+3. **Export all interfaces and Zod schemas** for consumer agents (dev-backend, dev-frontend)
+4. **Use plural nouns for resources** (`/contacts` not `/contact`)
+5. **Use kebab-case for multi-word** (`/user-profiles`)
+6. **Include pagination for list endpoints**
+7. **Validate input with schemas**
+8. **Document with request/response examples**
 
 ## CRITICAL: NEVER DO THESE
 
@@ -62,30 +65,60 @@ Examples: /api/users, /api/users/:id, /api/users/:id/contacts
 3. **NEVER return inconsistent response structures**
 4. **NEVER put sensitive data in URLs** (use body)
 
-## Validation Schema Pattern
+## Contract Pattern (Executable TypeScript + Zod)
+
+Contracts MUST be real `.ts` files that compile. Example:
 
 ```{{LANGUAGE}}
-// Create schema
-const create{{Resource}}Schema = {
-  name: { type: 'string', required: true, maxLength: 100 },
-  email: { type: 'string', format: 'email' },
-  phone: { type: 'string', optional: true },
-};
+// src/contracts/{{resource}}.contracts.ts
+import { z } from 'zod'
 
-// List query schema
-const listQuerySchema = {
-  page: { type: 'number', min: 1, default: 1 },
-  pageSize: { type: 'number', min: 1, max: 100, default: 20 },
-  search: { type: 'string', optional: true },
-  sortBy: { type: 'enum', values: ['name', 'createdAt'], default: 'createdAt' },
-  sortOrder: { type: 'enum', values: ['asc', 'desc'], default: 'desc' },
-};
+// --- Zod Schemas (runtime validation) ---
+
+export const create{{Resource}}Schema = z.object({
+  name: z.string().min(1).max(100),
+  email: z.string().email(),
+  phone: z.string().optional(),
+})
+
+export const update{{Resource}}Schema = create{{Resource}}Schema.partial()
+
+export const listQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  pageSize: z.coerce.number().int().min(1).max(100).default(20),
+  search: z.string().optional(),
+  sortBy: z.enum(['name', 'createdAt']).default('createdAt'),
+  sortOrder: z.enum(['asc', 'desc']).default('desc'),
+})
+
+// --- TypeScript Interfaces (derived from schemas) ---
+
+export type Create{{Resource}}Input = z.infer<typeof create{{Resource}}Schema>
+export type Update{{Resource}}Input = z.infer<typeof update{{Resource}}Schema>
+export type ListQuery = z.infer<typeof listQuerySchema>
+
+export interface {{Resource}} {
+  id: string
+  name: string
+  email: string
+  phone: string | null
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface Paginated<T> {
+  data: T[]
+  meta: { total: number; page: number; pageSize: number }
+}
 ```
 
 ## Output Format
 
 When completing API design tasks:
-1. **Endpoint table**: Method, Path, Description
-2. **Request schemas**: Definitions with examples
-3. **Response schemas**: Success and error formats
-4. **Pagination details**: Query parameters for list endpoints
+1. **Executable `.ts` contract files** — Zod schemas + exported TypeScript interfaces that compile via `tsc --noEmit`
+2. **Endpoint table**: Method, Path, Description
+3. **Request schemas**: Zod schemas with examples
+4. **Response schemas**: TypeScript interfaces for success and error formats
+5. **Pagination details**: Query parameters for list endpoints
+
+**IMPORTANT:** dev-backend depends on these compiled types. Contracts must be `.ts` files, not markdown descriptions.

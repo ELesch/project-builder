@@ -179,5 +179,5 @@ When both agents complete:
 
 If issues found:
 - Document which parallel combination caused the issue
-- Run `/recover`
+- Run `/orc-recover`
 - Update this check with new unsafe pattern

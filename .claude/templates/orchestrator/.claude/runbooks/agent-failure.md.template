@@ -58,7 +58,7 @@ Runbook for handling failed agent delegations and broken tests.
    ```
 
 5. **Verify fix**
-   - Run `/verify-agent`
+   - Run `/orc-verify`
    - Ensure all tests pass
 
 ### Common Causes

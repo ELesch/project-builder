@@ -9,6 +9,24 @@
             "command": ".claude/hooks/check-secrets.sh"
           }
         ]
+      },
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/check-secrets.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/check-secrets.sh"
+          }
+        ]
       }
     ],
     "SubagentStart": [

@@ -42,6 +42,11 @@ coverage/
 prisma/*.db
 prisma/*.db-journal
 
+# Claude session artifacts
+.claude/results/
+.claude/audit/sessions/
+.claude/plans/
+
 # Misc
 *.local
 .vercel
