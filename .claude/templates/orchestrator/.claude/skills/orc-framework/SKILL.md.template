@@ -93,7 +93,7 @@ Verify all expected framework infrastructure exists:
 - [ ] `.claude/skills/` with 11 subdirectories (capture, tech-revalidate, commit, app-design, audit-decision, audit-summary, orc-checkpoint, orc-framework, orc-verify, orc-parallel, orc-recover)
 - [ ] `.claude/handoffs/` with README and templates (3 files)
 - [ ] `.claude/templates/` with plan, results, design-system, handoff templates (6 files)
-- [ ] `.claude/hooks/` with audit-hooks.sh and check-secrets.sh (2 files)
+- [ ] `.claude/hooks/` with audit-hooks.mjs and check-secrets.mjs (2 files)
 - [ ] `.claude/audit/` with README
 - [ ] `.claude/checklists/` with at least 5 files
 - [ ] `.claude/runbooks/` with at least 4 files (README, rollback, deployment, agent-failure)
@@ -122,7 +122,7 @@ Verify all expected framework infrastructure exists:
 | Runbooks | 4+ (README, rollback, deployment, agent-failure) |
 | Handoffs | 3 (README, research-to-coding, mini-research) |
 | Templates | 6 (README, plan, results, design-system, handoff-mini, handoff-full) |
-| Hooks | 2 (audit-hooks.sh, check-secrets.sh) |
+| Hooks | 2 (audit-hooks.mjs, check-secrets.mjs) |
 | Status files | 7 |
 
 ### 6. Cross-Reference Validation

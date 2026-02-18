@@ -200,8 +200,8 @@
 
 | # | Template Path | Deployed Path | Condition |
 |---|--------------|---------------|-----------|
-| 76 | `.claude/hooks/audit-hooks.sh.template` | `.claude/hooks/audit-hooks.sh` | always |
-| 77 | `.claude/hooks/check-secrets.sh.template` | `.claude/hooks/check-secrets.sh` | always |
+| 76 | `.claude/hooks/audit-hooks.mjs.template` | `.claude/hooks/audit-hooks.mjs` | always |
+| 77 | `.claude/hooks/check-secrets.mjs.template` | `.claude/hooks/check-secrets.mjs` | always |
 
 ### 6d: Audit
 

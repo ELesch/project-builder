@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/audit-hooks.sh"
+            "command": "node .claude/hooks/audit-hooks.mjs"
           }
         ]
       }
@@ -15,7 +15,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/audit-hooks.sh"
+            "command": "node .claude/hooks/audit-hooks.mjs"
           }
         ]
       }
@@ -25,7 +25,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/audit-hooks.sh"
+            "command": "node .claude/hooks/audit-hooks.mjs"
           }
         ]
       }
@@ -35,7 +35,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/audit-hooks.sh"
+            "command": "node .claude/hooks/audit-hooks.mjs"
           }
         ]
       }
@@ -45,7 +45,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/audit-hooks.sh"
+            "command": "node .claude/hooks/audit-hooks.mjs"
           }
         ]
       }

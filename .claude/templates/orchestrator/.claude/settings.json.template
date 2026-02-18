@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/check-secrets.sh"
+            "command": "node .claude/hooks/check-secrets.mjs"
           }
         ]
       },
@@ -15,7 +15,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/check-secrets.sh"
+            "command": "node .claude/hooks/check-secrets.mjs"
           }
         ]
       },
@@ -24,7 +24,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/check-secrets.sh"
+            "command": "node .claude/hooks/check-secrets.mjs"
           }
         ]
       }
@@ -34,7 +34,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/audit-hooks.sh"
+            "command": "node .claude/hooks/audit-hooks.mjs"
           }
         ]
       }
@@ -44,7 +44,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/audit-hooks.sh"
+            "command": "node .claude/hooks/audit-hooks.mjs"
           }
         ]
       }
@@ -54,7 +54,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/audit-hooks.sh"
+            "command": "node .claude/hooks/audit-hooks.mjs"
           }
         ]
       }
@@ -64,7 +64,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/audit-hooks.sh"
+            "command": "node .claude/hooks/audit-hooks.mjs"
           }
         ]
       }
@@ -74,7 +74,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/audit-hooks.sh"
+            "command": "node .claude/hooks/audit-hooks.mjs"
           }
         ]
       }
