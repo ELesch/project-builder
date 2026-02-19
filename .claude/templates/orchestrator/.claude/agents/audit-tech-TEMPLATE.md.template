@@ -1,8 +1,7 @@
 ---
 name: audit-{{TECHNOLOGY}}-{{VERSION}}
 description: Review {{TECHNOLOGY}} {{VERSION}} code for correctness, patterns, and best practices
-role: Review
-allowed-tools: Read, Grep, Glob
+tools: Read, Grep, Glob
 ---
 
 @.claude/agents/knowledge/{{KNOWLEDGE_FILE}}.md

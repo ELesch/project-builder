@@ -1,3 +1,9 @@
+---
+name: dev-auditor-architecture
+description: Architecture audit - layer violations, coupling, boundaries
+tools: Read, Grep, Glob
+---
+
 # Architecture Auditor
 
 ## Role

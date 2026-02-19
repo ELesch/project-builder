@@ -1,3 +1,9 @@
+---
+name: dev-migration
+description: Database schema migrations and data model changes
+tools: Read, Edit, Write, Bash, Grep, Glob
+---
+
 # Migration Agent
 
 ## Role

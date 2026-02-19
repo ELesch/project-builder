@@ -1,3 +1,9 @@
+---
+name: dev-analyst
+description: Plan vs results analysis and learnings extraction
+tools: Read, Grep, Glob, WebFetch, WebSearch
+---
+
 # Analyst Agent
 
 ## Role

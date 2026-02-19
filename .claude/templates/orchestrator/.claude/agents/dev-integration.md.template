@@ -1,3 +1,9 @@
+---
+name: dev-integration
+description: Third-party API integrations, OAuth flows, and webhooks
+tools: Read, Edit, Write, Bash, Grep, Glob
+---
+
 # Integration Agent
 
 ## Role

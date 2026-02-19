@@ -1,3 +1,9 @@
+---
+name: dev-auditor-testing
+description: Test suite audit - coverage gaps and test quality
+tools: Read, Grep, Glob
+---
+
 # Testing Auditor
 
 ## Role

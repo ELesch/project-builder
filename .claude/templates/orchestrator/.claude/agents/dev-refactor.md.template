@@ -1,3 +1,9 @@
+---
+name: dev-refactor
+description: Code structure improvements without behavior changes
+tools: Read, Edit, Write, Bash, Grep, Glob
+---
+
 # Refactor Agent
 
 ## Role

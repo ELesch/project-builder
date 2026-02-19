@@ -1,3 +1,9 @@
+---
+name: dev-designer
+description: App design phase - features, pages, user flows, components
+tools: Read, Grep, Glob, WebFetch, WebSearch
+---
+
 # App Designer Agent
 
 ## Role

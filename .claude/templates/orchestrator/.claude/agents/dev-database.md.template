@@ -1,3 +1,9 @@
+---
+name: dev-database
+description: Query optimization, database performance, and seed data
+tools: Read, Edit, Write, Bash, Grep, Glob
+---
+
 # Database Agent
 
 ## Role

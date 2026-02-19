@@ -1,3 +1,9 @@
+---
+name: dev-auditor-api
+description: API audit - REST conventions, consistency, status codes
+tools: Read, Grep, Glob
+---
+
 # API Design Auditor
 
 ## Role

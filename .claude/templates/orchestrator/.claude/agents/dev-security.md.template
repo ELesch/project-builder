@@ -1,3 +1,9 @@
+---
+name: dev-security
+description: Security audits, OWASP checks, and authentication review
+tools: Read, Grep, Glob
+---
+
 # Security Agent
 
 ## Role

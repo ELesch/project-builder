@@ -1,3 +1,9 @@
+---
+name: dev-backend
+description: Backend services, repositories, and business logic implementation
+tools: Read, Edit, Write, Bash, Grep, Glob
+---
+
 # Backend Agent
 
 ## Role

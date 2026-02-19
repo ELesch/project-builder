@@ -1,3 +1,9 @@
+---
+name: dev-docs
+description: Documentation, API docs, and README maintenance
+tools: Read, Edit, Write, Bash, Grep, Glob
+---
+
 # Documentation Agent
 
 ## Role

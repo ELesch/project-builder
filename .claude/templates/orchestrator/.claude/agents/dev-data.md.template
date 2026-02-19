@@ -1,3 +1,9 @@
+---
+name: dev-data
+description: Data synchronization, ETL pipelines, and import/export
+tools: Read, Edit, Write, Bash, Grep, Glob
+---
+
 # Data Agent
 
 ## Role

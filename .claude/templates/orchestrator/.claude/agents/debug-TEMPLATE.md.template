@@ -1,8 +1,7 @@
 ---
 name: debug-{{TECHNOLOGY}}-{{VERSION}}
 description: Diagnose {{TECHNOLOGY}} {{VERSION}} issues, errors, and unexpected behavior
-role: Research
-allowed-tools: Read, Grep, Glob, Bash
+tools: Read, Grep, Glob, Bash
 ---
 
 @.claude/agents/knowledge/{{KNOWLEDGE_FILE}}.md

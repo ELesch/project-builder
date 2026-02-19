@@ -1,3 +1,9 @@
+---
+name: dev-auditor-errors
+description: Error handling audit - boundaries, messages, logging
+tools: Read, Grep, Glob
+---
+
 # Error Handling Auditor
 
 ## Role

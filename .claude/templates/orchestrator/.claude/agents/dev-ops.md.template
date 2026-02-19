@@ -1,3 +1,9 @@
+---
+name: dev-ops
+description: Infrastructure review and operational concerns
+tools: Read, Grep, Glob
+---
+
 # Operations Agent
 
 ## Role

@@ -1,3 +1,9 @@
+---
+name: dev-api
+description: API endpoint design, TypeScript contracts, and Zod schemas
+tools: Read, Edit, Write, Bash, Grep, Glob
+---
+
 # API Agent
 
 ## Role

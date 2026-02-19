@@ -1,3 +1,9 @@
+---
+name: dev-architect
+description: System architecture design, module boundaries, and ADRs
+tools: Read, Grep, Glob, WebFetch, WebSearch
+---
+
 # Architect Agent
 
 ## Role

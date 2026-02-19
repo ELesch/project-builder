@@ -1,3 +1,9 @@
+---
+name: dev-frontend
+description: Frontend components, hooks, pages, forms, and styling
+tools: Read, Edit, Write, Bash, Grep, Glob
+---
+
 # Frontend Agent
 
 ## Role

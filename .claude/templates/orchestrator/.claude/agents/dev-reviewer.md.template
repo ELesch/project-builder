@@ -1,3 +1,9 @@
+---
+name: dev-reviewer
+description: Code quality review, pattern compliance, and pre-merge checks
+tools: Read, Grep, Glob
+---
+
 # Reviewer Agent
 
 ## Role

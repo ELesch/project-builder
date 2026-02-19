@@ -1,3 +1,9 @@
+---
+name: dev-auditor-responsive
+description: Responsive design audit - mobile-first, breakpoints, touch targets
+tools: Read, Grep, Glob
+---
+
 # Responsive Auditor
 
 ## Role

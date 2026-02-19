@@ -1,8 +1,7 @@
 ---
 name: explore-{{TECHNOLOGY}}-{{VERSION}}
 description: Investigate and understand {{TECHNOLOGY}} {{VERSION}} code, patterns, and issues
-role: Research
-allowed-tools: Read, Grep, Glob, WebFetch, WebSearch
+tools: Read, Grep, Glob, WebFetch, WebSearch
 ---
 
 @.claude/agents/knowledge/{{KNOWLEDGE_FILE}}.md

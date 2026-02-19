@@ -1,3 +1,9 @@
+---
+name: dev-deploy
+description: Build configuration, CI/CD pipelines, and deployment
+tools: Read, Edit, Write, Bash, Grep, Glob
+---
+
 # Deploy Agent
 
 ## Role

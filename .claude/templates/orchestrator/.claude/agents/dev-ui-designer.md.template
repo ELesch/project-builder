@@ -1,3 +1,9 @@
+---
+name: dev-ui-designer
+description: Visual design specs, responsive strategy, and design tokens
+tools: Read, Grep, Glob, WebFetch, WebSearch
+---
+
 # UI Designer Agent
 
 ## Role

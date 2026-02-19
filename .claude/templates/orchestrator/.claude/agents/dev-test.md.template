@@ -1,3 +1,9 @@
+---
+name: dev-test
+description: Integration and E2E tests for features, reproducer tests for bugs
+tools: Read, Edit, Write, Bash, Grep, Glob
+---
+
 # Test Agent
 
 ## Role

@@ -1,3 +1,9 @@
+---
+name: dev-auditor-dependencies
+description: Dependency audit - CVEs, licenses, outdated packages
+tools: Read, Grep, Glob
+---
+
 # Dependencies Auditor
 
 ## Role

@@ -1,3 +1,9 @@
+---
+name: dev-auditor-performance
+description: Performance audit - N+1 queries, bundle size, caching
+tools: Read, Grep, Glob
+---
+
 # Performance Auditor
 
 ## Role
